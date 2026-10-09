@@ -74,7 +74,7 @@ pwd && git log --oneline -5 && command -v glab || echo "glab missing"
 `e83b7a1` Initialize RollbackIQ scaffold with the attribution guard
 
 ## Hindsight synchronization status
-Bank `rollbackiq` created this session; the attribution guard decision, the false-pass bug and fix, and the Phase 0 blockers were retained. No secrets stored.
+Bank `rollbackiq` was created this session and is active. Verified after writing: two documents holding 11 memory units (project implementation; Phase 0 status, blockers and next actions), and one active priority-10 directive, "No attribution footers". A third memory covering the false-pass bug and its fix was submitted twice (the first synchronous attempt timed out) and its extraction was still running at this checkpoint; the same content is recorded above under "Current failures" as the local backlog. Re-check on the next session with `hindsight list_documents` and re-retain if it never completes. No secrets were stored at any point.
 
 ## Coding standard: no attribution footers
 
@@ -98,7 +98,7 @@ Add actual GitLab pipeline, Duo session, issue, metric snapshot, test report, an
 - Decisions: one scanner shared by hooks and CI rather than duplicated patterns; git failures are fatal rather than fallbacks; hooks live in `scripts/git-hooks/` wired through repo-local `core.hooksPath` so they are versioned.
 - Tests: see the table above.
 - Blockers: no `glab`/Duo tooling and no GitLab remote.
-- Hindsight memories written/verified: yes (bank `rollbackiq`).
+- Hindsight memories written/verified: bank `rollbackiq` created; 2 documents / 11 memory units and 1 directive verified, 1 memory still extracting (see "Hindsight synchronization status").
 - Next exact action: provision the GitLab project/remote and push `main`, then start the GitLab Duo capability spike.
 
 ## Recovery procedure
