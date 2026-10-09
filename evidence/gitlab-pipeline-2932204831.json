@@ -1,0 +1,43 @@
+{
+  "captured_at": "2026-10-09T21:41:21.839238+00:00",
+  "captured_with": "scripts/capture_pipeline_evidence.py (GitLab REST API)",
+  "project": {
+    "id": 87449782,
+    "path_with_namespace": "gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq",
+    "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq",
+    "visibility": "public",
+    "duo_foundational_flows_enabled": true,
+    "duo_remote_flows_enabled": true
+  },
+  "pipeline": {
+    "id": 2932204831,
+    "status": "success",
+    "ref": "main",
+    "sha": "cb78914f6b73f48766c21da67a490f119c4c21a7",
+    "source": "push",
+    "created_at": "2026-10-09T21:41:04.960Z",
+    "updated_at": "2026-10-09T21:41:16.824Z",
+    "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/pipelines/2932204831"
+  },
+  "jobs": [
+    {
+      "id": 17073060503,
+      "name": "attribution-guard",
+      "stage": "verify",
+      "status": "success",
+      "duration_seconds": 9.83975,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/jobs/17073060503",
+      "runner": "k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default ",
+      "guard_output": [
+        "2026-10-09T21:41:14.263573Z 01O [skip] AGENTS.md (policy document that quotes the prohibited examples verbatim)",
+        "2026-10-09T21:41:14.263623Z 01O [skip] scripts/check_no_attribution.sh (this scanner defines the prohibited patterns)",
+        "2026-10-09T21:41:14.276449Z 01O [skip] AGENTS.md (policy document that quotes the prohibited examples verbatim)",
+        "2026-10-09T21:41:14.392214Z 01O [skip] scripts/check_no_attribution.sh (this scanner defines the prohibited patterns)",
+        "2026-10-09T21:41:14.411357Z 01O attribution guard: clean \u2014 37 unit(s) scanned, no attribution footers.",
+        "2026-10-09T21:41:14.425223Z 01O (scanned 1 commit message(s) in range: 796df35ab4c2088af2fc6a5476e410c99bbc91ab..cb78914f6b73f48766c21da67a490f119c4c21a7)",
+        "2026-10-09T21:41:14.425260Z 01O attribution guard: clean \u2014 1 unit(s) scanned, no attribution footers.",
+        "2026-10-09T21:41:15.158816Z 00O \u001b[32;1mJob succeeded\u001b[0;m"
+      ]
+    }
+  ]
+}

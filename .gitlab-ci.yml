@@ -1,0 +1,33 @@
+# RollbackIQ CI.
+#
+# The `verify` stage currently enforces the attribution guard only; the
+# deployment, rollback, health-verification and evidence-artifact jobs are
+# added in later phases (see ROLLBACKIQ_BUILD.md).
+stages:
+  - verify
+
+# Fails the pipeline if any committed file or commit message contains an AI
+# attribution footer, trailer or assistant signature (AGENTS.md section 10).
+# Uses the same scanner as the local Git hooks, so there is one rule to update.
+attribution-guard:
+  stage: verify
+  image: alpine:3.20
+  variables:
+    GIT_DEPTH: "0"
+  before_script:
+    - apk add --no-cache bash grep git coreutils
+  script:
+    - echo "Scanning tracked and untracked files for attribution footers"
+    - bash scripts/check_no_attribution.sh files
+    - |
+      base="${CI_MERGE_REQUEST_DIFF_BASE_SHA:-${CI_COMMIT_BEFORE_SHA:-}}"
+      case "$base" in
+        ""|0000000000000000000000000000000000000000) base="" ;;
+      esac
+      if [ -n "$base" ]; then
+        echo "Scanning commit messages in $base..$CI_COMMIT_SHA"
+        bash scripts/check_no_attribution.sh range "$base..$CI_COMMIT_SHA"
+      else
+        echo "Scanning commit messages reachable from $CI_COMMIT_SHA"
+        bash scripts/check_no_attribution.sh range "$CI_COMMIT_SHA"
+      fi

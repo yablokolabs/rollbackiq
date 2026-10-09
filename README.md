@@ -1,93 +1,147 @@
-# Showcase
+# RollbackIQ — Detect. Decide. Recover.
 
-Transcend Hackathon Showcase workspace for @yablokolabs (DevPost: yablokolabs). Visit the [onboarding issue](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/work_items/1) to get started.
+**RollbackIQ is a GitLab-native agentic production recovery engineer.** It detects a
+deployment regression, gathers evidence, proposes a safe response, requires explicit
+human approval before any consequential action, drives a controlled rollback through
+GitLab CI/CD, and then **independently verifies that the service actually recovered**.
 
-## Getting started
+> **The defining principle: a successful rollback job is not proof of recovery.**
+> Observed recovery against a healthy baseline is proof.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Built for the **GitLab Transcend Hackathon (Path A: Start Fresh)**.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Status — what is implemented today
 
-## Add your files
+This repository is honest about its progress. Nothing below claims GitLab execution that
+has not happened.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+| Area | Status | Evidence |
+| --- | --- | --- |
+| Healthy/faulty demo workload with real HTTP metrics | **Implemented and verified** | `demo/service/app.py`, `evidence/phase1-regression.json` |
+| Deterministic regression detection (thresholds, sustained windows, cooldown) | **Implemented and verified** | `backend/app/services/detector.py`, `backend/tests/test_detector.py` |
+| Incident state machine with illegal transitions rejected | **Implemented and verified** | `backend/app/models/incident.py` |
+| Safety gate (approval scope/expiry/actor, environment allowlist, known-good target, migration veto, idempotency) | **Implemented and verified** | `backend/app/services/safety.py`, `backend/tests/test_safety.py` |
+| Independent post-rollback verification | **Implemented and verified** | `backend/app/services/verifier.py` |
+| Docker image and Compose stack for both releases | **Implemented and verified** | `docker-compose.yml`, `demo/service/Dockerfile` |
+| Attribution guard (no AI attribution footers) in hooks and CI | **Implemented and verified locally** | `scripts/check_no_attribution.sh`, `.gitlab-ci.yml` |
+| GitLab CI/CD deploy and rollback jobs | **Not yet implemented** | plan in `ROLLBACKIQ_BUILD.md` |
+| GitLab Duo agent/flow investigation | **Not yet implemented** | Duo flows confirmed enabled on the project; no flow executed yet |
+| Control-plane API, persistence and dashboard | **Not yet implemented** | — |
+
+Test suite: **51 passing** (`pytest`).
+
+## Measured end-to-end run
+
+From `scripts/demo_regression.py` (raw record: `evidence/phase1-regression.json`), reproduced
+twice with the same class of result on a local machine:
+
+| Phase | Measurement |
+| --- | --- |
+| Healthy `v1` baseline | 150 real requests, 0 errors, p95 **35.6 ms** |
+| Faulty `v2` | 11.3% then 8.7% error rate; p95 **238.9 ms = 6.72x** baseline |
+| Detection | breached `P95_LATENCY` and `ERROR_RATE` on the second sustained window, after **7.72 s** |
+| Rollback | 0.51 s — *a local process restart standing in for the GitLab CI job, which is not implemented yet* |
+| Post-rollback window | 400 requests over ~5 s, 0 errors, p95 **28.0 ms = 0.79x** baseline |
+| Verification | `recovered=True`, `independent=True` |
+| Totals | time to verify 5.22 s; detection-to-verified-recovery 5.43 s; total **13.16 s** |
+
+## Quick start
+
+```bash
+# 1. Python environment
+python3 -m venv .venv
+.venv/bin/pip install -r backend/requirements.txt
+
+# 2. Tests
+.venv/bin/python -m pytest            # 51 passing
+
+# 3. The full regression demonstration (healthy -> faulty -> detected -> rolled back -> verified)
+.venv/bin/python scripts/demo_regression.py
+
+# 4. The workload on its own
+docker compose up -d workload-v1      # healthy release
+curl -s localhost:8000/release
+curl -s localhost:8000/metrics
+
+# faulty release (same image, different deployment inputs)
+RELEASE_VERSION=v2 FAULT_LATENCY_MS=180 FAULT_ERROR_RATE=0.10 \
+  docker compose --profile faulty up -d workload-v2
+```
+
+## How it works
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase.git
-git branch -M main
-git push -uf origin main
+deployment (GitLab CI/CD)            real user traffic
+        |                                    |
+        v                                    v
+  demo workload  -------------------->  HTTP probes (observer)      <-- measurement comes from the
+  /metrics, /release                    backend/app/services/collector.py    observer, not the service
+        |                                    |
+        |                                    v
+        |                            regression detector  (thresholds, sustained windows, cooldown)
+        |                                    |
+        |                                    v
+        |                         incident state machine  (HEALTHY -> ... -> RECOVERED / ESCALATED)
+        |                                    |
+        |                                    v
+        |                       GitLab Duo investigation  (planned: evidence + hypotheses)
+        |                                    |
+        |                                    v
+        |                            recovery proposal + risk
+        |                                    |
+        |                                    v
+        |                            SAFETY GATE (human approval, allowlist, known-good target,
+        |                                    |         migration veto, idempotency)
+        |                                    v
+        |                          GitLab CI/CD rollback job  (planned)
+        |                                    |
+        v                                    v
+     previous release  <--------  independent verifier  (new post-rollback observations only)
+                                             |
+                                             v
+                                  incident record + audit trail
 ```
 
-## Integrate with your tools
+Design rules that make this trustworthy:
 
-* [Set up project integrations](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/settings/integrations)
+- **Detection is arithmetic, not an opinion.** Thresholds, minimum sample counts, sustained
+  windows and cooldowns are deterministic; the numbers come from real requests.
+- **Thin evidence never triggers.** No verified baseline, too few samples, or an environment
+  mismatch suppresses detection instead of guessing.
+- **The safety gate reports every veto**, not just the first one, and refuses when migration
+  compatibility is unknown rather than assuming it is safe.
+- **Verification refuses to reuse the incident data.** An unknown rollback execution time means
+  independence cannot be claimed, so recovery is not confirmed.
+- **Measurement is independent.** The observer's own probe latencies are used, not the
+  service's self-report.
 
-## Collaborate with your team
+## Repository layout
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```
+backend/app/models/       incident state machine, metric windows, releases, approvals
+backend/app/services/     detector, safety gate, verifier, collector, stats
+backend/tests/            unit, negative and integration tests (51)
+demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
+scripts/                  demo regression runner, attribution guard, Git hooks
+evidence/                 raw measured records from real runs
+docs/PROGRESS.md          session checkpoint and current blockers
+```
 
-## Test and Deploy
+## Safety model
 
-Use the built-in continuous integration in GitLab.
+- Human approval is mandatory before a rollback; approvals are scoped to one exact proposal
+  hash, so approving one action never authorizes a different one.
+- Non-human actors (`system`, `agent`, and similar) cannot approve.
+- Rollback targets must be releases this system observed as healthy. Unknown target, target
+  equal to the current release, environment mismatch, unsafe/unknown migration and duplicate
+  idempotency keys all refuse.
+- **Code rollback does not restore deleted data.** Data restoration is deliberately out of
+  scope and remains a separate, human-controlled operation.
+- Retrieved telemetry, commit messages and issue text are treated as untrusted evidence, never
+  as instructions.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+See `AGENTS.md` and `ROLLBACKIQ_BUILD.md` for the full product and safety specification.
 
-***
+## Licence
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+MIT — see `LICENSE`.

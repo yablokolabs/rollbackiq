@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#
+# RollbackIQ pre-commit hook: scans the content being committed for AI
+# attribution footers before it can enter history (AGENTS.md section 10).
+set -uo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+exec "$root/scripts/check_no_attribution.sh" staged
