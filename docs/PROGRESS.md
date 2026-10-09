@@ -4,10 +4,25 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-Phase 1 complete and verified locally. Phase 2 (detection/investigation service, GitLab context, Duo flow) is next, blocked at the GitLab step pending project access.
+Phase 0 access is now real (token works, Duo flows are enabled on the project, glab is authenticated); the first push is pending a missing token permission. Phase 1 remains complete and verified locally.
 
 ## Current task
-Phase 0 is partially blocked: the local environment and the demo regression loop are done, but GitLab Duo and GitLab CI/CD cannot be verified without a GitLab project and credentials.
+Complete the GitLab bootstrap: create the project in the hackathon workspace, push `main`, and get the first real pipeline (and the `attribution-guard` job) to run as evidence. Then the Duo capability spike.
+
+## GitLab access (verified 2026-10-09)
+
+| Item | Value |
+| --- | --- |
+| Account | GitLab user `yablokolabs` (id 43178176), recognised as the hackathon workspace owner |
+| Workspace group | `gitlab-ai-hackathon/transcend-october-2026/43178176` (group id 144345494), public, project creation allowed at **developer** level; token access level 30 |
+| Workspace project | `…/43178176/showcase` (project id 87424071), public, `main`, currently only the starter README, onboarding issue #1 |
+| `glab` CLI | authenticated: "Logged in to gitlab.com as yablokolabs (GITLAB_TOKEN)" via the documented `gitlab/glab` image |
+| Token | fine-grained PAT from `~/.hermes/.env`; value never printed or stored |
+| Duo Agent Platform | `duo_foundational_flows_enabled = true` and `duo_remote_flows_enabled = true` on the project — the Phase 0 gate has a real target |
+| CI/CD | `jobs_enabled = true`, container registry and pages enabled, no pipelines have run yet |
+| Convention evidence | across 100 visible workspaces in this hackathon iteration, 87 use the provided `showcase` project and 13 created their own named project (for example `drift-guard`, `deadhand`, `shipmill`) |
+
+The URL originally supplied (`…/2870391/showcase`) returns 404: the numeric segment in that link is not this user's id. The correct workspace project is the `43178176` one above.
 
 ## Last completed milestone
 Deterministic healthy/faulty demo workload with **real measured regression**: v2 was detected at 6.72x baseline p95 and ~8.7% errors, then recovery was verified from independent post-rollback observations. Phase 1 gate (repeatable observed regression) is met.
@@ -27,12 +42,17 @@ Deterministic healthy/faulty demo workload with **real measured regression**: v2
 | Docker | 29.8.1, Compose v5.5.1, daemon working | `docker --version`, live container runs |
 | Python / Node | 3.12.3 / v22.23.2 (pip and venv installed this session) | `--version` |
 
-### Blocker requiring a human (cannot be worked around locally)
-1. A GitLab hackathon project and its namespace/URL.
-2. A Personal Access Token (or equivalent) with API scope, supplied as a **protected environment variable or CI variable** — never pasted into the repo, never printed, never stored in Hindsight.
-3. Confirmation of whether the Duo Agent Platform (custom agents/flows) is available on that account/plan, since the hackathon prerequisite is genuine Duo use.
+### Token permissions: what works and what is refused (measured)
 
-Until (1) and (2) exist, GitLab CI/CD deploy and rollback jobs and any Duo invocation cannot be verified, and per the specification's gate the architecture must not be built as if they were.
+| Operation | Result |
+| --- | --- |
+| Read project, tree, branches, commits, issues, pipelines, environments, members | allowed (HTTP 200) |
+| Write repository commits | allowed (an intentionally invalid commit returned HTTP 400 "provide at least one action", not 403) |
+| Create a project (`POST /projects`) | **refused: HTTP 403 `insufficient_granular_scope` — needs user permission `Project: Create`** |
+| Read protected branches | refused: HTTP 403 `insufficient_granular_scope` |
+| `GET /version` | refused: needs instance permission `Metadata: Read` |
+
+Because the chosen destination is a **new** project in the workspace group, the immediate blocker is that one missing permission. Either add `Project: Create` to the existing fine-grained token, or use a token whose scope covers it, or create the empty `rollbackiq` project in the workspace group manually so this session can push into it. Nothing has been created or pushed yet: the showcase project still holds only its starter commit, and no other project besides `showcase` and `yabloko-labs-ltd-group/yabloko-labs-ltd-project` exists for this account.
 
 ## Completed features
 - [x] Repository on `main` with the attribution guard enforced by local hooks and CI
@@ -88,14 +108,13 @@ None outstanding. Two problems found and fixed during this work:
 Also worth recording for future sessions: `git reset --hard` early in verification silently reverted an uncommitted fix; use `git reset --soft` when dropping scratch commits.
 
 ## Known blockers
-- No GitLab project, namespace, remote or token (see Phase 0 matrix). This blocks the Phase 0 gate, GitLab CI/CD jobs, and any Duo execution.
-- Duo availability on the account/plan is unknown.
-- `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
+- Token lacks `Project: Create`, so the agreed new project cannot be created by this session yet (see the permissions table above).
+- No `rollbackiq` project, remote or pipeline exists yet, so no GitLab CI/CD or Duo execution has been verified. `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
 
 ## Next three actions
-1. Once the GitLab project and token exist: add the remote, push `main`, confirm the `attribution-guard` job runs on a real pipeline, and record the pipeline URL as evidence.
-2. Run the Duo capability spike on that project: create the smallest supported custom agent or flow, invoke it, and capture the execution evidence (job log, session, artifact). This is the Phase 0 gate.
-3. Then start Phase 2: control-plane API and SQLite persistence, GitLab context collection (commits, pipeline, deployment metadata), and wiring the existing detector into an evidence-producing incident investigation.
+1. Get `Project: Create` on the token (or an empty `rollbackiq` project created manually), then create/push: `git remote add origin …/43178176/rollbackiq.git` and push `main`.
+2. Confirm the `attribution-guard` job runs on the first real pipeline and record the pipeline URL and job log as evidence.
+3. Run the Duo capability spike on that project — the smallest supported custom agent or flow, invoked for real, with the execution evidence captured. This is the Phase 0 gate.
 
 ## Exact next command
 ```bash
@@ -122,6 +141,13 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 003 — GitLab access established
+- Completed: token identity and permissions measured; workspace group and project identified; Duo flows confirmed enabled; `glab` authenticated; git-over-HTTPS auth verified read-only; README, MIT LICENSE and GitLab findings written.
+- Decisions: the RollbackIQ repository will live in a **new** project `rollbackiq` inside the workspace group (chosen by the user), which matches Path A "start fresh"; the token will be passed per-push and never stored in `.git/config` or committed.
+- Tests: 51 pytest tests still passing; no GitLab writes were made (verified: the workspace lists only `showcase`, and it still holds only its initial commit).
+- Blockers: token lacks `Project: Create` (HTTP 403), so the new project cannot be created from this session yet.
+- Next exact action: create/push `rollbackiq` once that permission exists, then watch the first pipeline.
 
 ### Session 002 — Phase 0 spike and Phase 1 environment
 - Completed: capability matrix and blocker identification; demo workload with real metrics and fault injection; Docker image + Compose stack; detector, state machine, safety gate, verifier, collector; 51 tests; measured end-to-end regression and verified recovery.
