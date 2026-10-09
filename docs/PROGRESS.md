@@ -4,7 +4,7 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**Phase 0 GitLab bootstrap complete.** The RollbackIQ repository exists in the hackathon workspace, `main` is pushed, and the first real GitLab pipeline ran green: job `attribution-guard` succeeded on a GitLab.com shared runner, scanning 35 files and 5 commit messages. Next: the Duo capability spike (the Phase 0 gate), then Phase 2. Phase 1 remains complete and verified locally.
+**Phase 0 GitLab bootstrap complete.** The project lives in the hackathon-provided `showcase` project (`main` = `7166d0de`) with the dedicated `rollbackiq` project mirroring it, and a real GitLab pipeline is green in both: the `attribution-guard` job succeeded on a GitLab.com shared runner, scanning 38 files and 10 commit messages. Next: the Duo capability spike (the Phase 0 gate), then Phase 2. Phase 1 remains complete and verified locally.
 
 ## GitLab CI evidence (first real pipeline)
 
@@ -18,15 +18,26 @@
 | What the job proved | `attribution guard: clean — 35 unit(s) scanned` for files, and `attribution guard: clean — 5 unit(s) scanned` after `(scanned 5 commit message(s) in range: 796df35…)` |
 | Captured records | `evidence/gitlab-pipeline-2932203567.json`, `evidence/gitlab-pipeline-2932204831.json` via `scripts/capture_pipeline_evidence.py` |
 
-Three pushes have now run the pipeline green, so CI enforcement is repeatable rather than a one-off:
+Five pipeline runs have now gone green, so CI enforcement is repeatable rather than a one-off:
 
-| Pipeline | Commit | Status | Job | Duration |
-| --- | --- | --- | --- | --- |
-| 2932203567 | `796df35a` | success | `attribution-guard` 17073050784 | 8.93 s |
-| 2932204831 | `cb78914f` | success | `attribution-guard` 17073060503 | 9.84 s |
-| 2932205470 | `047267b5` | success | `attribution-guard` | passed |
+| Project | Pipeline | Commit | Status | Job | Duration |
+| --- | --- | --- | --- | --- | --- |
+| rollbackiq | 2932203567 | `796df35a` | success | 17073050784 | 8.93 s |
+| rollbackiq | 2932204831 | `cb78914f` | success | 17073060503 | 9.84 s |
+| rollbackiq | 2932205470 | `047267b5` | success | — | passed |
+| rollbackiq | — | `41bd087` | success | — | passed |
+| **showcase** | **2932220957** | **`7166d0de`** | **success** | **17073185452** | **9.64 s** |
 
-Pipeline URL pattern: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/pipelines/2932203567
+The showcase run is the important one: its job scanned **38 files** and **10 commit messages** (range `a4d8a7ad..7166d0de`, i.e. from the workspace starter commit through the merge) and reported clean for both.
+
+Pipeline URL pattern: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/pipelines/2932220957
+
+### Repository topology (decided)
+
+The user needs the **hackathon-provided `showcase` project** to hold the project, so it is now the primary remote (`origin`) and the dedicated `rollbackiq` project is secondary (`rollbackiq-project`). Both carry the identical history and tree:
+
+- `showcase` `main` = `7166d0de`, a **non-force merge** whose parents are the workspace starter commit `a4d8a7ad` and the project tip `896c6b7`. The merge was required because the histories were unrelated; GitLab itself refused a force push to the protected `main`, which is the correct behaviour and is why the starter commit is preserved rather than discarded.
+- The dedicated `rollbackiq` project (id 87449782) received the same commit by fast-forward and can be deleted if the user prefers a single repository; deleting a project is destructive and has not been done without their say-so.
 
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
@@ -132,7 +143,9 @@ None outstanding. Two problems found and fixed during this work:
 Also worth recording for future sessions: `git reset --hard` early in verification silently reverted an uncommitted fix; use `git reset --soft` when dropping scratch commits.
 
 ## Known blockers
-- None for GitLab access: the token was upgraded to full access and project creation now returns 201. The remaining unverified area is **Duo execution** (flows are enabled but no flow has been invoked yet) and GitLab CI/CD deploy/rollback jobs, which are not written yet.
+- None for GitLab access: the token was upgraded to full access, project creation returns 201, and pushes to the protected `showcase` `main` work as ordinary fast-forwards.
+- The remaining unverified area is **Duo execution** (flows are enabled on both projects but no flow has been invoked yet) and the GitLab CI/CD deploy/rollback jobs, which are not written yet.
+- The duplicate `rollbackiq` project still exists; deleting it needs the user's explicit approval because project deletion is not reversible.
 - `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
 
 ## Next three actions
@@ -165,6 +178,11 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 005 — Showcase project adopted, CI green in it
+- Completed: force push refused by GitLab's protected-branch rule and worked around properly with a non-force merge; local `main` fast-forwarded to the merged commit; `showcase` made `origin` with the dedicated project kept as `rollbackiq-project`; showcase pipeline 2932220957 captured as evidence.
+- Bug found and fixed this session: the `pre-push` hook built an invalid revision range when the remote tip did not exist locally (first push to an unrelated remote), aborting the push instead of checking it. It now scans every commit reachable from the local tip in that case. Verified against a throwaway unrelated remote: a footer commit was still blocked, while a clean push was allowed.
+- Next exact action: the Duo capability spike on project 87424071 (showcase), capturing the real execution evidence.
 
 ### Session 004 — Repository pushed, first real pipeline green
 - Completed: project `rollbackiq` (id 87449782) created in the workspace group; `main` pushed with the token supplied per-command only (verified absent from `.git/config` and from the remote URL); upstream set to the credential-free `origin`; first pipeline 2932203567 succeeded with the `attribution-guard` job on a shared runner; evidence captured by `scripts/capture_pipeline_evidence.py`.
