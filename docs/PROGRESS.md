@@ -29,6 +29,8 @@ Seven pipeline runs have now gone green (four in the dedicated project, three in
 | showcase | 2932220957 | `7166d0de` | success | 17073185452 | 9.64 s |
 | **showcase** | **2932227652** | **`7c10cf3a`** | **success** | **17073237708** | **9.48 s** |
 | rollbackiq | 2932227684 | `7c10cf3a` | success | 17073237840 | 9.15 s |
+| showcase | 2932233927 | `a1828546` | success | — | passed |
+| showcase | 2932245570 | `8869c576` | success | 17073367647 guard + 17073367648 telemetry-spike (played manually) | 9.x s + 21.5 s |
 
 By commit `6797fa2` every push to `main` on either project has produced a green pipeline (nine in total). All of them ran the `attribution-guard` job on a GitLab.com shared runner (`k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default`), recorded job-by-job in `evidence/`.
 
@@ -203,6 +205,7 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - Spike result: a trace POSTed to `:14318/v1/traces` returned **HTTP 200 with `{"partialSuccess":{}}`**, i.e. accepted with nothing rejected, both with and without an auth header (no secret is needed in this configuration).
 - Implemented `demo/service/otel_setup.py` (OTLP/HTTP exporter, GitLab resource attributes, FastAPI instrumentation, guarded so telemetry can never break the workload) and wired it into `demo/service/app.py` with `/otel`, `/admin/flush-telemetry`, and release/fault attributes on each span. Added `demo/otel.env.example`, Compose passthrough, pinned OTel deps, `scripts/otel_export_evidence.py` and a manual `telemetry-spike` CI job.
 - Verified: `scripts/otel_export_evidence.py` against the real collector → **64 spans accepted, 0 failures** from 12 real requests, recorded in `evidence/otel-export-spike.json`; with no collector configured the workload serves normally and `/otel` reports `telemetry_enabled: false`. Test suite now **57 passed**. `.gitlab-ci.yml` validated by GitLab's own CI lint API (`valid: true`).
+- Verified **on a GitLab runner**, not just locally: manual job `telemetry-spike` (job `17073367648`, pipeline `2932245570`) was played on `k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default`, succeeded in 21.5 s, and its artifact reports **64 spans exported, 0 failures** to the group collector. Because the job runs in CI, its resource attributes carry the real pipeline context: `service.version` = `8869c5766202042b362b641a44a5231fcd0452ea` (from `CI_COMMIT_SHA`) and `gitlab.project.name` = `showcase` (from `CI_PROJECT_NAME`). Evidence: `evidence/otel-export-ci.json`, `evidence/gitlab-job-telemetry-spike.log`.
 - Not verified: that the spans render in the GitLab Observability UI. There is no public trace-query REST API (probes at `/api/v4/projects/87424071/observability*` all return 404), so collector acceptance is the strongest evidence obtainable from this host.
 - Note for later: the group's Observability page mentions an **MCP server** endpoint that is being provisioned. That is directly relevant to the GitLab MCP requirement — check it when it appears.
 

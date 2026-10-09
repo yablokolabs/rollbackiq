@@ -1,0 +1,51 @@
+{
+  "captured_at": "2026-10-09T22:05:12.559467+00:00",
+  "captured_with": "scripts/otel_export_evidence.py",
+  "collector_endpoint": "https://144345494.otel.gitlab-o11y.com:14318",
+  "service_started_from": "/builds/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/demo/service",
+  "requests_sent": 12,
+  "statuses": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "traffic_seconds": 0.089,
+  "workload_telemetry_report": {
+    "telemetry_enabled": true,
+    "exporter_endpoint": "https://144345494.otel.gitlab-o11y.com:14318/v1/traces",
+    "service_name": "rollbackiq-demo-workload",
+    "resource_attributes": {
+      "telemetry.sdk.language": "python",
+      "telemetry.sdk.name": "opentelemetry",
+      "telemetry.sdk.version": "1.45.1",
+      "service.instance.id": "7e5fee82-025f-49cd-9f9a-3ce51543622b",
+      "service.name": "rollbackiq-demo-workload",
+      "service.version": "8869c5766202042b362b641a44a5231fcd0452ea",
+      "deployment.environment.name": "demo-staging",
+      "gitlab.project.id": "87424071",
+      "gitlab.project.name": "showcase"
+    },
+    "batches_exported": 1,
+    "spans_exported": 64,
+    "export_failures": 0,
+    "last_export_error": null,
+    "setup_error": null,
+    "source": "real OTLP export counters, not a simulated metric",
+    "flushed": true
+  },
+  "verdict": {
+    "telemetry_enabled": true,
+    "spans_exported": 64,
+    "export_failures": 0,
+    "passed": true
+  }
+}
