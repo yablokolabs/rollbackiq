@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# RollbackIQ commit-msg hook: blocks any commit whose message contains an AI
+# attribution footer, trailer or assistant marker (AGENTS.md section 10).
+#
+# Installed by scripts/install-git-hooks.sh via `git config --local
+# core.hooksPath scripts/git-hooks`, so this hook is versioned with the repo.
+#
+# Bypassing with `git commit --no-verify` is possible; the pre-push hook and
+# the `attribution-guard` CI job are the backstops for that.
+set -uo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+exec "$root/scripts/check_no_attribution.sh" commit-msg "$1"

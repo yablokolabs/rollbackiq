@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Local environment and secrets (never commit credentials)
+.env
+.env.*
+!.env.example
+
+# Local runtime data
+*.sqlite3
+*.db
+
+# OS / editor
+.DS_Store
