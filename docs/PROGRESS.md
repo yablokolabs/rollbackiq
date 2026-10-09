@@ -4,7 +4,21 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-Phase 0 access is now real (token works, Duo flows are enabled on the project, glab is authenticated); the first push is pending a missing token permission. Phase 1 remains complete and verified locally.
+**Phase 0 GitLab bootstrap complete.** The RollbackIQ repository exists in the hackathon workspace, `main` is pushed, and the first real GitLab pipeline ran green: job `attribution-guard` succeeded on a GitLab.com shared runner, scanning 35 files and 5 commit messages. Next: the Duo capability spike (the Phase 0 gate), then Phase 2. Phase 1 remains complete and verified locally.
+
+## GitLab CI evidence (first real pipeline)
+
+| Item | Value |
+| --- | --- |
+| Project | `gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq` (id **87449782**), public |
+| Duo on the project | `duo_foundational_flows_enabled = true`, `duo_remote_flows_enabled = true` |
+| Pipeline | id **2932203567**, status **success**, ref `main`, sha `796df35a` |
+| Job | id **17073050784**, `attribution-guard`, stage `verify`, status **success**, **8.93 s** |
+| Runner | `k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default` (GitLab.com shared runner, docker+machine executor) |
+| What the job proved | `attribution guard: clean — 35 unit(s) scanned` for files, and `attribution guard: clean — 5 unit(s) scanned` after `(scanned 5 commit message(s) in range: 796df35…)` |
+| Captured record | `evidence/gitlab-pipeline-2932203567.json` via `scripts/capture_pipeline_evidence.py` |
+
+Pipeline URL: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/pipelines/2932203567
 
 ## Current task
 Complete the GitLab bootstrap: create the project in the hackathon workspace, push `main`, and get the first real pipeline (and the `attribution-guard` job) to run as evidence. Then the Duo capability spike.
@@ -108,8 +122,8 @@ None outstanding. Two problems found and fixed during this work:
 Also worth recording for future sessions: `git reset --hard` early in verification silently reverted an uncommitted fix; use `git reset --soft` when dropping scratch commits.
 
 ## Known blockers
-- Token lacks `Project: Create`, so the agreed new project cannot be created by this session yet (see the permissions table above).
-- No `rollbackiq` project, remote or pipeline exists yet, so no GitLab CI/CD or Duo execution has been verified. `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
+- None for GitLab access: the token was upgraded to full access and project creation now returns 201. The remaining unverified area is **Duo execution** (flows are enabled but no flow has been invoked yet) and GitLab CI/CD deploy/rollback jobs, which are not written yet.
+- `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
 
 ## Next three actions
 1. Get `Project: Create` on the token (or an empty `rollbackiq` project created manually), then create/push: `git remote add origin …/43178176/rollbackiq.git` and push `main`.
@@ -141,6 +155,12 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 004 — Repository pushed, first real pipeline green
+- Completed: project `rollbackiq` (id 87449782) created in the workspace group; `main` pushed with the token supplied per-command only (verified absent from `.git/config` and from the remote URL); upstream set to the credential-free `origin`; first pipeline 2932203567 succeeded with the `attribution-guard` job on a shared runner; evidence captured by `scripts/capture_pipeline_evidence.py`.
+- Notable: the `pre-push` hook scanned all 5 commits during the real push, and CI independently scanned 35 files plus the same 5 commit messages — local and server-side enforcement both observed.
+- Errors made and fixed: the earlier project-creation attempt failed with 403 `insufficient_granular_scope` and my parser reported it as empty output because it checked `message` while the API returns `error`; corrected by printing HTTP status and the raw body.
+- Next exact action: run the Duo capability spike on project 87449782 and capture the execution evidence.
 
 ### Session 003 — GitLab access established
 - Completed: token identity and permissions measured; workspace group and project identified; Duo flows confirmed enabled; `glab` authenticated; git-over-HTTPS auth verified read-only; README, MIT LICENSE and GitLab findings written.
