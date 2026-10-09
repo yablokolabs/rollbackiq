@@ -17,7 +17,10 @@
 #   scripts/check_no_attribution.sh range REV         scan commit messages in REV
 #   scripts/check_no_attribution.sh patterns          print the forbidden patterns
 #
-# Exit status: 0 clean, 1 violation(s) found, 2 usage error.
+# Exit status: 0 clean, 1 violation(s) found, 2 usage or environment error.
+#
+# A failing git command is always a hard error (exit 2): scanning zero units
+# because git refused to run must never be reported as a clean result.
 #
 # Known limitation: this file defines the forbidden patterns and AGENTS.md
 # quotes them as policy, so both are excluded from file scans. Exclusions are
@@ -68,9 +71,37 @@ fi
 RESET=''
 if [ -n "$RED" ]; then RESET=$'\033[0m'; fi
 
+VIOLATIONS=0
+SCANNED=0
+GREP_ARGS=()
+TMP_DIR=""
+
 usage() {
-  sed -n '13,20p' "$0"
+  sed -n '13,22p' "$0"
   exit 2
+}
+
+cleanup() {
+  [ -n "$TMP_DIR" ] && [ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
+  return 0
+}
+trap cleanup EXIT
+
+fail() {
+  printf '%sattribution guard: ERROR%s — %s\n' "$RED" "$RESET" "$*" >&2
+  exit 2
+}
+
+# Run git, writing stdout to $1; any failure is fatal so a broken git call can
+# never be mistaken for "nothing to scan".
+git_to_file() {
+  local out="$1"; shift
+  if ! git "$@" >"$out" 2>"$out.err"; then
+    printf '%sattribution guard: ERROR%s — git %s failed:\n' "$RED" "$RESET" "$*" >&2
+    sed 's/^/  /' "$out.err" >&2
+    printf 'Refusing to report a clean scan from a failed git command.\n' >&2
+    exit 2
+  fi
 }
 
 repo_root() {
@@ -99,8 +130,16 @@ report_exclusions() {
   done
 }
 
-VIOLATIONS=0
-SCANNED=0
+add_pattern_args() {
+  local p
+  GREP_ARGS=()
+  for p in "${COMMON_PATTERNS[@]}"; do GREP_ARGS+=(-e "$p"); done
+}
+
+add_commit_pattern_args() {
+  local p
+  for p in "${COMMIT_PATTERNS[@]}"; do GREP_ARGS+=(-e "$p"); done
+}
 
 flush_violations() {
   local label="$1" output="$2"
@@ -112,37 +151,45 @@ flush_violations() {
 
 scan_file() {
   local file="$1" rel="${1#./}"
-  local reason
+  local reason output
   if reason=$(exclusion_reason "$rel"); then
     printf '%s[skip]%s %s (%s)\n' "$YELLOW" "$RESET" "$rel" "$reason"
     return 0
   fi
   [ -f "$file" ] || return 0
-  local output
   output=$(grep -nIE -i "${GREP_ARGS[@]}" -- "$file" 2>/dev/null) || true
   SCANNED=$((SCANNED + 1))
   flush_violations "$rel" "$output"
 }
 
-add_pattern_args() {
-  local p
-  GREP_ARGS=()
-  for p in "${COMMON_PATTERNS[@]}"; do GREP_ARGS+=(-e "$p"); done
-}
-
 mode_files() {
-  local root; root=$(repo_root)
+  local root inside_git=0 gerr
+  root=$(repo_root)
   cd "$root" || exit 2
   add_pattern_args
   report_exclusions
   echo "--- scanning working tree in $root ---"
+
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    local file
+    inside_git=1
+  elif [ -e .git ]; then
+    # A .git directory exists but git refuses to use it (for example the
+    # "dubious ownership" check). Falling back to find here would report a
+    # clean tree from a repository the guard could not actually read, so fail.
+    gerr=$(git rev-parse --is-inside-work-tree 2>&1 | head -3)
+    fail "a .git directory is present but git cannot read this repository:
+$gerr"
+  fi
+
+  local file
+  if [ "$inside_git" -eq 1 ]; then
+    TMP_DIR=$(mktemp -d) || fail "cannot create a temporary directory"
+    git_to_file "$TMP_DIR/files" ls-files --cached --others --exclude-standard -z
     while IFS= read -r -d '' file; do
       scan_file "./$file"
-    done < <(git ls-files --cached --others --exclude-standard -z)
+    done < "$TMP_DIR/files"
   else
-    local file
+    echo "(not a git repository: scanning all files under $root)"
     while IFS= read -r -d '' file; do
       scan_file "$file"
     done < <(find . -type f -not -path './.git/*' -print0)
@@ -150,31 +197,35 @@ mode_files() {
 }
 
 mode_staged() {
-  local root; root=$(repo_root)
+  local root reason output file
+  root=$(repo_root)
   cd "$root" || exit 2
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+    || fail "not a git repository: staged mode requires git"
   add_pattern_args
   report_exclusions
   echo "--- scanning staged content ---"
-  local file rel reason output
+
+  TMP_DIR=$(mktemp -d) || fail "cannot create a temporary directory"
+  git_to_file "$TMP_DIR/staged" diff --cached --name-only --diff-filter=ACM -z
   while IFS= read -r -d '' file; do
-    rel="$file"
-    if reason=$(exclusion_reason "$rel"); then
-      printf '%s[skip]%s %s (%s)\n' "$YELLOW" "$RESET" "$rel" "$reason"
+    if reason=$(exclusion_reason "$file"); then
+      printf '%s[skip]%s %s (%s)\n' "$YELLOW" "$RESET" "$file" "$reason"
       continue
     fi
-    output=$(git show ":$file" 2>/dev/null | grep -nIE -i "${GREP_ARGS[@]}") || true
+    git_to_file "$TMP_DIR/blob" show ":$file"
+    output=$(grep -nIE -i "${GREP_ARGS[@]}" "$TMP_DIR/blob") || true
     SCANNED=$((SCANNED + 1))
-    flush_violations "$rel (staged)" "$output"
-  done < <(git diff --cached --name-only --diff-filter=ACM -z)
+    flush_violations "$file (staged)" "$output"
+  done < "$TMP_DIR/staged"
 }
 
 mode_commit_msg() {
   local msgfile="${1:-}"
   [ -n "$msgfile" ] || usage
-  [ -f "$msgfile" ] || { echo "commit-msg: no such file: $msgfile" >&2; exit 2; }
+  [ -f "$msgfile" ] || fail "commit-msg: no such file: $msgfile"
   add_pattern_args
-  local p
-  for p in "${COMMIT_PATTERNS[@]}"; do GREP_ARGS+=(-e "$p"); done
+  add_commit_pattern_args
   local output
   # Git comment lines (starting with #) are stripped before comparing.
   output=$(sed '/^[[:space:]]*#/d' "$msgfile" | grep -nIE -i "${GREP_ARGS[@]}") || true
@@ -183,17 +234,24 @@ mode_commit_msg() {
 }
 
 mode_range() {
-  local range="${1:-}" rev output
+  local range="${1:-}" rev output commits=0
   [ -n "$range" ] || usage
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+    || fail "not a git repository: range mode requires git"
   add_pattern_args
-  local p
-  for p in "${COMMIT_PATTERNS[@]}"; do GREP_ARGS+=(-e "$p"); done
+  add_commit_pattern_args
+
+  TMP_DIR=$(mktemp -d) || fail "cannot create a temporary directory"
+  git_to_file "$TMP_DIR/revs" rev-list "$range"
   while IFS= read -r rev; do
     [ -n "$rev" ] || continue
-    output=$(git log -1 --format=%B "$rev" | grep -nIE -i "${GREP_ARGS[@]}") || true
+    commits=$((commits + 1))
+    git_to_file "$TMP_DIR/msg" log -1 --format=%B "$rev"
+    output=$(grep -nIE -i "${GREP_ARGS[@]}" "$TMP_DIR/msg") || true
     SCANNED=$((SCANNED + 1))
     flush_violations "commit $rev" "$output"
-  done < <(git rev-list "$range" 2>/dev/null)
+  done < "$TMP_DIR/revs"
+  echo "(scanned $commits commit message(s) in range: $range)"
 }
 
 mode_patterns() {
@@ -212,7 +270,7 @@ main() {
     range)     shift; mode_range "${1:-}" ;;
     patterns)  mode_patterns; exit 0 ;;
     -h|--help|help) usage ;;
-    *) echo "unknown mode: $mode" >&2; usage ;;
+    *) fail "unknown mode: $mode (try --help)" ;;
   esac
   echo
   if [ "$VIOLATIONS" -gt 0 ]; then
