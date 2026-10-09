@@ -142,6 +142,14 @@ docs/PROGRESS.md          session checkpoint and current blockers
 
 See `AGENTS.md` and `ROLLBACKIQ_BUILD.md` for the full product and safety specification.
 
+## Hackathon workspace
+
+This repository lives in the provided Transcend Hackathon workspace project for `@yablokolabs`
+(DevPost: `yablokolabs`), which also hosts the [onboarding issue](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/work_items/1).
+The workspace starter `README.md` that this file replaces remains in history at commit
+`a4d8a7ad`, and the workspace starter commit is kept as the first parent of the merge that
+brought this project into the repository.
+
 ## Licence
 
 MIT — see `LICENSE`.
