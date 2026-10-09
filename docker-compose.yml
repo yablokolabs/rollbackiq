@@ -1,0 +1,47 @@
+# RollbackIQ demo stack.
+#
+# Two services from one image, so the healthy and faulty releases are the same
+# build with different deployment inputs:
+#
+#   docker compose up -d workload-v1                       # healthy release
+#   RELEASE_VERSION=v2 FAULT_LATENCY_MS=180 FAULT_ERROR_RATE=0.10 \
+#     docker compose up -d workload-v2                     # regressed release
+#
+# The control plane (backend/) and dashboard (frontend/) are added in later
+# phases; this file currently runs the workloads the probes measure.
+services:
+  workload-v1:
+    build:
+      context: ./demo/service
+      args:
+        RELEASE_VERSION: v1
+    environment:
+      RELEASE_VERSION: v1
+      RELEASE_COMMIT_SHA: ${V1_COMMIT_SHA:-local}
+      RELEASE_PIPELINE_ID: ${V1_PIPELINE_ID:-local}
+      DEPLOY_ENV: ${DEPLOY_ENV:-demo-staging}
+      BASE_LATENCY_MS: ${BASE_LATENCY_MS:-20}
+      FAULT_LATENCY_MS: "0"
+      FAULT_ERROR_RATE: "0"
+    ports:
+      - "${WORKLOAD_PORT:-8000}:8000"
+    restart: unless-stopped
+
+  workload-v2:
+    profiles: ["faulty"]
+    build:
+      context: ./demo/service
+      args:
+        RELEASE_VERSION: v2
+    environment:
+      RELEASE_VERSION: v2
+      RELEASE_COMMIT_SHA: ${V2_COMMIT_SHA:-local}
+      RELEASE_PIPELINE_ID: ${V2_PIPELINE_ID:-local}
+      DEPLOY_ENV: ${DEPLOY_ENV:-demo-staging}
+      BASE_LATENCY_MS: ${BASE_LATENCY_MS:-20}
+      FAULT_LATENCY_MS: ${FAULT_LATENCY_MS:-180}
+      FAULT_ERROR_RATE: ${FAULT_ERROR_RATE:-0.10}
+      FAULT_SEED: ${FAULT_SEED:-1234}
+    ports:
+      - "${WORKLOAD_PORT:-8000}:8000"
+    restart: unless-stopped
