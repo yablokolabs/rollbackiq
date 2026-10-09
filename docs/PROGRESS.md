@@ -16,9 +16,19 @@
 | Job | id **17073050784**, `attribution-guard`, stage `verify`, status **success**, **8.93 s** |
 | Runner | `k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default` (GitLab.com shared runner, docker+machine executor) |
 | What the job proved | `attribution guard: clean — 35 unit(s) scanned` for files, and `attribution guard: clean — 5 unit(s) scanned` after `(scanned 5 commit message(s) in range: 796df35…)` |
-| Captured record | `evidence/gitlab-pipeline-2932203567.json` via `scripts/capture_pipeline_evidence.py` |
+| Captured records | `evidence/gitlab-pipeline-2932203567.json`, `evidence/gitlab-pipeline-2932204831.json` via `scripts/capture_pipeline_evidence.py` |
 
-Pipeline URL: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/pipelines/2932203567
+Three pushes have now run the pipeline green, so CI enforcement is repeatable rather than a one-off:
+
+| Pipeline | Commit | Status | Job | Duration |
+| --- | --- | --- | --- | --- |
+| 2932203567 | `796df35a` | success | `attribution-guard` 17073050784 | 8.93 s |
+| 2932204831 | `cb78914f` | success | `attribution-guard` 17073060503 | 9.84 s |
+| 2932205470 | `047267b5` | success | `attribution-guard` | passed |
+
+Pipeline URL pattern: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/rollbackiq/-/pipelines/2932203567
+
+Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
 Complete the GitLab bootstrap: create the project in the hackathon workspace, push `main`, and get the first real pipeline (and the `attribution-guard` job) to run as evidence. Then the Duo capability spike.
@@ -159,7 +169,7 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 ### Session 004 — Repository pushed, first real pipeline green
 - Completed: project `rollbackiq` (id 87449782) created in the workspace group; `main` pushed with the token supplied per-command only (verified absent from `.git/config` and from the remote URL); upstream set to the credential-free `origin`; first pipeline 2932203567 succeeded with the `attribution-guard` job on a shared runner; evidence captured by `scripts/capture_pipeline_evidence.py`.
 - Notable: the `pre-push` hook scanned all 5 commits during the real push, and CI independently scanned 35 files plus the same 5 commit messages — local and server-side enforcement both observed.
-- Errors made and fixed: the earlier project-creation attempt failed with 403 `insufficient_granular_scope` and my parser reported it as empty output because it checked `message` while the API returns `error`; corrected by printing HTTP status and the raw body.
+- Errors made and fixed: (1) the earlier project-creation attempt failed with 403 `insufficient_granular_scope` and my parser reported it as empty output because it checked `message` while the API returns `error`; corrected by printing HTTP status and the raw body; (2) `git push origin main` failed with `could not read Username` because the credential-free remote cannot authenticate — fixed with an env-reading credential helper; (3) a pipeline poll read the previous pipeline because GitLab creates the new one a few seconds after the push, so polls now query by commit sha.
 - Next exact action: run the Duo capability spike on project 87449782 and capture the execution evidence.
 
 ### Session 003 — GitLab access established
