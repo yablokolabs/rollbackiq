@@ -24,6 +24,7 @@ has not happened.
 | Independent post-rollback verification | **Implemented and verified** | `backend/app/services/verifier.py` |
 | Docker image and Compose stack for both releases | **Implemented and verified** | `docker-compose.yml`, `demo/service/Dockerfile` |
 | Attribution guard (no AI attribution footers) in hooks and CI | **Implemented and verified locally** | `scripts/check_no_attribution.sh`, `.gitlab-ci.yml` |
+| OpenTelemetry export to GitLab Observability | **Implemented and verified against the real collector** (64 spans accepted, 0 failures) | `demo/service/otel_setup.py`, `evidence/otel-export-spike.json` |
 | GitLab CI/CD deploy and rollback jobs | **Not yet implemented** | plan in `ROLLBACKIQ_BUILD.md` |
 | GitLab Duo agent/flow investigation | **Not yet implemented** | Duo flows confirmed enabled on the project; no flow executed yet |
 | Control-plane API, persistence and dashboard | **Not yet implemented** | — |
@@ -141,6 +142,24 @@ docs/PROGRESS.md          session checkpoint and current blockers
   as instructions.
 
 See `AGENTS.md` and `ROLLBACKIQ_BUILD.md` for the full product and safety specification.
+
+## Observability
+
+The demo workload exports real OpenTelemetry traces to the collector configured through
+`OTEL_EXPORTER_OTLP_ENDPOINT`, with the resource attributes GitLab documents so a trace
+links back to the project and the exact deployed commit (`gitlab.project.id`,
+`gitlab.project.name`, `service.version`, `deployment.environment.name`).
+
+Telemetry is opt-in and can never break the workload: with no collector configured the
+service runs exactly as before, and its own `/otel` endpoint reports what the telemetry
+layer actually did — including a counter wrapped around the real exporter, so spans are
+only reported as sent once the collector accepted the batch. `demo/otel.env.example`
+shows the configuration (no credentials in the repository).
+
+`scripts/otel_export_evidence.py` proves the path end to end: it starts the workload as
+deployed, sends genuine requests, flushes, and exits non-zero unless spans were accepted
+with zero failures. It is also a manual CI job (`telemetry-spike`) so the export can be
+re-proven on a GitLab runner.
 
 ## Hackathon workspace
 

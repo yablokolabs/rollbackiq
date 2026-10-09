@@ -1,2 +1,11 @@
 fastapi>=0.115,<1.0
 uvicorn[standard]>=0.30,<1.0
+
+# OpenTelemetry. These three must be version-aligned, so they are pinned to the
+# exact set that was resolved and exercised: the SDK provides the tracer
+# provider, the OTLP/HTTP exporter sends spans to the collector (GitLab
+# Observability in the hackathon setup), and the FastAPI instrumentation
+# creates a server span per request.
+opentelemetry-sdk==1.45.1
+opentelemetry-exporter-otlp-proto-http==1.45.1
+opentelemetry-instrumentation-fastapi==0.66b1

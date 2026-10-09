@@ -5,6 +5,7 @@
 # added in later phases (see ROLLBACKIQ_BUILD.md).
 stages:
   - verify
+  - observe
 
 # Fails the pipeline if any committed file or commit message contains an AI
 # attribution footer, trailer or assistant signature (AGENTS.md section 10).
@@ -31,3 +32,33 @@ attribution-guard:
         echo "Scanning commit messages reachable from $CI_COMMIT_SHA"
         bash scripts/check_no_attribution.sh range "$CI_COMMIT_SHA"
       fi
+
+# Sends real OpenTelemetry spans from a runner to the group's GitLab
+# Observability collector, by starting the workload exactly as it is deployed
+# and driving genuine HTTP traffic through it. The job is manual because it
+# produces telemetry, not because it is optional: it exists so the export path
+# can be re-proven on a GitLab runner rather than only on a laptop.
+#
+# CI/CD telemetry for pipelines themselves is a separate, group-level switch:
+# set GITLAB_OBSERVABILITY_EXPORT to metrics,logs,traces in the group's CI/CD
+# variables (see the group's Observability page).
+telemetry-spike:
+  stage: observe
+  image: python:3.12-slim
+  when: manual
+  allow_failure: true
+  variables:
+    # Not a secret: the group's collector endpoint. Override with a group or
+    # project CI/CD variable of the same name if the workspace changes.
+    OTEL_EXPORTER_OTLP_ENDPOINT: "https://144345494.otel.gitlab-o11y.com:14318"
+    OTEL_SERVICE_NAME: "rollbackiq-demo-workload"
+    CI_PROJECT_ID: "$CI_PROJECT_ID"
+    CI_PROJECT_NAME: "$CI_PROJECT_NAME"
+  script:
+    - pip install --quiet --no-cache-dir -r demo/service/requirements.txt
+    - python scripts/otel_export_evidence.py --requests 12 --out evidence/otel-export-ci.json
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - evidence/otel-export-ci.json

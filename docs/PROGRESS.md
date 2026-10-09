@@ -164,7 +164,7 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
 
 ## Next three actions
-1. Run the Duo capability spike on the showcase project (87424071) — the smallest supported custom agent or flow, invoked for real, with the execution evidence captured. This is the remaining Phase 0 gate.
+1. Run the Duo capability spike on the showcase project (87424071) — the smallest supported custom agent or flow, invoked for real, with the execution evidence captured. This is the remaining Phase 0 gate. Also check whether the group's Observability **MCP server** endpoint has finished provisioning, since that is the sanctioned route for the GitLab MCP requirement.
 2. Build the CI/CD deploy and rollback jobs so recovery runs through GitLab CI instead of the local restart stub, then re-measure the full detect-to-verified-recovery timeline including pipeline time.
 3. Wire the control plane (FastAPI + SQLite) to GitLab issues/incidents so evidence links land in a real GitLab incident record.
 
@@ -197,6 +197,14 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 006 — Real OpenTelemetry export to GitLab Observability
+- User enabled Observability for the workspace group (144345494) and supplied the collector endpoints (`https://144345494.otel.gitlab-o11y.com:14318` for OTLP/HTTP, `:14317` for gRPC).
+- Spike result: a trace POSTed to `:14318/v1/traces` returned **HTTP 200 with `{"partialSuccess":{}}`**, i.e. accepted with nothing rejected, both with and without an auth header (no secret is needed in this configuration).
+- Implemented `demo/service/otel_setup.py` (OTLP/HTTP exporter, GitLab resource attributes, FastAPI instrumentation, guarded so telemetry can never break the workload) and wired it into `demo/service/app.py` with `/otel`, `/admin/flush-telemetry`, and release/fault attributes on each span. Added `demo/otel.env.example`, Compose passthrough, pinned OTel deps, `scripts/otel_export_evidence.py` and a manual `telemetry-spike` CI job.
+- Verified: `scripts/otel_export_evidence.py` against the real collector → **64 spans accepted, 0 failures** from 12 real requests, recorded in `evidence/otel-export-spike.json`; with no collector configured the workload serves normally and `/otel` reports `telemetry_enabled: false`. Test suite now **57 passed**. `.gitlab-ci.yml` validated by GitLab's own CI lint API (`valid: true`).
+- Not verified: that the spans render in the GitLab Observability UI. There is no public trace-query REST API (probes at `/api/v4/projects/87424071/observability*` all return 404), so collector acceptance is the strongest evidence obtainable from this host.
+- Note for later: the group's Observability page mentions an **MCP server** endpoint that is being provisioned. That is directly relevant to the GitLab MCP requirement — check it when it appears.
 
 ### Session 005 — Showcase project adopted, CI green in it
 - Completed: force push refused by GitLab's protected-branch rule and worked around properly with a non-force merge; local `main` fast-forwarded to the merged commit; `showcase` made `origin` with the dedicated project kept as `rollbackiq-project`; showcase pipeline 2932220957 captured as evidence.

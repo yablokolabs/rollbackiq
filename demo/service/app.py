@@ -16,7 +16,9 @@ from __future__ import annotations
 
 import itertools
 import os
+import pathlib
 import random
+import sys
 import threading
 import time
 from collections import deque
@@ -24,6 +26,14 @@ from dataclasses import dataclass, field
 from typing import Deque, Dict, List
 
 from fastapi import FastAPI, HTTPException, Query, Response
+
+# The workload is a self-contained directory that is started with
+# `uvicorn app:app` from its own directory, but tests and tooling also load this
+# file by path. Putting the file's own directory on the path first makes the
+# sibling telemetry module importable in both cases instead of only one.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+import otel_setup  # noqa: E402  (must follow the sys.path setup above)
 
 __version__ = "0.1.0"
 
@@ -159,6 +169,15 @@ def summarise(observations: List[Observation]) -> Dict[str, float]:
 
 app = FastAPI(title="RollbackIQ demo workload", version=__version__)
 
+# Telemetry is optional and never fatal: with no collector configured the
+# workload runs exactly as before, and /otel reports why nothing was exported.
+TELEMETRY = otel_setup.setup_telemetry(app, default_service_name="rollbackiq-demo-workload")
+TRACER = otel_setup.get_tracer()
+
+# Probe and metadata endpoints are reported on, so they must not count as user
+# traffic in the observation window.
+NON_TRAFFIC_PATHS = {"/healthz", "/metrics", "/release", "/readyz", "/otel"}
+
 
 @app.middleware("http")
 async def observe_request(request, call_next):
@@ -171,9 +190,16 @@ async def observe_request(request, call_next):
         return response
     finally:
         duration_ms = (time.perf_counter() - started) * 1000.0
-        # Health, metrics and metadata endpoints are probes, not user traffic,
-        # so they are excluded from the window they themselves report on.
-        if request.url.path not in {"/healthz", "/metrics", "/release", "/readyz"}:
+        # Attach the deployed release identity to whatever span the
+        # instrumentation created, so a trace says which release served it.
+        if TELEMETRY.get("telemetry_enabled"):
+            from opentelemetry import trace as _trace
+
+            span = _trace.get_current_span()
+            span.set_attribute("rollbackiq.release", SETTINGS.release)
+            span.set_attribute("rollbackiq.deployment_environment", SETTINGS.environment)
+            span.set_attribute("http.response.status_code", status)
+        if request.url.path not in NON_TRAFFIC_PATHS:
             WINDOW.record(Observation(at=time.time(), duration_ms=duration_ms, status=status))
 
 
@@ -205,7 +231,23 @@ def work(units: int = Query(default=3, ge=1, le=50)) -> Dict[str, object]:
     # Deterministic per-request jitter so repeated runs are comparable.
     rng = _request_rng()
 
+    if TRACER is None:
+        return _serve_work(units, rng)
+
+    with TRACER.start_as_current_span("workload.serve") as span:
+        # These attributes are what let a trace explain a regression: the
+        # release, and the fault configuration that release was deployed with.
+        span.set_attribute("rollbackiq.release", SETTINGS.release)
+        span.set_attribute("rollbackiq.fault_latency_ms", SETTINGS.fault_latency_ms)
+        span.set_attribute("rollbackiq.fault_error_rate", SETTINGS.fault_error_rate)
+        span.set_attribute("rollbackiq.work_units", units)
+        return _serve_work(units, rng, span=span)
+
+
+def _serve_work(units: int, rng: random.Random, span: object | None = None) -> Dict[str, object]:
     if SETTINGS.fault_error_rate > 0 and rng.random() < SETTINGS.fault_error_rate:
+        if span is not None:
+            span.set_attribute("rollbackiq.fault_injected", "error")
         raise HTTPException(status_code=500, detail="simulated dependency failure")
 
     total = 0
@@ -220,6 +262,12 @@ def work(units: int = Query(default=3, ge=1, le=50)) -> Dict[str, object]:
         time.sleep((sleep_ms * jitter) / 1000.0)
 
     return {"release": SETTINGS.release, "units": units, "checksum": total}
+
+
+@app.get("/otel")
+def otel_status() -> Dict[str, object]:
+    """Report what the telemetry layer actually did in this process."""
+    return dict(otel_setup.report())
 
 
 @app.get("/metrics")
@@ -264,3 +312,10 @@ def reset_window() -> Dict[str, str]:
     """Clear the observation window (used by the demo to separate phases)."""
     WINDOW.reset()
     return {"status": "reset"}
+
+
+@app.post("/admin/flush-telemetry")
+def flush_telemetry() -> Dict[str, object]:
+    """Flush pending spans so evidence collection is not racy."""
+    flushed = otel_setup.flush()
+    return {**otel_setup.report(), "flushed": flushed}

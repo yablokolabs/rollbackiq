@@ -11,7 +11,7 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py ./
+COPY app.py otel_setup.py ./
 
 # Release metadata, populated by the deployment. Defaults describe a local run
 # so the image is honest about being unlabelled when nothing sets them.
@@ -23,7 +23,12 @@ ENV RELEASE_VERSION=${RELEASE_VERSION} \
     DEPLOY_ENV=demo-staging \
     BASE_LATENCY_MS=20 \
     FAULT_LATENCY_MS=0 \
-    FAULT_ERROR_RATE=0
+    FAULT_ERROR_RATE=0 \
+    OTEL_ENABLED= \
+    OTEL_EXPORTER_OTLP_ENDPOINT=
+
+# OpenTelemetry is wired but stays off until a collector is configured, so the
+# image behaves identically for a plain local run.
 
 EXPOSE 8000
 

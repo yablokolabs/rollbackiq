@@ -9,6 +9,18 @@
 #
 # The control plane (backend/) and dashboard (frontend/) are added in later
 # phases; this file currently runs the workloads the probes measure.
+# Observability is opt-in: set OTEL_ENABLED=true and OTEL_EXPORTER_OTLP_ENDPOINT
+# to send real spans to a collector (GitLab Observability, see demo/otel.env.example).
+# With neither set the workloads run unmodified and /otel explains that.
+x-telemetry: &telemetry
+  OTEL_ENABLED: ${OTEL_ENABLED:-}
+  OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+  OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-rollbackiq-demo-workload}
+  CI_PROJECT_ID: ${CI_PROJECT_ID:-}
+  CI_PROJECT_NAME: ${CI_PROJECT_NAME:-rollbackiq}
+  CI_COMMIT_SHA: ${CI_COMMIT_SHA:-local}
+  CI_ENVIRONMENT_NAME: ${CI_ENVIRONMENT_NAME:-demo-staging}
+
 services:
   workload-v1:
     build:
@@ -23,6 +35,7 @@ services:
       BASE_LATENCY_MS: ${BASE_LATENCY_MS:-20}
       FAULT_LATENCY_MS: "0"
       FAULT_ERROR_RATE: "0"
+      <<: *telemetry
     ports:
       - "${WORKLOAD_PORT:-8000}:8000"
     restart: unless-stopped
@@ -42,6 +55,7 @@ services:
       FAULT_LATENCY_MS: ${FAULT_LATENCY_MS:-180}
       FAULT_ERROR_RATE: ${FAULT_ERROR_RATE:-0.10}
       FAULT_SEED: ${FAULT_SEED:-1234}
+      <<: *telemetry
     ports:
       - "${WORKLOAD_PORT:-8000}:8000"
     restart: unless-stopped
