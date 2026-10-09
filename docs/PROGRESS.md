@@ -61,17 +61,28 @@ Complete the GitLab bootstrap: create the project in the hackathon workspace, pu
 | CI/CD | `jobs_enabled = true`, container registry and pages enabled, no pipelines have run yet |
 | Convention evidence | across 100 visible workspaces in this hackathon iteration, 87 use the provided `showcase` project and 13 created their own named project (for example `drift-guard`, `deadhand`, `shipmill`) |
 
-The URL originally supplied (`…/2870391/showcase`) returns 404: the numeric segment in that link is not this user's id. The correct workspace project is the `43178176` one above.
+**Correction to an earlier statement in this file.** The URL originally supplied (`…/2870391/showcase`) was first reported here as returning 404. That was wrong, and the error is worth recording because of what it actually is: it is a **real project belonging to a different participant**. Verified by API:
+
+| Project | Path | Namespace | Owner |
+| --- | --- | --- | --- |
+| 87399648 | `…/transcend-october-2026/2870391/showcase` | group id 144290527, path `2870391` | **`romamo`** (DevPost: romamo) |
+| 87424071 | `…/transcend-october-2026/43178176/showcase` | group id 144345494, path `43178176` | **`yablokolabs`** (this user) |
+
+Both URL forms return HTTP 200, which is why the wrong link was not self-evidently wrong. The numeric segment is the participant's user id, not a project id, and `2870391` is someone else's. The correct workspace project for this submission is the `43178176` one, and that is where `origin` points.
+
+`/api/v4/namespaces` confirms exactly one hackathon workspace namespace for this user: `gitlab-ai-hackathon/transcend-october-2026/43178176` (id 144345494).
 
 ## Last completed milestone
 Deterministic healthy/faulty demo workload with **real measured regression**: v2 was detected at 6.72x baseline p95 and ~8.7% errors, then recovery was verified from independent post-rollback observations. Phase 1 gate (repeatable observed regression) is met.
 
-## Phase 0 capability matrix (observed on this host, 2026-10-09)
+## Phase 0 capability matrix (initial snapshot on this host, 2026-10-09)
+
+This matrix is the state **before** a token was provided. It is kept for the record; the token-dependent rows are superseded by the capability sections further down.
 
 | Capability | Observed result | How it was checked |
 | --- | --- | --- |
 | `glab` CLI | Works, version 1.122.0, but only via the documented `gitlab/glab` container image; not installed on the host | `docker run --rm --entrypoint glab gitlab/glab --version` |
-| GitLab authentication | **None configured**; API returns 401 | `docker run --rm --entrypoint glab gitlab/glab auth status` |
+| GitLab authentication | **None configured** at the time of this snapshot; API returned 401. Superseded: the token now authenticates and `glab` is logged in | `docker run --rm --entrypoint glab gitlab/glab auth status` |
 | GitLab project / namespace | **None**; no git remote configured | `git remote -v` (empty) |
 | GitLab token in environment | **None set** (checked by name only; no value was printed) | env presence loop for `GITLAB_TOKEN`, `GITLAB_PAT`, `CI_JOB_TOKEN`, `GLAB_TOKEN` |
 | GitLab Duo CLI | Binary not present; **capability unverified** | `command -v duo` / `glab-duo` → missing |
@@ -167,7 +178,7 @@ cd /home/azureuser/rollbackiq && .venv/bin/python -m pytest && git log --oneline
 ```
 
 ## Latest Git commit
-`6797fa2` Keep the hackathon workspace reference in the README (local `main`, `origin/main` and `rollbackiq-project/main` are identical).
+`9ddce6a` "Refresh the checkpoint with the final commit and workspace observability note" — the commit that contains this line is a documentation-only follow-up on top of it, because a file cannot record its own hash. At the time of writing, local `main`, `origin/main` and `rollbackiq-project/main` were all at `9ddce6a` with the tree clean, and both pipelines for it were green.
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active; Phase 0 findings, the Phase 1 verified results and the two fixed defects are retained this session. One earlier memory may still be extracting; re-check with `hindsight list_documents`. No secrets are stored.
