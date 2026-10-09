@@ -30,7 +30,7 @@ Seven pipeline runs have now gone green (four in the dedicated project, three in
 | **showcase** | **2932227652** | **`7c10cf3a`** | **success** | **17073237708** | **9.48 s** |
 | rollbackiq | 2932227684 | `7c10cf3a` | success | 17073237840 | 9.15 s |
 
-All three showcase runs and all four dedicated-project runs used the `attribution-guard` job on a GitLab.com shared runner (`k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default`), recorded job-by-job in `evidence/`.
+By commit `6797fa2` every push to `main` on either project has produced a green pipeline (nine in total). All of them ran the `attribution-guard` job on a GitLab.com shared runner (`k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default`), recorded job-by-job in `evidence/`.
 
 The showcase run of `7166d0de` is the notable one: its job scanned **38 files** and **10 commit messages** (range `a4d8a7ad..7166d0de`, i.e. from the workspace starter commit through the merge) and reported clean for both.
 
@@ -157,6 +157,8 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 2. Build the CI/CD deploy and rollback jobs so recovery runs through GitLab CI instead of the local restart stub, then re-measure the full detect-to-verified-recovery timeline including pipeline time.
 3. Wire the control plane (FastAPI + SQLite) to GitLab issues/incidents so evidence links land in a real GitLab incident record.
 
+Optional but cheap hackathon bonus noted from the onboarding issue: the workspace group supports its own observability stack via **Observe → Observability configuration → Enable Observability**. Not enabled and not required to submit; do not claim it unless it is turned on and observed.
+
 Resolved this session: the token now has full access, project creation returns 201, `origin` is the showcase project and pushes to it succeed without force (protected `main`, non-force merge path).
 
 ## Exact next command
@@ -165,7 +167,7 @@ cd /home/azureuser/rollbackiq && .venv/bin/python -m pytest && git log --oneline
 ```
 
 ## Latest Git commit
-`7c10cf3` Adopt the showcase project as the primary remote and record its pipeline.
+`6797fa2` Keep the hackathon workspace reference in the README (local `main`, `origin/main` and `rollbackiq-project/main` are identical).
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active; Phase 0 findings, the Phase 1 verified results and the two fixed defects are retained this session. One earlier memory may still be extracting; re-check with `hindsight list_documents`. No secrets are stored.
