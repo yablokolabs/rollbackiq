@@ -58,7 +58,32 @@ injected deployment configuration, and a code rollback does not restore deleted 
 
 Both need `GITLAB_TOKEN` in the environment; the token is never stored in the repository.
 
-## 5. The video: under three minutes
+## 5. The recording that exists today
+
+`docs/demo/rollbackiq-demo.mp4` — **1:44, 1440×900, real data, captions and no narration**, produced by
+`scripts/record_demo.py` at 18:19 UTC.
+
+What is in it:
+
+- **A real lifecycle run on this host**, streamed live into the frame as it happened: real containers,
+deploy v1 and a measured baseline, the real detector firing on v2, an approval scoped to one proposal
+hash, the gate evaluated by dry run, the authorized rollback, and verification of a **new** window that
+started after the rollback. The recorder refuses to keep a take whose log pane did not render the run
+(that guard is in the script, after an earlier take produced a blank pane that still looked like a video).
+- **The incident console over that run's artifacts**, touring all six views.
+
+What is deliberately **not** in it, so it must not be mistaken for the final submission take:
+
+- **The approval is not played by hand in the GitLab UI.** It is the local run's approval, recorded by
+  `scripts/demo_lifecycle_local.sh` with the container host's user. The required final take plays
+  `deploy:regressed`, `approval:grant` and `rollback:managed` in the GitLab UI so the approver is a person
+  clicking Approve, which is the one thing this host cannot do.
+- The pipeline's job logs are not on screen; the console and the local run are.
+
+Captions are drawn as an overlay and the overlay is styled as one: the viewer is always told which layer
+they are looking at.
+
+## 6. The video: under three minutes
 
 The rules require an under-3-minute video showing the automation actually running. This
 storyboard is written to fit **2:50**, and every shot is something that genuinely exists.
@@ -88,10 +113,11 @@ Rules for the recording:
   execution path is the CI/CD safety gate, and that separation is the design.
 - If the console is on screen, use the real incident; do not build a mock view for the video.
 
-## 6. What a reviewer should check first
+## 7. What a reviewer should check first
 
 | Claim | Check |
 | --- | --- |
+| The recording is real | `scripts/record_demo.py`, and `evidence/demo-run/` artifacts from the recorded run (`verification.json`: `recovered=True`, `independent=True`, 200 samples, 6.01 s) |
 | The gate refuses | `backend/tests/test_safety.py`, and `evidence/local-ci-lifecycle/` for the six real refusals |
 | Recovery is independently verified | `evidence/gitlab-ci-lifecycle-artifacts/verification.json` against `baseline-window.json`; compare its window start with the rollback's `executed_at` |
 | The detector cannot be talked into firing | the behaviour of `deploy:regressed` when the window is healthy, and `backend/tests/test_detector.py` |

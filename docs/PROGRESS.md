@@ -292,7 +292,8 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Five diagrams, self-checked and geometry-audited (`docs/diagrams/`, `scripts/render_diagrams.py`, `scripts/check_diagram_geometry.py`)
 - [x] Documentation set (`ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`)
 - [x] The suite runs in CI as `test:pytest` (it did not before; see session 008)
-- [ ] Demo video (under three minutes) and the submission pass
+- [x] Demo recording of a real run + the live console (`docs/demo/rollbackiq-demo.mp4`, 1:44, produced by `scripts/record_demo.py`)
+- [ ] Final submission take with the approval played by hand in the GitLab UI, and the submission pass
 
 ## Work in progress
 Nothing left running locally except the console API, started with `.venv/bin/uvicorn app.api.incident_api:app --app-dir backend --port 8000` (reads artifacts only; no token needed). Two commits are **local only and unpushed**: `ae493d1` (console) and the diagrams/docs commit that follows it. Also installed this session: `.agents/skills/diagram-design/` (gitignored, third-party tooling — re-install with `npx skills add cathrynlavery/diagram-design`). `.venv` is installed; the demo workload is not running (Compose stack was torn down after verification). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` (event types `[0,1]` — mention and assign) with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
@@ -339,7 +340,7 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - The group Observability **MCP server** endpoint is still unverified; do not claim GitLab MCP usage unless it is observed.
 
 ## Next three actions
-1. **Record the under-3-minute demo video** with the automation actually running; the approval must be played by a human in the UI, and the narration must not imply the custom flow orchestrates the whole lifecycle — execution authority stays in the CI/CD safety gate. The storyboard, with timings, is in `docs/DEMO.md`.
+1. **Record the final submission take** with the three manual jobs played **by hand in the GitLab UI** (the requirement the local capture cannot satisfy) — storyboard and timings in `docs/DEMO.md` §6. The existing `docs/demo/rollbackiq-demo.mp4` covers the run and the console and can be cut into that take.
 2. **Decide the push.** Commits `ae493d1` (console) and the diagrams/docs commit are local only; pushing is what makes the `test` stage and the new documentation visible in GitLab CI, but pushing has not been authorised in this session.
 3. **Re-verify the submission package** on a fresh clone: tests → guard → console build → diagram render, and confirm every evidence link in the README resolves to a real artifact.
 
@@ -374,6 +375,14 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 008 (continued) — The demo run, the recording, and two bugs only a recording could find
+
+- **`scripts/demo_lifecycle_local.sh` now reproduces the whole CI lifecycle on one host in ~32 s with real containers** — deploy v1 and measure the baseline, require the real detector to fire on v2, approve one hashed proposal, evaluate the gate by dry run, execute the gated rollback, then verify recovery from a new window. It uses the *same* scripts the CI jobs run; there is no demo-only code path. Final result: `recovered=True independent=True reasons=[]`, 200 samples, 6.01 s window, p95 0.96× baseline.
+- **`scripts/record_demo.py` produced `docs/demo/rollbackiq-demo.mp4`** (1:44, 1440×900, captions, no narration): a real run streamed live into the frame, then the console over that run's artifacts. It is **not** the final submission take, because the approval is the local run's rather than a person clicking Approve in the GitLab UI — recorded as such in `docs/DEMO.md`.
+- **Two bugs the recording found, both fixed at the source:**
+  1. `ci_release.py` printed its command trace to **stdout**, so `$(ci_release.py digest …)` captured the trace plus the digest and the rollback then refused with a digest mismatch that looked nothing like the cause. Traces now go to stderr, keeping stdout machine-readable (GitLab captures both streams, so job logs are unaffected).
+  2. The first take rendered a **blank log pane** for the whole run: the player page was loaded with `set_content()`, and a relative `fetch('/run.log')` cannot resolve on `about:blank`. The page is now served from a routed origin, and the recorder **refuses to keep a take whose log pane rendered fewer than 500 characters** — the guard exists because a blank pane still produced a perfectly valid-looking video file.
 
 ### Session 008 (continued) — Diagrams, documentation, and a CI gap worth closing
 

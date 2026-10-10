@@ -53,7 +53,12 @@ PASSTHROUGH = (
 
 def run(cmd: List[str], *, check: bool = True, capture: bool = True) -> subprocess.CompletedProcess:
     printable = " ".join(shlex.quote(part) for part in cmd)
-    print(f"+ {printable}", flush=True)
+    # The trace goes to stderr, not stdout: ``ci_release.py digest`` is read into
+    # a shell variable, and a trace on stdout silently becomes part of the value
+    # it returns -- which then fails the digest check for a reason that looks
+    # nothing like the cause. GitLab captures both streams, so job logs are
+    # unaffected.
+    print(f"+ {printable}", file=sys.stderr, flush=True)
     return subprocess.run(
         cmd,
         check=check,

@@ -29,6 +29,7 @@ has not happened.
 | GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
 | Control-plane API and incident console | **Implemented and verified locally** — the API serves typed JSON read from the pipeline's own artifacts, and every dashboard view renders with no page or console errors | `backend/app/api/incident_api.py`, `dashboard/`, `docs/screenshots/` |
 | Diagrammed architecture, security model and evaluation | **Implemented and verified locally** — five diagrams, each self-checked and geometry-audited, plus the documentation set | `docs/diagrams/`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/EVALUATION.md`, `docs/DEMO.md`, `docs/COMPETITION_COMPLIANCE.md` |
+| Demo recording of a real run and the console | **Recorded** — 1:44, captions, real containers; **not** the final submission take, which needs the approval played by hand in the GitLab UI | `docs/demo/rollbackiq-demo.mp4`, `scripts/record_demo.py` |
 
 Test suite: **98 passing** (`pytest`).
 
@@ -143,6 +144,18 @@ scripts/                  demo regression runner, attribution guard, catalog pro
 evidence/                 raw measured records from real runs
 docs/PROGRESS.md          session checkpoint and current blockers
 ```
+
+## Reproduce the whole lifecycle on one host
+
+```bash
+bash scripts/demo_lifecycle_local.sh     # ~32 s, real containers, no demo-only code path
+```
+
+It runs the same scripts the CI jobs run: deploy v1 and measure the baseline, require the real detector
+to fire on v2, approve one hashed proposal, evaluate the gate without changing anything, execute the
+authorized rollback, then verify recovery from a **new** window. It exits non-zero when the verifier
+refuses, which is a correct outcome rather than a bug. `scripts/record_demo.py` records that run and the
+console into `docs/demo/rollbackiq-demo.mp4`.
 
 ## Diagrams and documentation
 
