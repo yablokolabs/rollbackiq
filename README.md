@@ -29,7 +29,7 @@ has not happened.
 | GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
 | Control-plane API and incident console | **Implemented and verified locally** — the API serves typed JSON read from the pipeline's own artifacts, and every dashboard view renders with no page or console errors | `backend/app/api/incident_api.py`, `dashboard/`, `docs/screenshots/` |
 | Diagrammed architecture, security model and evaluation | **Implemented and verified locally** — five diagrams, each self-checked and geometry-audited, plus the documentation set | `docs/diagrams/`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/EVALUATION.md`, `docs/DEMO.md`, `docs/COMPETITION_COMPLIANCE.md` |
-| Demo recording of a real run and the console | **Recorded** — 1:44, captions, real containers; **not** the final submission take, which needs the approval played by hand in the GitLab UI | `demo/videos/rollbackiq-demo.mp4`, `scripts/record_demo.py` |
+| Demonstration video | **Made** — 2:36, narrated, with a recording of a real lifecycle run inside it and the real GitLab pages. Not in it: a person playing the approval job in the GitLab UI | `demo/videos/rollbackiq-demo.mp4`, `demo/videowright/`, `docs/DEMO.md` |
 
 Test suite: **108 passing** (`pytest`).
 
@@ -142,6 +142,8 @@ docs/DEMO.md              reproduction paths and the under-3-minute video storyb
 docs/INCIDENT_RUNBOOK.md  what the person on call does, step by step, and what each refusal means
 docs/COMPETITION_COMPLIANCE.md   stage-by-stage coverage, and what is not claimed
 demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
+demo/videowright/         the demonstration video project (scenes, narration, live-run footage)
+demo/videos/              the demonstration video, its subtitles, and the earlier silent recording
 duo/                      custom Duo agent prompt + flow definition (provisioned to the AI Catalog)
 scripts/                  demo regression runner, attribution guard, catalog provisioning, Git hooks
 evidence/                 raw measured records from real runs
@@ -158,7 +160,8 @@ It runs the same scripts the CI jobs run: deploy v1 and measure the baseline, re
 to fire on v2, approve one hashed proposal, evaluate the gate without changing anything, execute the
 authorized rollback, then verify recovery from a **new** window. It exits non-zero when the verifier
 refuses, which is a correct outcome rather than a bug. `scripts/record_demo.py` records that run and the
-console into `demo/videos/rollbackiq-demo.mp4`.
+console into `demo/videos/rollbackiq-local-run.mp4`. The narrated demonstration video is
+`demo/videos/rollbackiq-demo.mp4`; `demo/videowright/README.md` says how it is built.
 
 ## Diagrams and documentation
 

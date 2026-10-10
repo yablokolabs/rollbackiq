@@ -58,60 +58,50 @@ injected deployment configuration, and a code rollback does not restore deleted 
 
 Both need `GITLAB_TOKEN` in the environment; the token is never stored in the repository.
 
-## 5. The recording that exists today
+## 5. The demonstration video
 
-`demo/videos/rollbackiq-demo.mp4` — **1:44, 1440×900, real data, captions and no narration**, produced by
-`scripts/record_demo.py` at 18:19 UTC.
+`demo/videos/rollbackiq-demo.mp4` — **2:36, 1920×1080, narrated** (British English, female voice),
+with subtitles in `demo/videos/rollbackiq-demo.srt` and `.vtt`. It is built in `demo/videowright/`;
+`demo/videowright/README.md` lists the source of every picture and number, and the rebuild commands.
 
-What is in it:
+| Rule for the video | How this video meets it |
+| --- | --- |
+| Under three minutes | 2:36. `composite_footage.py` exits non-zero at 3:00 or more |
+| Shows the automation running, not slides or a mockup | Two scenes carry a **recording of a real lifecycle run** (real containers, the real detector, safety gate and verifier), made while the run happened. The other scenes show the real GitLab pipeline, the `verify:recovery` job log and the Duo flow's note, as GitLab serves them |
+| Explains the problem, the solution, and the use of GitLab | Problem: a rollback that nobody proved. Solution: detect by measurement, approve one exact proposal, verify from a new window. GitLab: one CI/CD pipeline for the lifecycle, and a custom Duo flow from the AI Catalog that investigates on the incident issue |
 
-- **A real lifecycle run on this host**, streamed live into the frame as it happened: real containers,
-deploy v1 and a measured baseline, the real detector firing on v2, an approval scoped to one proposal
-hash, the gate evaluated by dry run, the authorized rollback, and verification of a **new** window that
-started after the rollback. The recorder refuses to keep a take whose log pane did not render the run
-(that guard is in the script, after an earlier take produced a blank pane that still looked like a video).
-- **The incident console over that run's artifacts**, touring all six views.
+Eight scenes: the problem and the rule; the pipeline and the baseline; detection (live footage);
+approval and the gate; rollback and independent verification (live footage, shown at 1.25x and
+labelled so); the Duo investigation; the GitLab result and the repeated runs; the limits.
 
-What is deliberately **not** in it, so it must not be mistaken for the final submission take:
+What the video does **not** show, and says so on screen:
 
-- **The approval is not played by hand in the GitLab UI.** It is the local run's approval, recorded by
-  `scripts/demo_lifecycle_local.sh` with the container host's user. The required final take plays
-  `deploy:regressed`, `approval:grant` and `rollback:managed` in the GitLab UI so the approver is a person
-  clicking Approve, which is the one thing this host cannot do.
-- The pipeline's job logs are not on screen; the console and the local run are.
+- **A person playing the approval job in the GitLab UI.** In pipeline 2932808602 the token owner
+  played `approval:grant` through the API. In the live footage the approver is the host user of
+  the local run. A take with the three manual jobs played by hand in the GitLab UI needs a person.
+- The Duo flow does not run the lifecycle. It investigates and recommends, and its note
+  recommended HOLD and ESCALATE.
 
-Captions are drawn as an overlay and the overlay is styled as one: the viewer is always told which layer
-they are looking at.
+The narration says two things that must not be left out: the fault is **injected deployment
+configuration** on the same image, and a **code rollback does not restore deleted data**.
 
-## 6. The video: under three minutes
+`demo/videos/rollbackiq-local-run.mp4` is the earlier silent recording (1:44): one whole local run
+and a tour of the six console views, made by `scripts/record_demo.py`.
 
-The rules require an under-3-minute video showing the automation actually running. This
-storyboard is written to fit **2:50**, and every shot is something that genuinely exists.
+## 6. A take with the approval played by hand
 
-| Time | On screen | What is said (beats, not a script) |
-| --- | --- | --- |
-| 0:00–0:20 | Console **Overview**: the faulted windows at 8.59× / 8.75× the 27.24 ms baseline | The problem: a deploy regressed latency and errors, and the usual answer is a rollback nobody proved. The claim here is *verified* recovery. |
-| 0:20–0:40 | GitLab **pipeline 2932808602** job graph | The lifecycle is real CI/CD: guard, tests, build with an immutable digest, health-gated deploy of v1, then a deliberate v2. |
-| 0:40–1:00 | Play **`deploy:regressed`** in the UI; its log shows the detector firing | The regression is not staged in a slide: the job fails closed unless the real detector fires on measured windows. |
-| 1:00–1:25 | Type the comment that mentions the flow's service account on issue #2; the session link appears | The GitLab-native investigation: a **custom Duo agent and flow** in the AI Catalog, triggered from the issue. It reads the repository's evidence and reports back. |
-| 1:25–1:45 | Issue #2: the flow's report, recommending **HOLD** | Point out that it refused the incident's numbers without artifacts — and that the mismatch it flagged was a real error in our own record. That is the behaviour worth trusting. |
-| 1:45–2:05 | Play **`approval:grant`** **by hand in the UI** | This is the gate: a named human approves one exact proposal hash. No approval, no action — and the wait is the point. |
-| 2:05–2:25 | Play **`rollback:managed`**; the log shows 18 checks passed, `veto_codes: []`, then the deploy | The agent cannot do this. The gate checks environment, target, approval scope and expiry, migration safety, digest and idempotency before anything changes. |
-| 2:25–2:45 | `verify:recovery` log and the console **Verification** view: 6.01 s window, 200 samples, p95 1.014×, 0.0% errors, window started *after* the rollback | The point of the whole project: a green rollback job is not recovery. A new window measured after the action is. |
-| 2:45–2:50 | Console **Approval centre** or the issue's evidence links | Close on the audit trail: every claim in the video is an artifact in the repository. |
+This is the one part that needs a person. Pipeline
+[2934281629](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/pipelines/2934281629)
+on branch `submission-completion` has run its automatic jobs and waits at the manual ones.
 
-Rules for the recording:
+1. Start a screen recording of the pipeline page.
+2. Play `deploy:regressed`. Its log must show the detector firing on window 2.
+3. Play `approval:grant`. Your GitLab login is recorded against one proposal hash.
+4. Play `rollback:managed`. Its log shows the 18 checks and the deployment of v1.
+5. `verify:recovery` runs by itself. Its log must end with `recovered=True independent=True`.
 
-- **Play the three manual jobs by hand in the UI.** Do not trigger them through the API: the
-  point of `approval:grant` is that a person decided, and an API-triggered job records the token
-  owner instead.
-- **Say these two things out loud**, because leaving them out would be misleading: the fault is
-  **injected deployment configuration** — v1 and v2 are the same image digest — and a **code
-  rollback does not restore deleted data**, which is why writing the fault to delete data was
-  never done.
-- **Do not imply the Duo flow orchestrates the lifecycle.** It investigates and recommends. The
-  execution path is the CI/CD safety gate, and that separation is the design.
-- If the console is on screen, use the real incident; do not build a mock view for the video.
+Do not trigger the three jobs through the API: the point of `approval:grant` is that a person
+decided. The recording can replace the two live-footage clips, or follow the video as a second file.
 
 ## 7. What a reviewer should check first
 

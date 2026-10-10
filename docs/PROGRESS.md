@@ -4,9 +4,9 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Open: the final video take with the approval played by hand, and the merge of this branch.
+**Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Later in the session: the narrated demonstration video was built (`demo/videos/rollbackiq-demo.mp4`, 2:36, VideoWright project in `demo/videowright/`), the diagrams were embedded in the README and re-rendered whole, and the branch pipeline ran `test:pytest` on a runner for the first time (success). Open: a take with the approval played by hand in the GitLab UI, the GitLab MCP token, and the merge of this branch.
 
-**User decisions in session 009:** work on a branch, not on `main`; push the branch and open a merge request, the user merges; **use only the `showcase` project (`origin`)** — do not push to `rollbackiq-project`.
+**User decisions in session 009:** work on a branch, not on `main`; push the branch and open a merge request, the user merges; **use only the `showcase` project (`origin`)** — do not push to `rollbackiq-project`; the video uses a **British female ElevenLabs voice**, with `~/mender/demo/videos` and `~/sightops/demo/videos` as references; the video rules are: under three minutes, shows the automation running (not slides or a mockup), explains the problem, the solution and the use of GitLab.
 
 State before session 009, kept for the record:
 
@@ -207,9 +207,9 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-1. Merge request for `submission-completion` on `showcase`: watch the pipeline, in particular `test:pytest`, which has not run on a runner before this branch.
-2. Final submission take with `deploy:regressed`, `approval:grant` and `rollback:managed` played **by hand in the GitLab UI** (needs the user).
-3. GitLab MCP: needs a token with the `mcp` scope, or the OAuth flow in a browser (needs the user). Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
+1. **Push and merge.** Merge request !1 (`submission-completion` → `main`) on `showcase`. Commits after `5d3c349` are local until the next push.
+2. **A take with the approval played by hand** (needs the user): pipeline `2934281629` waits at `deploy:regressed`. Steps in `docs/DEMO.md` §6.
+3. **GitLab MCP** (needs the user): a token with the `mcp` scope, or the OAuth flow in a browser. Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
 
 Resolved uncertainties from the first pipeline: `docker:27-dind` **is** permitted on the shared runner; the registry accepts the image once the job logs in; `apk add python3 py3-pip` plus `pip install --break-system-packages` works on the Alpine `docker:27` image; and `GITLAB_USER_LOGIN` **is** populated for manual jobs.
 
@@ -292,7 +292,10 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] `docs/INCIDENT_RUNBOOK.md` and `.env.example`
 - [x] Fresh-clone check: 108 tests, guard clean, console builds (diagram render not rerun there; it needs the gitignored skill)
 - [ ] GitLab MCP — blocked: token has no `mcp` scope (`evidence/gitlab-mcp-probe.json`)
-- [ ] Final submission take with the approval played by hand in the GitLab UI, and the submission pass
+- [x] Narrated demonstration video, 2:36, with a recording of a real run inside it (`demo/videos/rollbackiq-demo.mp4`, `demo/videowright/`)
+- [x] `test:pytest` observed green on a GitLab runner (pipeline `2934281629`, 61.8 s)
+- [x] Diagrams embedded in the README and rendered whole
+- [ ] A take with the approval played by hand in the GitLab UI, and the submission pass
 
 ## Work in progress
 Nothing is running. The evaluation containers were removed. Two older demo containers (`rollbackiq-local-workload`, `rollbackiq-local-workload-verify`) from session 008 are still up; they are harmless and `scripts/demo_lifecycle_local.sh` replaces them. An untracked `CLAUDE.md` is in the repository root; it was not made by this session, and the attribution guard flags its title, so it must not be committed as it is. `.agents/skills/diagram-design/` is gitignored (re-install with `npx skills add cathrynlavery/diagram-design`). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
@@ -333,16 +336,16 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 
 ## Known blockers
 - **GitLab MCP:** `POST https://gitlab.com/api/v4/mcp` returns 403 to the available token. The server's challenge requires scope `mcp`; the token has `api`, `ai_features` and others, not `mcp`. Needs a new token or the browser OAuth flow. Not claimed anywhere.
-- **Final video take:** the approval must be played by a person in the GitLab UI.
+- **Approval by hand:** the video exists, but no recording shows a person playing `approval:grant` in the GitLab UI. Only the user can do that.
 - The duplicate `rollbackiq` project still exists; the user said to use only `showcase`. Deleting the duplicate needs the user's explicit approval.
 - `glab` is usable only through the container image here.
 - Novayagraph does not index this repository (it answers for another project), so it was not used.
-- Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`, `videowright`. VideoWright makes animated explainers and does not record a running system; it could add title cards to the final take.
+- Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`. VideoWright is a project dependency in `demo/videowright/` (`npm ci`). `context-mode` is installed as a CLI (`context-mode index|search`).
 
 ## Next three actions
-1. **Watch the merge request pipeline** on `showcase` and fix what it finds. `test:pytest` runs on a runner for the first time.
-2. **Record the final submission take** with the three manual jobs played by hand in the GitLab UI — storyboard in `docs/DEMO.md` §6.
-3. **GitLab MCP**, when a token with the `mcp` scope exists: `scripts/gitlab_mcp_probe.py`, then update `docs/COMPETITION_COMPLIANCE.md` only with what is observed.
+1. **Push the branch** and watch the pipeline; then the user merges !1.
+2. **The user plays the three manual jobs by hand** on a pipeline of this branch and records the screen (`docs/DEMO.md` §6).
+3. **GitLab MCP**, when a token with the `mcp` scope exists.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
@@ -352,18 +355,11 @@ Resolved this session: the token now has full access, project creation returns 2
 
 ## Exact next command
 ```bash
-cd /home/azureuser/rollbackiq && git switch submission-completion && .venv/bin/python -m pytest -q && bash scripts/check_no_attribution.sh staged && git log --oneline origin/main..HEAD
+cd /home/azureuser/rollbackiq && git switch submission-completion && .venv/bin/python -m pytest -q && git status --short && git log --oneline origin/submission-completion..HEAD
 ```
 
 ## Latest Git commit
-Branch `submission-completion`, on top of local `main` (`bc021da`):
-
-| Commit | What it holds |
-| --- | --- |
-| `9a3c65c` | Repeated-run evaluation, outage handling in the Duo trigger script, the new negative tests |
-| `199dfd2` | Incident runbook, `.env.example`, the GitLab MCP probe and its record, the `SECURITY.md` correction, the recording at `demo/videos/` |
-
-`origin/main` is still at `5936280`. The five session 008 commits (`ae493d1` … `bc021da`) reach GitLab through this branch's merge request, not through a push to `main`.
+Branch `submission-completion`. `origin/submission-completion` is at `5d3c349` (merge request !1). Run `git log --oneline origin/submission-completion..HEAD` for the commits that are not pushed yet; they hold the diagram embedding and render fix, and the video project. `origin/main` is still at `5936280`.
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active and reachable over HTTP on port 8888 (the `hindsight` CLI is not installed; use `POST /v1/default/banks/rollbackiq/memories` and `…/memories/recall`). Session 009 findings are retained. No secrets are stored.
@@ -393,6 +389,15 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - **Documentation error found:** `docs/SECURITY.md` listed four check codes that the gate never emits. Corrected from `safety.py`.
 - **A note on the red phase:** the first run of the outage tests reached gitlab.com with a dummy token and got 401 (no effect), because the script had no configurable URL yet.
 - Tests **108 passed**; guard clean; fresh clone verified.
+
+### Session 009 (continued) — The narrated video, the diagrams, and the first test run on a runner
+
+- **The video.** `demo/videowright/` is a VideoWright project (scaffold taken from the user's SightOps project): eight scenes, narration by ElevenLabs voice Alice (British English, female, `eleven_multilingual_v2`), 2:36. To show the automation running, `record_run_footage.py` records a real lifecycle run while it happens, and `composite_footage.py` puts two clips of it into the Detect and Recover scenes. The Recover clip plays at 1.25x and the scene says so. The GitLab pipeline, the `verify:recovery` log and the Duo note are captured from the public GitLab pages.
+- **Narration history.** The first key had 1,314 credits, so the first take used the half-cost model and came out at 2:54. The user supplied a key with more credits; the second take is shorter (353 words), uses the better model, and says aloud that the fault is injected configuration on the same image.
+- **What the video does not show:** a person playing `approval:grant` in the GitLab UI. The Decide scene states that the token owner played it through the API.
+- **Console finding:** the 18 check details in the pipeline `2932808602` artifact carry the old failure-style wording beside a passed mark (the artifact predates the `safety.py` wording fix). The video therefore shows the approval record card only; the live footage shows the checks with the corrected wording.
+- **Diagrams.** The README named only the HTML sources, so GitLab showed no pictures; the five PNG files are now embedded. All five PNG files were also cut by 64 px on the right, because the renderer's viewport was narrower than the SVG. Fixed in `scripts/render_diagrams.py`.
+- **CI.** Pipeline `2934281629` on the branch: `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` succeeded on a GitLab runner. The manual jobs wait.
 
 ### Session 008 (continued) — The demo run, the recording, and two bugs only a recording could find
 

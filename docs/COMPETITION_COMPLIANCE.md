@@ -14,7 +14,7 @@ anything written here. This document records what exists, and what does not.
 | --- | --- | --- |
 | Public GitLab repository | Yes | `gitlab-ai-hackathon/transcend-october-2026/43178176/showcase`, primary remote `origin` |
 | MIT licence | Yes | `LICENSE` |
-| Under-3-minute video showing the automation running | **Recorded, not final**: 1:44 of a real local run and the console. The submission take needs the approval played by hand in the GitLab UI; see [`DEMO.md`](DEMO.md) | `demo/videos/rollbackiq-demo.mp4` |
+| Under-3-minute video showing the automation running | **Made**: 2:36, narrated, with a recording of a real lifecycle run inside it and the real GitLab pages. Not in it: a person playing the approval job in the GitLab UI; see [`DEMO.md`](DEMO.md) sections 5 and 6 | `demo/videos/rollbackiq-demo.mp4`, built in `demo/videowright/` |
 | Genuine GitLab AI use, visible | Yes | Custom Duo agent + flow provisioned from `duo/`, executed via the project's flow trigger; session `9288744` finished and posted its report to issue #2 |
 | No AI attribution footers anywhere | Yes | `scripts/check_no_attribution.sh`, enforced by hooks and the `attribution-guard` job |
 
