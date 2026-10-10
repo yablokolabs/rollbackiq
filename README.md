@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand/rollbackiq-logo.png" alt="RollbackIQ. Detect. Decide. Recover." width="560">
+</p>
+
 # RollbackIQ — Detect. Decide. Recover.
 
 **RollbackIQ is a GitLab-native agentic production recovery engineer.** It detects a
@@ -129,6 +133,7 @@ Design rules that make this trustworthy:
 ## Repository layout
 
 ```
+assets/brand/             the logo and the icon, each as SVG and PNG
 backend/app/api/          read-only incident API over the pipeline's own artifacts (+ serves the console)
 backend/app/models/       incident state machine, metric windows, releases, approvals
 backend/app/services/     detector, safety gate, verifier, collector, stats

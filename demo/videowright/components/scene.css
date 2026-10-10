@@ -737,3 +737,10 @@
 .rq-scene .shot.on-dark {
 	background: #05060f;
 }
+
+/* The two letters that the logo sets in its orange. */
+.rq-scene .wordmark .iq {
+	display: inline-block;
+	line-height: 1;
+	color: #fc6d26;
+}

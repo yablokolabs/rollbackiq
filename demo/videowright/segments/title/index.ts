@@ -1,4 +1,5 @@
 import { arrowIcon, defineScene } from "../../components/scene.js";
+import logoUrl from "../../videos/rollbackiq-demo/assets/rollbackiq-icon.png";
 
 const flowSteps = ["DETECT", "DECIDE", "RECOVER"]
 	.map((step) => `<div class="flow-step">${step}</div>`)
@@ -13,9 +14,10 @@ export default defineScene({
 		<div class="rq-scene centered">
 			<div class="kicker bad" data-beat="0">A production bug deleted customer data. Recovery took a war room.</div>
 			<div class="brand" data-beat="1">
+				<img class="logo" src="${logoUrl}" alt="The RollbackIQ icon: a rollback arrow around a health trace">
 				<div>
-					<div class="wordmark">RollbackIQ</div>
-					<div class="lede">A recovery engineer for release regressions, on GitLab</div>
+					<div class="wordmark">Rollback<span class="iq">IQ</span></div>
+					<div class="lede">A recovery engineer for release regressions</div>
 				</div>
 			</div>
 			<div class="flow" data-beat="1">${flowSteps}</div>
