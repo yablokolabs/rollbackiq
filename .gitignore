@@ -40,3 +40,7 @@ evidence/**/*-state.json
 # Installer artifacts from `npx skills add` (see .agents/skills/ above).
 .claude/
 skills-lock.json
+
+# Demo video project: render intermediates. The final video, the narration audio and the
+# footage of the real run are committed.
+demo/videowright/build/

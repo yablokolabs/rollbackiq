@@ -1,0 +1,1769 @@
+{
+  "words": [
+    {
+      "word": "A",
+      "start": 0.035,
+      "end": 0.093
+    },
+    {
+      "word": "production",
+      "start": 0.163,
+      "end": 0.615
+    },
+    {
+      "word": "bug",
+      "start": 0.673,
+      "end": 0.917
+    },
+    {
+      "word": "once",
+      "start": 0.998,
+      "end": 1.219
+    },
+    {
+      "word": "deleted",
+      "start": 1.265,
+      "end": 1.718
+    },
+    {
+      "word": "customer",
+      "start": 1.788,
+      "end": 2.252
+    },
+    {
+      "word": "data.",
+      "start": 2.31,
+      "end": 2.949
+    },
+    {
+      "word": "Recovery",
+      "start": 3.228,
+      "end": 3.727
+    },
+    {
+      "word": "took",
+      "start": 3.796,
+      "end": 4.005
+    },
+    {
+      "word": "backups,",
+      "start": 4.063,
+      "end": 4.772
+    },
+    {
+      "word": "and",
+      "start": 4.841,
+      "end": 5.085
+    },
+    {
+      "word": "a",
+      "start": 5.166,
+      "end": 5.19
+    },
+    {
+      "word": "war",
+      "start": 5.271,
+      "end": 5.445
+    },
+    {
+      "word": "room.",
+      "start": 5.503,
+      "end": 5.886
+    },
+    {
+      "word": "RollbackIQ",
+      "start": 6.327,
+      "end": 7.14
+    },
+    {
+      "word": "is",
+      "start": 7.349,
+      "end": 7.442
+    },
+    {
+      "word": "a",
+      "start": 7.488,
+      "end": 7.512
+    },
+    {
+      "word": "recovery",
+      "start": 7.581,
+      "end": 8.115
+    },
+    {
+      "word": "engineer",
+      "start": 8.185,
+      "end": 8.649
+    },
+    {
+      "word": "for",
+      "start": 8.731,
+      "end": 8.87
+    },
+    {
+      "word": "release",
+      "start": 8.94,
+      "end": 9.311
+    },
+    {
+      "word": "regressions,",
+      "start": 9.358,
+      "end": 10.089
+    },
+    {
+      "word": "built",
+      "start": 10.17,
+      "end": 10.437
+    },
+    {
+      "word": "on",
+      "start": 10.507,
+      "end": 10.658
+    },
+    {
+      "word": "GitLab.",
+      "start": 10.774,
+      "end": 11.459
+    },
+    {
+      "word": "Its",
+      "start": 11.9,
+      "end": 12.121
+    },
+    {
+      "word": "rule",
+      "start": 12.19,
+      "end": 12.481
+    },
+    {
+      "word": "is",
+      "start": 12.539,
+      "end": 12.666
+    },
+    {
+      "word": "simple:",
+      "start": 12.725,
+      "end": 13.317
+    },
+    {
+      "word": "a",
+      "start": 13.595,
+      "end": 13.665
+    },
+    {
+      "word": "green",
+      "start": 13.781,
+      "end": 14.106
+    },
+    {
+      "word": "rollback",
+      "start": 14.199,
+      "end": 14.675
+    },
+    {
+      "word": "job",
+      "start": 14.756,
+      "end": 15.035
+    },
+    {
+      "word": "is",
+      "start": 15.128,
+      "end": 15.314
+    },
+    {
+      "word": "not",
+      "start": 15.464,
+      "end": 15.685
+    },
+    {
+      "word": "success.",
+      "start": 15.755,
+      "end": 16.533
+    },
+    {
+      "word": "Measured",
+      "start": 16.811,
+      "end": 17.148
+    },
+    {
+      "word": "recovery",
+      "start": 17.195,
+      "end": 17.717
+    },
+    {
+      "word": "is.",
+      "start": 17.81,
+      "end": 18.228
+    },
+    {
+      "word": "The",
+      "start": 18.994,
+      "end": 19.099
+    },
+    {
+      "word": "whole",
+      "start": 19.145,
+      "end": 19.343
+    },
+    {
+      "word": "lifecycle",
+      "start": 19.401,
+      "end": 20.062
+    },
+    {
+      "word": "is",
+      "start": 20.12,
+      "end": 20.295
+    },
+    {
+      "word": "one",
+      "start": 20.387,
+      "end": 20.62
+    },
+    {
+      "word": "GitLab",
+      "start": 20.689,
+      "end": 21.177
+    },
+    {
+      "word": "pipeline.",
+      "start": 21.293,
+      "end": 22.082
+    },
+    {
+      "word": "The",
+      "start": 22.326,
+      "end": 22.431
+    },
+    {
+      "word": "build",
+      "start": 22.489,
+      "end": 22.744
+    },
+    {
+      "word": "job",
+      "start": 22.814,
+      "end": 23.034
+    },
+    {
+      "word": "publishes",
+      "start": 23.104,
+      "end": 23.569
+    },
+    {
+      "word": "one",
+      "start": 23.65,
+      "end": 23.836
+    },
+    {
+      "word": "image.",
+      "start": 23.882,
+      "end": 24.393
+    },
+    {
+      "word": "The",
+      "start": 24.671,
+      "end": 24.764
+    },
+    {
+      "word": "deploy",
+      "start": 24.822,
+      "end": 25.159
+    },
+    {
+      "word": "job",
+      "start": 25.217,
+      "end": 25.438
+    },
+    {
+      "word": "starts",
+      "start": 25.507,
+      "end": 25.856
+    },
+    {
+      "word": "version",
+      "start": 25.925,
+      "end": 26.285
+    },
+    {
+      "word": "one",
+      "start": 26.367,
+      "end": 26.61
+    },
+    {
+      "word": "in",
+      "start": 26.68,
+      "end": 26.796
+    },
+    {
+      "word": "a",
+      "start": 26.843,
+      "end": 26.866
+    },
+    {
+      "word": "demo",
+      "start": 26.935,
+      "end": 27.272
+    },
+    {
+      "word": "staging",
+      "start": 27.33,
+      "end": 27.76
+    },
+    {
+      "word": "environment,",
+      "start": 27.806,
+      "end": 28.549
+    },
+    {
+      "word": "and",
+      "start": 28.723,
+      "end": 28.874
+    },
+    {
+      "word": "measures",
+      "start": 28.932,
+      "end": 29.246
+    },
+    {
+      "word": "a",
+      "start": 29.292,
+      "end": 29.327
+    },
+    {
+      "word": "healthy",
+      "start": 29.408,
+      "end": 29.745
+    },
+    {
+      "word": "baseline",
+      "start": 29.815,
+      "end": 30.349
+    },
+    {
+      "word": "from",
+      "start": 30.407,
+      "end": 30.616
+    },
+    {
+      "word": "real",
+      "start": 30.732,
+      "end": 30.999
+    },
+    {
+      "word": "requests.",
+      "start": 31.092,
+      "end": 31.986
+    },
+    {
+      "word": "Now",
+      "start": 32.752,
+      "end": 32.996
+    },
+    {
+      "word": "watch",
+      "start": 33.089,
+      "end": 33.344
+    },
+    {
+      "word": "it",
+      "start": 33.402,
+      "end": 33.483
+    },
+    {
+      "word": "run.",
+      "start": 33.553,
+      "end": 33.982
+    },
+    {
+      "word": "This",
+      "start": 34.307,
+      "end": 34.505
+    },
+    {
+      "word": "is",
+      "start": 34.563,
+      "end": 34.656
+    },
+    {
+      "word": "live",
+      "start": 34.772,
+      "end": 35.062
+    },
+    {
+      "word": "output",
+      "start": 35.097,
+      "end": 35.468
+    },
+    {
+      "word": "from",
+      "start": 35.526,
+      "end": 35.666
+    },
+    {
+      "word": "the",
+      "start": 35.712,
+      "end": 35.782
+    },
+    {
+      "word": "same",
+      "start": 35.851,
+      "end": 36.13
+    },
+    {
+      "word": "scripts",
+      "start": 36.165,
+      "end": 36.548
+    },
+    {
+      "word": "the",
+      "start": 36.606,
+      "end": 36.676
+    },
+    {
+      "word": "pipeline",
+      "start": 36.745,
+      "end": 37.245
+    },
+    {
+      "word": "jobs",
+      "start": 37.291,
+      "end": 37.605
+    },
+    {
+      "word": "use.",
+      "start": 37.674,
+      "end": 38.127
+    },
+    {
+      "word": "Version",
+      "start": 38.452,
+      "end": 38.835
+    },
+    {
+      "word": "two",
+      "start": 38.893,
+      "end": 39.125
+    },
+    {
+      "word": "deploys",
+      "start": 39.195,
+      "end": 39.625
+    },
+    {
+      "word": "with",
+      "start": 39.706,
+      "end": 39.857
+    },
+    {
+      "word": "an",
+      "start": 39.903,
+      "end": 39.961
+    },
+    {
+      "word": "injected",
+      "start": 40.008,
+      "end": 40.612
+    },
+    {
+      "word": "fault:",
+      "start": 40.693,
+      "end": 41.18
+    },
+    {
+      "word": "the",
+      "start": 41.424,
+      "end": 41.54
+    },
+    {
+      "word": "same",
+      "start": 41.61,
+      "end": 41.912
+    },
+    {
+      "word": "image,",
+      "start": 41.97,
+      "end": 42.469
+    },
+    {
+      "word": "with",
+      "start": 42.527,
+      "end": 42.701
+    },
+    {
+      "word": "different",
+      "start": 42.748,
+      "end": 43.073
+    },
+    {
+      "word": "configuration.",
+      "start": 43.119,
+      "end": 44.129
+    },
+    {
+      "word": "One",
+      "start": 44.571,
+      "end": 44.803
+    },
+    {
+      "word": "bad",
+      "start": 44.861,
+      "end": 45.093
+    },
+    {
+      "word": "window",
+      "start": 45.151,
+      "end": 45.534
+    },
+    {
+      "word": "is",
+      "start": 45.65,
+      "end": 45.813
+    },
+    {
+      "word": "not",
+      "start": 45.929,
+      "end": 46.126
+    },
+    {
+      "word": "enough.",
+      "start": 46.184,
+      "end": 46.8
+    },
+    {
+      "word": "Window",
+      "start": 47.241,
+      "end": 47.647
+    },
+    {
+      "word": "one:",
+      "start": 47.763,
+      "end": 48.228
+    },
+    {
+      "word": "latency",
+      "start": 48.611,
+      "end": 49.203
+    },
+    {
+      "word": "near",
+      "start": 49.273,
+      "end": 49.447
+    },
+    {
+      "word": "nine",
+      "start": 49.54,
+      "end": 49.818
+    },
+    {
+      "word": "times",
+      "start": 49.865,
+      "end": 50.224
+    },
+    {
+      "word": "the",
+      "start": 50.282,
+      "end": 50.352
+    },
+    {
+      "word": "baseline.",
+      "start": 50.41,
+      "end": 51.153
+    },
+    {
+      "word": "Still",
+      "start": 51.478,
+      "end": 51.815
+    },
+    {
+      "word": "no",
+      "start": 51.931,
+      "end": 52.105
+    },
+    {
+      "word": "incident.",
+      "start": 52.221,
+      "end": 52.964
+    },
+    {
+      "word": "Window",
+      "start": 53.208,
+      "end": 53.545
+    },
+    {
+      "word": "two",
+      "start": 53.615,
+      "end": 53.87
+    },
+    {
+      "word": "confirms",
+      "start": 53.951,
+      "end": 54.485
+    },
+    {
+      "word": "it,",
+      "start": 54.555,
+      "end": 54.799
+    },
+    {
+      "word": "and",
+      "start": 54.973,
+      "end": 55.112
+    },
+    {
+      "word": "the",
+      "start": 55.159,
+      "end": 55.228
+    },
+    {
+      "word": "detector",
+      "start": 55.275,
+      "end": 55.82
+    },
+    {
+      "word": "opens",
+      "start": 55.902,
+      "end": 56.296
+    },
+    {
+      "word": "an",
+      "start": 56.343,
+      "end": 56.413
+    },
+    {
+      "word": "incident",
+      "start": 56.494,
+      "end": 56.981
+    },
+    {
+      "word": "with",
+      "start": 57.028,
+      "end": 57.156
+    },
+    {
+      "word": "a",
+      "start": 57.202,
+      "end": 57.237
+    },
+    {
+      "word": "rollback",
+      "start": 57.353,
+      "end": 57.841
+    },
+    {
+      "word": "proposal.",
+      "start": 57.922,
+      "end": 58.758
+    },
+    {
+      "word": "A",
+      "start": 59.443,
+      "end": 59.524
+    },
+    {
+      "word": "proposal",
+      "start": 59.594,
+      "end": 60.116
+    },
+    {
+      "word": "changes",
+      "start": 60.197,
+      "end": 60.615
+    },
+    {
+      "word": "nothing.",
+      "start": 60.743,
+      "end": 61.312
+    },
+    {
+      "word": "A",
+      "start": 61.637,
+      "end": 61.718
+    },
+    {
+      "word": "named",
+      "start": 61.811,
+      "end": 62.101
+    },
+    {
+      "word": "person",
+      "start": 62.159,
+      "end": 62.519
+    },
+    {
+      "word": "must",
+      "start": 62.566,
+      "end": 62.752
+    },
+    {
+      "word": "approve",
+      "start": 62.786,
+      "end": 63.181
+    },
+    {
+      "word": "that",
+      "start": 63.216,
+      "end": 63.367
+    },
+    {
+      "word": "exact",
+      "start": 63.437,
+      "end": 63.913
+    },
+    {
+      "word": "proposal,",
+      "start": 63.982,
+      "end": 64.667
+    },
+    {
+      "word": "by",
+      "start": 64.783,
+      "end": 64.992
+    },
+    {
+      "word": "its",
+      "start": 65.108,
+      "end": 65.329
+    },
+    {
+      "word": "hash.",
+      "start": 65.41,
+      "end": 65.991
+    },
+    {
+      "word": "Then",
+      "start": 66.432,
+      "end": 66.664
+    },
+    {
+      "word": "the",
+      "start": 66.722,
+      "end": 66.792
+    },
+    {
+      "word": "safety",
+      "start": 66.838,
+      "end": 67.175
+    },
+    {
+      "word": "gate",
+      "start": 67.222,
+      "end": 67.454
+    },
+    {
+      "word": "runs",
+      "start": 67.501,
+      "end": 67.768
+    },
+    {
+      "word": "eighteen",
+      "start": 67.884,
+      "end": 68.371
+    },
+    {
+      "word": "checks:",
+      "start": 68.441,
+      "end": 69.103
+    },
+    {
+      "word": "the",
+      "start": 69.277,
+      "end": 69.37
+    },
+    {
+      "word": "environment,",
+      "start": 69.428,
+      "end": 70.113
+    },
+    {
+      "word": "the",
+      "start": 70.194,
+      "end": 70.299
+    },
+    {
+      "word": "target",
+      "start": 70.357,
+      "end": 70.705
+    },
+    {
+      "word": "release,",
+      "start": 70.751,
+      "end": 71.192
+    },
+    {
+      "word": "the",
+      "start": 71.309,
+      "end": 71.425
+    },
+    {
+      "word": "approver,",
+      "start": 71.483,
+      "end": 72.075
+    },
+    {
+      "word": "the",
+      "start": 72.133,
+      "end": 72.249
+    },
+    {
+      "word": "idempotency",
+      "start": 72.319,
+      "end": 73.073
+    },
+    {
+      "word": "key.",
+      "start": 73.131,
+      "end": 73.573
+    },
+    {
+      "word": "If",
+      "start": 74.014,
+      "end": 74.211
+    },
+    {
+      "word": "one",
+      "start": 74.304,
+      "end": 74.513
+    },
+    {
+      "word": "check",
+      "start": 74.548,
+      "end": 74.815
+    },
+    {
+      "word": "fails,",
+      "start": 74.896,
+      "end": 75.442
+    },
+    {
+      "word": "the",
+      "start": 75.523,
+      "end": 75.639
+    },
+    {
+      "word": "rollback",
+      "start": 75.709,
+      "end": 76.138
+    },
+    {
+      "word": "is",
+      "start": 76.208,
+      "end": 76.301
+    },
+    {
+      "word": "refused.",
+      "start": 76.359,
+      "end": 77.125
+    },
+    {
+      "word": "Here",
+      "start": 77.787,
+      "end": 78.066
+    },
+    {
+      "word": "the",
+      "start": 78.124,
+      "end": 78.205
+    },
+    {
+      "word": "gate",
+      "start": 78.263,
+      "end": 78.507
+    },
+    {
+      "word": "passes,",
+      "start": 78.553,
+      "end": 79.203
+    },
+    {
+      "word": "and",
+      "start": 79.319,
+      "end": 79.47
+    },
+    {
+      "word": "the",
+      "start": 79.517,
+      "end": 79.586
+    },
+    {
+      "word": "rollback",
+      "start": 79.633,
+      "end": 80.016
+    },
+    {
+      "word": "puts",
+      "start": 80.086,
+      "end": 80.318
+    },
+    {
+      "word": "version",
+      "start": 80.388,
+      "end": 80.724
+    },
+    {
+      "word": "one",
+      "start": 80.84,
+      "end": 81.084
+    },
+    {
+      "word": "back.",
+      "start": 81.142,
+      "end": 81.665
+    },
+    {
+      "word": "But",
+      "start": 81.99,
+      "end": 82.141
+    },
+    {
+      "word": "a",
+      "start": 82.176,
+      "end": 82.199
+    },
+    {
+      "word": "green",
+      "start": 82.28,
+      "end": 82.593
+    },
+    {
+      "word": "job",
+      "start": 82.675,
+      "end": 82.907
+    },
+    {
+      "word": "proves",
+      "start": 82.977,
+      "end": 83.325
+    },
+    {
+      "word": "nothing.",
+      "start": 83.441,
+      "end": 84.091
+    },
+    {
+      "word": "So",
+      "start": 84.416,
+      "end": 84.602
+    },
+    {
+      "word": "a",
+      "start": 84.683,
+      "end": 84.718
+    },
+    {
+      "word": "separate",
+      "start": 84.834,
+      "end": 85.229
+    },
+    {
+      "word": "step",
+      "start": 85.252,
+      "end": 85.531
+    },
+    {
+      "word": "measures",
+      "start": 85.612,
+      "end": 85.926
+    },
+    {
+      "word": "a",
+      "start": 85.96,
+      "end": 85.995
+    },
+    {
+      "word": "new",
+      "start": 86.077,
+      "end": 86.239
+    },
+    {
+      "word": "window",
+      "start": 86.274,
+      "end": 86.599
+    },
+    {
+      "word": "that",
+      "start": 86.669,
+      "end": 86.796
+    },
+    {
+      "word": "starts",
+      "start": 86.843,
+      "end": 87.214
+    },
+    {
+      "word": "after",
+      "start": 87.296,
+      "end": 87.656
+    },
+    {
+      "word": "the",
+      "start": 87.702,
+      "end": 87.772
+    },
+    {
+      "word": "rollback:",
+      "start": 87.83,
+      "end": 88.399
+    },
+    {
+      "word": "two",
+      "start": 88.515,
+      "end": 88.7
+    },
+    {
+      "word": "hundred",
+      "start": 88.77,
+      "end": 89.037
+    },
+    {
+      "word": "requests,",
+      "start": 89.084,
+      "end": 89.583
+    },
+    {
+      "word": "over",
+      "start": 89.629,
+      "end": 89.885
+    },
+    {
+      "word": "six",
+      "start": 89.978,
+      "end": 90.256
+    },
+    {
+      "word": "seconds.",
+      "start": 90.314,
+      "end": 91.069
+    },
+    {
+      "word": "Latency",
+      "start": 91.452,
+      "end": 91.928
+    },
+    {
+      "word": "is",
+      "start": 91.986,
+      "end": 92.067
+    },
+    {
+      "word": "back",
+      "start": 92.149,
+      "end": 92.334
+    },
+    {
+      "word": "at",
+      "start": 92.381,
+      "end": 92.439
+    },
+    {
+      "word": "the",
+      "start": 92.474,
+      "end": 92.543
+    },
+    {
+      "word": "baseline,",
+      "start": 92.625,
+      "end": 93.252
+    },
+    {
+      "word": "with",
+      "start": 93.321,
+      "end": 93.519
+    },
+    {
+      "word": "zero",
+      "start": 93.588,
+      "end": 94.018
+    },
+    {
+      "word": "errors.",
+      "start": 94.134,
+      "end": 94.749
+    },
+    {
+      "word": "Recovered,",
+      "start": 95.132,
+      "end": 95.771
+    },
+    {
+      "word": "from",
+      "start": 95.829,
+      "end": 96.026
+    },
+    {
+      "word": "independent",
+      "start": 96.108,
+      "end": 96.804
+    },
+    {
+      "word": "evidence.",
+      "start": 96.874,
+      "end": 97.617
+    },
+    {
+      "word": "Then",
+      "start": 98.36,
+      "end": 98.639
+    },
+    {
+      "word": "a",
+      "start": 98.731,
+      "end": 98.824
+    },
+    {
+      "word": "custom",
+      "start": 98.94,
+      "end": 99.358
+    },
+    {
+      "word": "GitLab",
+      "start": 99.451,
+      "end": 99.904
+    },
+    {
+      "word": "Duo",
+      "start": 99.985,
+      "end": 100.252
+    },
+    {
+      "word": "flow",
+      "start": 100.322,
+      "end": 100.565
+    },
+    {
+      "word": "investigates",
+      "start": 100.682,
+      "end": 101.425
+    },
+    {
+      "word": "the",
+      "start": 101.471,
+      "end": 101.541
+    },
+    {
+      "word": "incident.",
+      "start": 101.61,
+      "end": 102.249
+    },
+    {
+      "word": "It",
+      "start": 102.528,
+      "end": 102.679
+    },
+    {
+      "word": "is",
+      "start": 102.725,
+      "end": 102.806
+    },
+    {
+      "word": "defined",
+      "start": 102.853,
+      "end": 103.282
+    },
+    {
+      "word": "in",
+      "start": 103.364,
+      "end": 103.491
+    },
+    {
+      "word": "this",
+      "start": 103.549,
+      "end": 103.7
+    },
+    {
+      "word": "repository,",
+      "start": 103.781,
+      "end": 104.559
+    },
+    {
+      "word": "registered",
+      "start": 104.675,
+      "end": 105.175
+    },
+    {
+      "word": "in",
+      "start": 105.209,
+      "end": 105.268
+    },
+    {
+      "word": "the",
+      "start": 105.314,
+      "end": 105.395
+    },
+    {
+      "word": "AI",
+      "start": 105.488,
+      "end": 105.813
+    },
+    {
+      "word": "Catalog,",
+      "start": 105.883,
+      "end": 106.545
+    },
+    {
+      "word": "and",
+      "start": 106.823,
+      "end": 107.055
+    },
+    {
+      "word": "started",
+      "start": 107.125,
+      "end": 107.497
+    },
+    {
+      "word": "by",
+      "start": 107.543,
+      "end": 107.682
+    },
+    {
+      "word": "a",
+      "start": 107.717,
+      "end": 107.74
+    },
+    {
+      "word": "mention",
+      "start": 107.822,
+      "end": 108.193
+    },
+    {
+      "word": "on",
+      "start": 108.251,
+      "end": 108.321
+    },
+    {
+      "word": "the",
+      "start": 108.356,
+      "end": 108.425
+    },
+    {
+      "word": "incident",
+      "start": 108.507,
+      "end": 108.948
+    },
+    {
+      "word": "issue.",
+      "start": 109.029,
+      "end": 109.575
+    },
+    {
+      "word": "It",
+      "start": 110.016,
+      "end": 110.167
+    },
+    {
+      "word": "has",
+      "start": 110.225,
+      "end": 110.399
+    },
+    {
+      "word": "no",
+      "start": 110.55,
+      "end": 110.771
+    },
+    {
+      "word": "tool",
+      "start": 110.864,
+      "end": 111.2
+    },
+    {
+      "word": "that",
+      "start": 111.258,
+      "end": 111.374
+    },
+    {
+      "word": "can",
+      "start": 111.409,
+      "end": 111.537
+    },
+    {
+      "word": "deploy",
+      "start": 111.595,
+      "end": 112.059
+    },
+    {
+      "word": "or",
+      "start": 112.175,
+      "end": 112.35
+    },
+    {
+      "word": "approve.",
+      "start": 112.419,
+      "end": 113.174
+    },
+    {
+      "word": "Its",
+      "start": 113.615,
+      "end": 113.836
+    },
+    {
+      "word": "note",
+      "start": 113.894,
+      "end": 114.114
+    },
+    {
+      "word": "was",
+      "start": 114.149,
+      "end": 114.277
+    },
+    {
+      "word": "not",
+      "start": 114.393,
+      "end": 114.59
+    },
+    {
+      "word": "flattering.",
+      "start": 114.648,
+      "end": 115.31
+    },
+    {
+      "word": "It",
+      "start": 115.635,
+      "end": 115.786
+    },
+    {
+      "word": "found",
+      "start": 115.856,
+      "end": 116.111
+    },
+    {
+      "word": "three",
+      "start": 116.169,
+      "end": 116.436
+    },
+    {
+      "word": "values",
+      "start": 116.494,
+      "end": 116.924
+    },
+    {
+      "word": "in",
+      "start": 116.982,
+      "end": 117.051
+    },
+    {
+      "word": "our",
+      "start": 117.109,
+      "end": 117.214
+    },
+    {
+      "word": "incident",
+      "start": 117.284,
+      "end": 117.713
+    },
+    {
+      "word": "record",
+      "start": 117.76,
+      "end": 118.119
+    },
+    {
+      "word": "that",
+      "start": 118.166,
+      "end": 118.294
+    },
+    {
+      "word": "did",
+      "start": 118.328,
+      "end": 118.479
+    },
+    {
+      "word": "not",
+      "start": 118.549,
+      "end": 118.723
+    },
+    {
+      "word": "match",
+      "start": 118.781,
+      "end": 119.048
+    },
+    {
+      "word": "the",
+      "start": 119.095,
+      "end": 119.176
+    },
+    {
+      "word": "artifacts,",
+      "start": 119.234,
+      "end": 119.989
+    },
+    {
+      "word": "and",
+      "start": 120.163,
+      "end": 120.291
+    },
+    {
+      "word": "it",
+      "start": 120.349,
+      "end": 120.395
+    },
+    {
+      "word": "recommended",
+      "start": 120.453,
+      "end": 121.022
+    },
+    {
+      "word": "hold",
+      "start": 121.092,
+      "end": 121.475
+    },
+    {
+      "word": "and",
+      "start": 121.591,
+      "end": 121.823
+    },
+    {
+      "word": "escalate.",
+      "start": 121.939,
+      "end": 122.752
+    },
+    {
+      "word": "We",
+      "start": 123.077,
+      "end": 123.205
+    },
+    {
+      "word": "corrected",
+      "start": 123.263,
+      "end": 123.715
+    },
+    {
+      "word": "the",
+      "start": 123.762,
+      "end": 123.832
+    },
+    {
+      "word": "record.",
+      "start": 123.901,
+      "end": 124.482
+    },
+    {
+      "word": "In",
+      "start": 125.167,
+      "end": 125.329
+    },
+    {
+      "word": "GitLab,",
+      "start": 125.399,
+      "end": 125.968
+    },
+    {
+      "word": "the",
+      "start": 126.026,
+      "end": 126.142
+    },
+    {
+      "word": "same",
+      "start": 126.2,
+      "end": 126.455
+    },
+    {
+      "word": "lifecycle",
+      "start": 126.513,
+      "end": 127.117
+    },
+    {
+      "word": "ran",
+      "start": 127.164,
+      "end": 127.361
+    },
+    {
+      "word": "on",
+      "start": 127.442,
+      "end": 127.616
+    },
+    {
+      "word": "shared",
+      "start": 127.709,
+      "end": 128.046
+    },
+    {
+      "word": "runners,",
+      "start": 128.116,
+      "end": 128.638
+    },
+    {
+      "word": "and",
+      "start": 128.673,
+      "end": 128.812
+    },
+    {
+      "word": "recovery",
+      "start": 128.882,
+      "end": 129.358
+    },
+    {
+      "word": "was",
+      "start": 129.416,
+      "end": 129.543
+    },
+    {
+      "word": "verified",
+      "start": 129.613,
+      "end": 130.147
+    },
+    {
+      "word": "there",
+      "start": 130.194,
+      "end": 130.437
+    },
+    {
+      "word": "too.",
+      "start": 130.484,
+      "end": 131.03
+    },
+    {
+      "word": "On",
+      "start": 131.471,
+      "end": 131.622
+    },
+    {
+      "word": "one",
+      "start": 131.691,
+      "end": 131.865
+    },
+    {
+      "word": "host",
+      "start": 131.912,
+      "end": 132.167
+    },
+    {
+      "word": "we",
+      "start": 132.214,
+      "end": 132.307
+    },
+    {
+      "word": "repeated",
+      "start": 132.376,
+      "end": 132.794
+    },
+    {
+      "word": "it",
+      "start": 132.852,
+      "end": 132.922
+    },
+    {
+      "word": "five",
+      "start": 133.003,
+      "end": 133.386
+    },
+    {
+      "word": "times.",
+      "start": 133.433,
+      "end": 134.06
+    },
+    {
+      "word": "Five",
+      "start": 134.176,
+      "end": 134.524
+    },
+    {
+      "word": "of",
+      "start": 134.571,
+      "end": 134.663
+    },
+    {
+      "word": "five",
+      "start": 134.745,
+      "end": 135.093
+    },
+    {
+      "word": "runs",
+      "start": 135.151,
+      "end": 135.465
+    },
+    {
+      "word": "recovered,",
+      "start": 135.534,
+      "end": 136.091
+    },
+    {
+      "word": "and",
+      "start": 136.242,
+      "end": 136.405
+    },
+    {
+      "word": "five",
+      "start": 136.463,
+      "end": 136.718
+    },
+    {
+      "word": "healthy",
+      "start": 136.753,
+      "end": 137.078
+    },
+    {
+      "word": "controls",
+      "start": 137.136,
+      "end": 137.636
+    },
+    {
+      "word": "gave",
+      "start": 137.705,
+      "end": 137.984
+    },
+    {
+      "word": "zero",
+      "start": 138.042,
+      "end": 138.448
+    },
+    {
+      "word": "false",
+      "start": 138.564,
+      "end": 138.889
+    },
+    {
+      "word": "positives.",
+      "start": 138.936,
+      "end": 139.841
+    },
+    {
+      "word": "RollbackIQ",
+      "start": 140.526,
+      "end": 141.304
+    },
+    {
+      "word": "does",
+      "start": 141.513,
+      "end": 141.687
+    },
+    {
+      "word": "not",
+      "start": 141.769,
+      "end": 141.966
+    },
+    {
+      "word": "restore",
+      "start": 142.024,
+      "end": 142.442
+    },
+    {
+      "word": "deleted",
+      "start": 142.5,
+      "end": 143.023
+    },
+    {
+      "word": "data,",
+      "start": 143.081,
+      "end": 143.638
+    },
+    {
+      "word": "and",
+      "start": 143.812,
+      "end": 143.998
+    },
+    {
+      "word": "it",
+      "start": 144.079,
+      "end": 144.16
+    },
+    {
+      "word": "says",
+      "start": 144.23,
+      "end": 144.474
+    },
+    {
+      "word": "so.",
+      "start": 144.532,
+      "end": 145.008
+    },
+    {
+      "word": "It",
+      "start": 145.391,
+      "end": 145.542
+    },
+    {
+      "word": "makes",
+      "start": 145.6,
+      "end": 145.844
+    },
+    {
+      "word": "a",
+      "start": 145.89,
+      "end": 145.925
+    },
+    {
+      "word": "rollback",
+      "start": 146.006,
+      "end": 146.459
+    },
+    {
+      "word": "a",
+      "start": 146.517,
+      "end": 146.54
+    },
+    {
+      "word": "decision",
+      "start": 146.598,
+      "end": 147.039
+    },
+    {
+      "word": "with",
+      "start": 147.109,
+      "end": 147.272
+    },
+    {
+      "word": "evidence:",
+      "start": 147.353,
+      "end": 148.131
+    },
+    {
+      "word": "detected",
+      "start": 148.247,
+      "end": 148.851
+    },
+    {
+      "word": "by",
+      "start": 148.909,
+      "end": 149.048
+    },
+    {
+      "word": "measurement,",
+      "start": 149.141,
+      "end": 149.791
+    },
+    {
+      "word": "approved",
+      "start": 149.861,
+      "end": 150.348
+    },
+    {
+      "word": "by",
+      "start": 150.406,
+      "end": 150.534
+    },
+    {
+      "word": "a",
+      "start": 150.592,
+      "end": 150.615
+    },
+    {
+      "word": "person,",
+      "start": 150.685,
+      "end": 151.231
+    },
+    {
+      "word": "verified",
+      "start": 151.312,
+      "end": 151.927
+    },
+    {
+      "word": "independently.",
+      "start": 151.997,
+      "end": 153.1
+    },
+    {
+      "word": "Detect.",
+      "start": 153.216,
+      "end": 153.959
+    },
+    {
+      "word": "Decide.",
+      "start": 154.029,
+      "end": 154.737
+    },
+    {
+      "word": "Recover.",
+      "start": 154.818,
+      "end": 155.759
+    }
+  ]
+}
