@@ -90,7 +90,8 @@ scanning is not used and not claimed.
   verified; 5 healthy control runs gave 0 false positives.
 - **Six refusals**, each by a different guard: no approval, a non-human approver, a wrong
   environment, a target that was never observed healthy, a wrong image digest, and a replay.
-- **110 automated tests**, run in the pipeline.
+- **110 automated tests.** The `test:pytest` job runs them in every pipeline; its log in pipeline
+  2934572189 on `main` ends with `110 passed`.
 
 ## The most useful thing the agent did
 
