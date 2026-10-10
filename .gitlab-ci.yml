@@ -49,6 +49,12 @@ variables:
     # The release, incident and rollback scripts use the control plane's typed
     # models and the verifier, so the job installs the same requirements.
     - pip install --break-system-packages --quiet -r backend/requirements.txt
+    # Authenticate to the project's registry before any push. Without this the
+    # push fails as "denied" once the image has already been built, which reads
+    # like a registry permission problem rather than a missing login. The
+    # password arrives on stdin so it never appears in the job log or in a
+    # process listing.
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
 
 # The control-plane scripts need only Python; this keeps the approval job light.
 .python:
