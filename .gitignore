@@ -36,3 +36,7 @@ evidence/**/*-state.json
 
 # OS / editor
 .DS_Store
+
+# Installer artifacts from `npx skills add` (see .agents/skills/ above).
+.claude/
+skills-lock.json
