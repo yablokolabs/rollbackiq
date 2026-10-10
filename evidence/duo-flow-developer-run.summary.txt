@@ -1,0 +1,14 @@
+# GitLab Duo flow run — session 9283219 (headless, --flow-config-id developer)
+#
+# Extracted from the Duo CLI debug log. The raw log is NOT committed: it embeds
+# AGENTS.md as flow context, and AGENTS.md quotes the attribution strings the
+# guard forbids. The guard blocked the commit and was right to; a policy
+# quotation is not a reason to add an exemption, so only bounded fields are
+# extracted here and the raw log stays local.
+
+flow          : (flow: developer/v1)
+capabilities  : capabilities=[job_trace_pagination, tool_call_approval_source, incremental_checkpoints, advanced_search, incremental_checkpoints_only, duo_developer, tool_call_approval, tool_call_pattern_approval, flow_semantic_versioning, inline_flow_config_binding]
+flow mode     : mode=build via plan_context + agent privileges
+MCP servers   : configs_loaded — total=2 ok=0 not_found=2 error=0 servers=0/0
+websocket     : WebSocket connection created WebSocket connection closed 
+completion    : Workflow completed successfully
