@@ -1,0 +1,69 @@
+2026-10-09T22:04:55.590740Z 00O [0KRunning with gitlab-runner 19.5.0~pre.2272.g28a18501 (28a18501)[0;m
+2026-10-09T22:04:55.590763Z 00O [0K  on k8s.saas-linux-small-amd64.runners-manager.gitlab.com/default nezyxEJex, system ID: r_z1WZ6iRKczGt[0;m
+2026-10-09T22:04:55.590765Z 00O [0K  UUID: 019fd6c6-56c4-78a2-8961-bbb53e204387[0;m
+2026-10-09T22:04:55.590773Z 00O [0K  feature flags: FF_USE_GIT_PROACTIVE_AUTH:true, FF_HASH_CACHE_KEYS:true, FF_MACHINE_OPTIONS_EXPAND_ENV:true, FF_DOCKER_MACHINE_JSON_OUTPUT:true[0;m
+2026-10-09T22:04:55.590810Z 00O [0K[36;1mResolving secrets[0;m[0;m
+2026-10-09T22:04:55.591022Z 00O section_start:1791583495:prepare_executor[0K
+2026-10-09T22:04:55.591027Z 00O+[0K[36;1mPreparing the "docker+machine" executor[0;m[0;m
+2026-10-09T22:04:55.670314Z 00O [0KUsing Docker executor with image python:3.12-slim ...[0;m
+2026-10-09T22:04:55.670363Z 00O [0KUsing helper image:  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501  (overridden, default would be  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-v19.5.0 )[0;m
+2026-10-09T22:04:55.670373Z 00O [0KUsing effective pull policy of [always] for container registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501[0;m
+2026-10-09T22:04:55.671137Z 00O [0KAuthenticating with credentials from job payload (GitLab Registry)[0;m
+2026-10-09T22:04:55.671147Z 00O [0KPulling docker image registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501 ...[0;m
+2026-10-09T22:04:57.272035Z 00O [0KUsing docker image sha256:08749606eabcea842cbd189a80b2f3d7670b949f70dfc654d45d8b81554bd837 for registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501 with digest registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper@sha256:eea1152121f06d47f94871fef69559be0a87c75212f227e34e7617d1a3bbe6c3 ...[0;m
+2026-10-09T22:04:58.984890Z 00O [0KUsing helper image:  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501  (overridden, default would be  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-v19.5.0 )[0;m
+2026-10-09T22:04:58.984905Z 00O [0KUsing effective pull policy of [always] for container registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501[0;m
+2026-10-09T22:04:58.986033Z 00O [0KUsing docker image sha256:08749606eabcea842cbd189a80b2f3d7670b949f70dfc654d45d8b81554bd837 for registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501 with digest registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper@sha256:eea1152121f06d47f94871fef69559be0a87c75212f227e34e7617d1a3bbe6c3 ...[0;m
+2026-10-09T22:04:58.986042Z 00O [0KUsing effective pull policy of [always] for container python:3.12-slim[0;m
+2026-10-09T22:04:58.986704Z 00O [0KPulling docker image python:3.12-slim ...[0;m
+2026-10-09T22:05:02.141498Z 00O [0KUsing docker image sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316 for python:3.12-slim with digest python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 ...[0;m
+2026-10-09T22:05:02.141571Z 00O section_end:1791583502:prepare_executor[0K
+2026-10-09T22:05:02.141733Z 00O+section_start:1791583502:prepare_script[0K
+2026-10-09T22:05:02.141738Z 00O+[0K[36;1mPreparing environment[0;m[0;m
+2026-10-09T22:05:02.141767Z 00O [0KUsing helper image:  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501  (overridden, default would be  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-v19.5.0 )[0;m
+2026-10-09T22:05:02.141775Z 00O [0KUsing effective pull policy of [always] for container registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501[0;m
+2026-10-09T22:05:02.142909Z 00O [0KUsing docker image sha256:08749606eabcea842cbd189a80b2f3d7670b949f70dfc654d45d8b81554bd837 for registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-28a18501 with digest registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper@sha256:eea1152121f06d47f94871fef69559be0a87c75212f227e34e7617d1a3bbe6c3 ...[0;m
+2026-10-09T22:05:02.142919Z 00O [0KUsing effective pull policy of [always] for container sha256:08749606eabcea842cbd189a80b2f3d7670b949f70dfc654d45d8b81554bd837[0;m
+2026-10-09T22:05:03.288212Z 01O Running on runner-nezyxejex-project-87424071-concurrent-0 via runner-nezyxejex-s-l-s-amd64-1791583433-199ee2b9...
+2026-10-09T22:05:03.290973Z 01O Running on CPU: INTEL(R) XEON(R) PLATINUM 8581C CPU @ 2.10GHz (avx, avx2, avx512f)
+2026-10-09T22:05:03.437667Z 00O section_end:1791583503:prepare_script[0K
+2026-10-09T22:05:03.438189Z 00O+section_start:1791583503:get_sources[0K
+2026-10-09T22:05:03.438194Z 00O+[0K[36;1mGetting source from Git repository[0;m[0;m
+2026-10-09T22:05:03.805290Z 01O [32;1mGitaly correlation ID: 77b2ee7a18a7449e861705867ab08a25[0;m
+2026-10-09T22:05:03.810967Z 01O [32;1mFetching changes with git depth set to 20...[0;m
+2026-10-09T22:05:03.813694Z 01O Initialized empty Git repository in /builds/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/.git/
+2026-10-09T22:05:03.815448Z 01O [32;1mCreated fresh repository.[0;m
+2026-10-09T22:05:04.392807Z 01O [32;1mChecking out 8869c576 as detached HEAD (ref is main)...[0;m
+2026-10-09T22:05:04.432240Z 01O 
+2026-10-09T22:05:04.432245Z 01O [32;1mSkipping Git submodules setup[0;m
+2026-10-09T22:05:04.432305Z 01O [32;1m$ git remote set-url origin "${CI_REPOSITORY_URL}" || echo 'Not a git repository; skipping'[0;m
+2026-10-09T22:05:04.594998Z 00O section_end:1791583504:get_sources[0K
+2026-10-09T22:05:04.595977Z 00O+section_start:1791583504:step_script[0K
+2026-10-09T22:05:04.595985Z 00O+[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+2026-10-09T22:05:04.595995Z 00O [0KUsing effective pull policy of [always] for container python:3.12-slim[0;m
+2026-10-09T22:05:04.597182Z 00O [0KUsing docker image sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316 for python:3.12-slim with digest python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 ...[0;m
+2026-10-09T22:05:04.954960Z 01O [32;1m$ pip install --quiet --no-cache-dir -r demo/service/requirements.txt[0;m
+2026-10-09T22:05:12.199043Z 01E WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+2026-10-09T22:05:12.294110Z 01E 
+2026-10-09T22:05:12.294117Z 01E [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+2026-10-09T22:05:12.294118Z 01E [notice] To update, run: pip install --upgrade pip
+2026-10-09T22:05:12.504630Z 01O [32;1m$ python scripts/otel_export_evidence.py --requests 12 --out evidence/otel-export-ci.json[0;m
+2026-10-09T22:05:13.997472Z 01O {
+2026-10-09T22:05:13.997477Z 01O   "telemetry_enabled": true,
+2026-10-09T22:05:13.997478Z 01O   "spans_exported": 64,
+2026-10-09T22:05:13.997479Z 01O   "export_failures": 0,
+2026-10-09T22:05:13.997479Z 01O   "passed": true
+2026-10-09T22:05:13.997480Z 01O }
+2026-10-09T22:05:13.997480Z 01O written: evidence/otel-export-ci.json
+2026-10-09T22:05:13.997481Z 01O spans accepted by the collector: 64 (failures: 0)
+2026-10-09T22:05:14.470248Z 00O section_end:1791583514:step_script[0K
+2026-10-09T22:05:14.471034Z 00O+section_start:1791583514:upload_artifacts_on_success[0K
+2026-10-09T22:05:14.471041Z 00O+[0K[36;1mUploading artifacts for successful job[0;m[0;m
+2026-10-09T22:05:14.867975Z 01O [32;1mUploading artifacts...[0;m
+2026-10-09T22:05:14.917738Z 01E evidence/otel-export-ci.json: found 1 matching artifact files and directories[0;m 
+2026-10-09T22:05:15.746560Z 01E Uploading artifacts as "archive" to coordinator... 201 Created[0;m  correlation_id[0;m=2925caccb19d4a99a0873ad56ce3bbf1 id[0;m=17073367648 status[0;m=201 token[0;m=eyJraWQiO
+2026-10-09T22:05:15.898579Z 00O section_end:1791583515:upload_artifacts_on_success[0K
+2026-10-09T22:05:15.898985Z 00O+section_start:1791583515:cleanup_file_variables[0K
+2026-10-09T22:05:15.898991Z 00O+[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+2026-10-09T22:05:16.403228Z 00O section_end:1791583516:cleanup_file_variables[0K
+2026-10-09T22:05:16.487779Z 00O [32;1mJob succeeded[0;m

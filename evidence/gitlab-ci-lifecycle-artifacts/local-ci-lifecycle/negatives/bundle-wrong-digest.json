@@ -1,0 +1,97 @@
+{
+  "incident_id": "inc-v2-20261010032827",
+  "environment": "demo-staging",
+  "proposal": {
+    "incident_id": "inc-v2-20261010032827",
+    "action": "rollback",
+    "target_release": "v1",
+    "environment": "demo-staging",
+    "requires_migration": false,
+    "risks": [
+      "rolling back the deployment does not restore any data deleted by the regressed release",
+      "the regressed release remains in the pipeline history and must not be redeployed unreviewed"
+    ],
+    "contraindications": [],
+    "evidence_refs": [
+      "evidence/local-ci-lifecycle/deploy-regressed.json",
+      "evidence/local-ci-lifecycle"
+    ],
+    "expected_recovery": "p95 latency within evidence/local-ci-lifecycle/baseline-window.json envelope and error rate below the recovery limit",
+    "created_at": "2026-10-10T03:28:27.682280Z"
+  },
+  "approval": {
+    "id": "appr-inc-v2-20261010032827",
+    "incident_id": "inc-v2-20261010032827",
+    "proposal_hash": "dd7fe7a306dd1183",
+    "actor": "yablokolabs",
+    "decision": "APPROVED",
+    "environment": "demo-staging",
+    "created_at": "2026-10-10T03:28:36.589796Z",
+    "expires_at": "2026-10-10T03:43:36.589796Z",
+    "scope_note": "played by yablokolabs in pipeline local-ci"
+  },
+  "current_release": {
+    "id": "v2",
+    "commit_sha": "LOCAL",
+    "pipeline_id": "local-ci",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+    "known_good": false,
+    "requires_migration": false,
+    "migration_compatible": null,
+    "created_at": "2026-10-10T03:28:27.682291Z"
+  },
+  "target_release": {
+    "id": "v1",
+    "commit_sha": "LOCAL",
+    "pipeline_id": "local-ci",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "known_good": true,
+    "requires_migration": false,
+    "migration_compatible": true,
+    "created_at": "2026-10-10T03:28:27.682296Z"
+  },
+  "baseline": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "captured_at": "2026-10-10T03:28:19.296861Z",
+    "window": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T03:28:16.898920Z",
+      "ended_at": "2026-10-10T03:28:17.338094Z",
+      "request_count": 150,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.749233001377434,
+      "p95_ms": 27.23688498372212,
+      "p99_ms": 40.49823002424091,
+      "mean_ms": 22.875666701778147,
+      "max_ms": 44.488870014902204,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "sample_count": 150,
+    "verified": true
+  },
+  "before": {
+    "release": "v2",
+    "environment": "demo-staging",
+    "started_at": "2026-10-10T03:28:24.091924Z",
+    "ended_at": "2026-10-10T03:28:26.999465Z",
+    "request_count": 120,
+    "error_count": 10,
+    "error_rate": 0.08333333333333333,
+    "availability": 0.9166666666666666,
+    "p50_ms": 200.96799900056794,
+    "p95_ms": 238.19968797033653,
+    "p99_ms": 241.8167680152692,
+    "mean_ms": 188.12580035834495,
+    "max_ms": 241.87083798460662,
+    "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+  },
+  "idempotency_key": "rollback-inc-v2-20261010032827-v1"
+}

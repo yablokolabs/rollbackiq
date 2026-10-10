@@ -1,0 +1,162 @@
+{
+  "environment": "demo-staging",
+  "base_url": "http://127.0.0.1:8101",
+  "probe_config": {
+    "detection_samples_per_window": 150,
+    "detection_concurrency": 8,
+    "verification_samples": 400,
+    "verification_concurrency": 2
+  },
+  "fault_injection": {
+    "v2_fault_latency_ms": 180,
+    "v2_fault_error_rate": 0.1
+  },
+  "rollback_mechanism": "local process restart standing in for the GitLab CI rollback job",
+  "verification_thresholds": {
+    "p95_tolerance_multiplier": 1.5,
+    "max_error_rate": 0.02,
+    "min_samples": 30,
+    "stabilization_seconds": 3.0
+  },
+  "baseline_window": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "started_at": "2026-10-09T21:22:30.352988Z",
+    "ended_at": "2026-10-09T21:22:30.898683Z",
+    "request_count": 150,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "availability": 1.0,
+    "p50_ms": 24.295192037243396,
+    "p95_ms": 35.571338958106935,
+    "p99_ms": 49.67646597651765,
+    "mean_ms": 25.15736097935587,
+    "max_ms": 51.07687501003966,
+    "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 2.0s)"
+  },
+  "faulty_windows": [
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-09T21:22:31.580931Z",
+      "ended_at": "2026-10-09T21:22:35.124490Z",
+      "request_count": 150,
+      "error_count": 17,
+      "error_rate": 0.11333333333333333,
+      "availability": 0.8866666666666667,
+      "p50_ms": 197.70367903402075,
+      "p95_ms": 238.39643399696797,
+      "p99_ms": 243.43237100401893,
+      "mean_ms": 181.09361024185395,
+      "max_ms": 265.1912830187939,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 2.0s)"
+    },
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-09T21:22:35.125044Z",
+      "ended_at": "2026-10-09T21:22:38.786228Z",
+      "request_count": 150,
+      "error_count": 13,
+      "error_rate": 0.08666666666666667,
+      "availability": 0.9133333333333333,
+      "p50_ms": 203.12519901199266,
+      "p95_ms": 238.88088000239804,
+      "p99_ms": 242.91711003752425,
+      "mean_ms": 188.82054497875893,
+      "max_ms": 247.87456600461155,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 2.0s)"
+    }
+  ],
+  "detection": {
+    "triggered": true,
+    "breaches": [
+      "P95_LATENCY",
+      "ERROR_RATE"
+    ],
+    "reasons": [
+      "p95 238.9ms is 6.72x the baseline 35.6ms (limit 3.0x)",
+      "error rate 8.667% exceeds 5.0%"
+    ],
+    "suppressed_reason": null,
+    "sample_count": 150,
+    "window_started_at": "2026-10-09T21:22:35.125044Z",
+    "window_ended_at": "2026-10-09T21:22:38.786228Z",
+    "baseline_release": "v1",
+    "p95_ratio": 6.715543665188784,
+    "error_rate": 0.08666666666666667,
+    "confidence": 1.0,
+    "confidence_note": "heuristic margin-and-sample indicator between 0 and 1, not a probability",
+    "evaluated_at": "2026-10-09T21:22:38.787228Z"
+  },
+  "timing": {
+    "time_to_detect_seconds": 7.724,
+    "rollback_execution_seconds": 0.505,
+    "time_to_verify_seconds": 5.219,
+    "total_recovery_seconds": 13.157,
+    "detection_to_verification_seconds": 5.434
+  },
+  "post_rollback_window": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "started_at": "2026-10-09T21:22:39.506660Z",
+    "ended_at": "2026-10-09T21:22:44.219792Z",
+    "request_count": 400,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "availability": 1.0,
+    "p50_ms": 23.03101704455912,
+    "p95_ms": 27.962649997789413,
+    "p99_ms": 40.22780398372561,
+    "mean_ms": 23.360633166885236,
+    "max_ms": 51.98543699225411,
+    "source": "probe: 400 real HTTP GET /api/work (concurrency 2, timeout 2.0s)"
+  },
+  "verification": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 400,
+    "window_seconds": 4.713132,
+    "independent": true,
+    "p95_ms": 27.962649997789413,
+    "baseline_p95_ms": 35.571338958106935,
+    "p95_ratio_vs_baseline": 0.7861005746992424,
+    "error_rate": 0.0,
+    "improved_vs_faulty": true,
+    "before": {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-09T21:22:35.125044Z",
+      "ended_at": "2026-10-09T21:22:38.786228Z",
+      "request_count": 150,
+      "error_count": 13,
+      "error_rate": 0.08666666666666667,
+      "availability": 0.9133333333333333,
+      "p50_ms": 203.12519901199266,
+      "p95_ms": 238.88088000239804,
+      "p99_ms": 242.91711003752425,
+      "mean_ms": 188.82054497875893,
+      "max_ms": 247.87456600461155,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 2.0s)"
+    },
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-09T21:22:39.506660Z",
+      "ended_at": "2026-10-09T21:22:44.219792Z",
+      "request_count": 400,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 23.03101704455912,
+      "p95_ms": 27.962649997789413,
+      "p99_ms": 40.22780398372561,
+      "mean_ms": 23.360633166885236,
+      "max_ms": 51.98543699225411,
+      "source": "probe: 400 real HTTP GET /api/work (concurrency 2, timeout 2.0s)"
+    },
+    "verified_at": "2026-10-09T21:22:44.220104Z"
+  }
+}

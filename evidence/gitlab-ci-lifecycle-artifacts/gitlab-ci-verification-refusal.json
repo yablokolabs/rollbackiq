@@ -1,0 +1,15 @@
+{
+  "captured_with": "GitLab API job record",
+  "project": "gitlab-ai-hackathon/transcend-october-2026/43178176/showcase",
+  "pipeline_id": 2932800704,
+  "job": {
+    "id": 17076760903,
+    "name": "verify:recovery",
+    "stage": "operate",
+    "status": "failed",
+    "duration": 57.813869
+  },
+  "failure_reason_from_log": "recovered=False independent=True reasons=[\"stabilization window 1.1s is shorter than 3.0s\"]",
+  "why_this_matters": "The reviewer-independent verification job refused to certify recovery because the post-rollback window was too short to demonstrate stability, and the pipeline failed closed. The window was thin because the probe had not been paced; --min-duration was missing from this job while it was present in the local run. The verifier was correct and the job was fixed.",
+  "captured_at": "2026-10-10T04:23:26.110021+00:00"
+}

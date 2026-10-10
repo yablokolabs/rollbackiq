@@ -1,0 +1,273 @@
+{
+  "incident_id": "inc-v2-20261010042632",
+  "environment": "demo-staging",
+  "idempotency_key": "rollback-inc-v2-20261010042632-v1",
+  "dry_run": false,
+  "decision": {
+    "allowed": true,
+    "stage": "safety_gate",
+    "detail": "safety gate allowed the rollback",
+    "veto_codes": [],
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is unknown, so rollback effect cannot be predicted"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is not a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target has not been verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target is the release that is already deployed"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "no approval record supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'yablokolabs' is not an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval was granted for a different proposal; the proposal changed after approval"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T04:42:33.583891+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s exceeds 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "rollback requires an idempotency key"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010042632-v1' has already been executed"
+      }
+    ],
+    "proposal_hash": "70f980983c184108",
+    "target_release": "v1"
+  },
+  "safety_verdict": {
+    "allowed": true,
+    "target_release": "v1",
+    "proposal_hash": "70f980983c184108",
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is unknown, so rollback effect cannot be predicted"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is not a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target has not been verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target is the release that is already deployed"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "no approval record supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'yablokolabs' is not an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval was granted for a different proposal; the proposal changed after approval"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T04:42:33.583891+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s exceeds 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "rollback requires an idempotency key"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010042632-v1' has already been executed"
+      }
+    ],
+    "checked_at": "2026-10-10T04:28:18.366443Z"
+  },
+  "evaluated_at": "2026-10-10T04:28:18.366689+00:00",
+  "resolved_image_digest": "sha256:72a3cc1744c777a92bcd9bd1c83e60696e001fb93cb49a45e81fe72678561847",
+  "approved_target_digest": "sha256:72a3cc1744c777a92bcd9bd1c83e60696e001fb93cb49a45e81fe72678561847",
+  "executed_at": "2026-10-10T04:28:18.406715+00:00",
+  "verification": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 200,
+    "window_seconds": 6.00798,
+    "independent": true,
+    "p95_ms": 27.22558099999617,
+    "baseline_p95_ms": 27.242767000018375,
+    "p95_ratio_vs_baseline": 0.9993691536538049,
+    "error_rate": 0.0,
+    "improved_vs_faulty": true,
+    "before": {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T04:26:29.376048Z",
+      "ended_at": "2026-10-10T04:26:32.279367Z",
+      "request_count": 120,
+      "error_count": 10,
+      "error_rate": 0.08333333333333333,
+      "availability": 0.9166666666666666,
+      "p50_ms": 201.07699799999068,
+      "p95_ms": 238.4457929999826,
+      "p99_ms": 241.42149299999005,
+      "mean_ms": 187.9444524749997,
+      "max_ms": 241.69591099999366,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T04:28:22.151081Z",
+      "ended_at": "2026-10-10T04:28:28.159061Z",
+      "request_count": 200,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 23.59908100000041,
+      "p95_ms": 27.22558099999617,
+      "p99_ms": 27.8659340000047,
+      "mean_ms": 23.55959981000005,
+      "max_ms": 37.07899500000167,
+      "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+    },
+    "verified_at": "2026-10-10T04:28:28.294333Z"
+  },
+  "post_rollback_window": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "started_at": "2026-10-10T04:28:22.151081Z",
+    "ended_at": "2026-10-10T04:28:28.159061Z",
+    "request_count": 200,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "availability": 1.0,
+    "p50_ms": 23.59908100000041,
+    "p95_ms": 27.22558099999617,
+    "p99_ms": 27.8659340000047,
+    "mean_ms": 23.55959981000005,
+    "max_ms": 37.07899500000167,
+    "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+  },
+  "outcome": "executed",
+  "probe_exit_code": 0
+}

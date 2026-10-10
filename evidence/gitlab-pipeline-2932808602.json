@@ -1,0 +1,99 @@
+{
+  "captured_with": "GitLab API",
+  "project": "gitlab-ai-hackathon/transcend-october-2026/43178176/showcase",
+  "project_id": 87424071,
+  "pipeline": {
+    "id": 2932808602,
+    "status": "success",
+    "ref": "main",
+    "sha": "1ba056fab01feb4c9fa12142ffac3e57434adeee",
+    "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/pipelines/2932808602"
+  },
+  "jobs": [
+    {
+      "name": "attribution-guard",
+      "stage": "verify",
+      "status": "success",
+      "duration_s": 9.9,
+      "id": 17076805675,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805675"
+    },
+    {
+      "name": "build:workload-image",
+      "stage": "build",
+      "status": "success",
+      "duration_s": 71.4,
+      "id": 17076805676,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805676"
+    },
+    {
+      "name": "deploy:staging",
+      "stage": "deploy",
+      "status": "success",
+      "duration_s": 41.8,
+      "id": 17076805677,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805677"
+    },
+    {
+      "name": "deploy:regressed",
+      "stage": "deploy",
+      "status": "success",
+      "duration_s": 44.5,
+      "id": 17076805678,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805678"
+    },
+    {
+      "name": "approval:grant",
+      "stage": "operate",
+      "status": "success",
+      "duration_s": 21.6,
+      "id": 17076805679,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805679"
+    },
+    {
+      "name": "rollback:managed",
+      "stage": "operate",
+      "status": "success",
+      "duration_s": 54.2,
+      "id": 17076805680,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805680"
+    },
+    {
+      "name": "verify:recovery",
+      "stage": "operate",
+      "status": "success",
+      "duration_s": 57.0,
+      "id": 17076805681,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805681"
+    },
+    {
+      "name": "telemetry-spike",
+      "stage": "operate",
+      "status": "manual",
+      "duration_s": null,
+      "id": 17076805682,
+      "web_url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/jobs/17076805682"
+    }
+  ],
+  "what_ran": "attribution-guard; build and push of the workload image with its immutable digest; a health-gated deploy of v1 plus a baseline window; a deliberate v2 regression that required the real detector to fire; a human approval recorded against GITLAB_USER_LOGIN; the safety-gated rollback; and an independent verification job.",
+  "detection_measured_in_ci": {
+    "window_1_p95_ratio": 6.31,
+    "window_1_error_rate": 0.133,
+    "window_2_p95_ratio": 6.43,
+    "window_2_error_rate": 0.083,
+    "breaches": [
+      "P95_LATENCY",
+      "ERROR_RATE"
+    ],
+    "triggered_on_window": 2
+  },
+  "verification_measured_in_ci": {
+    "recovered": true,
+    "independent": true,
+    "reasons": [],
+    "window_seconds": 6.01,
+    "samples": 200,
+    "p95_ratio_vs_baseline": 1.014,
+    "error_rate": 0.0
+  }
+}

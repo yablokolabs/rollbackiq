@@ -1,0 +1,51 @@
+{
+  "captured_at": "2026-10-09T22:01:32.414340+00:00",
+  "captured_with": "scripts/otel_export_evidence.py",
+  "collector_endpoint": "https://144345494.otel.gitlab-o11y.com:14318",
+  "service_started_from": "/home/azureuser/rollbackiq/demo/service",
+  "requests_sent": 12,
+  "statuses": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "traffic_seconds": 0.083,
+  "workload_telemetry_report": {
+    "telemetry_enabled": true,
+    "exporter_endpoint": "https://144345494.otel.gitlab-o11y.com:14318/v1/traces",
+    "service_name": "rollbackiq-demo-workload",
+    "resource_attributes": {
+      "telemetry.sdk.language": "python",
+      "telemetry.sdk.name": "opentelemetry",
+      "telemetry.sdk.version": "1.45.1",
+      "service.instance.id": "0950c7a3-e161-4a2d-a6bf-422d40168d18",
+      "service.name": "rollbackiq-demo-workload",
+      "service.version": "local",
+      "deployment.environment.name": "demo-staging",
+      "gitlab.project.id": "87424071",
+      "gitlab.project.name": "rollbackiq"
+    },
+    "batches_exported": 1,
+    "spans_exported": 64,
+    "export_failures": 0,
+    "last_export_error": null,
+    "setup_error": null,
+    "source": "real OTLP export counters, not a simulated metric",
+    "flushed": true
+  },
+  "verdict": {
+    "telemetry_enabled": true,
+    "spans_exported": 64,
+    "export_failures": 0,
+    "passed": true
+  }
+}

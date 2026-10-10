@@ -1,0 +1,13 @@
+{
+  "action": "deploy",
+  "release": "v2",
+  "environment": "demo-staging",
+  "container": "rollbackiq-workload-v2",
+  "image": "registry.gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/workload:1ba056fab01feb4c9fa12142ffac3e57434adeee",
+  "image_digest": "sha256:72a3cc1744c777a92bcd9bd1c83e60696e001fb93cb49a45e81fe72678561847",
+  "commit_sha": "1ba056fab01feb4c9fa12142ffac3e57434adeee",
+  "pipeline_id": "2932808602",
+  "fault_latency_ms": "180",
+  "fault_error_rate": "0.10",
+  "deployed_at": "2026-10-10T04:26:25Z"
+}
