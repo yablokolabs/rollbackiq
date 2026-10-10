@@ -79,6 +79,8 @@ RELEASE_VERSION=v2 FAULT_LATENCY_MS=180 FAULT_ERROR_RATE=0.10 \
 
 ## How it works
 
+![System architecture: the deploy job, the regression detector, the safety gate, the rollback job, the independent verifier and the Duo flow](docs/diagrams/architecture.png)
+
 ```
 deployment (GitLab CI/CD)            real user traffic
         |                                    |
@@ -159,6 +161,22 @@ refuses, which is a correct outcome rather than a bug. `scripts/record_demo.py` 
 console into `demo/videos/rollbackiq-demo.mp4`.
 
 ## Diagrams and documentation
+
+| Diagram | What it shows |
+| --- | --- |
+| [Architecture](docs/diagrams/architecture.png) | Components and the one authorized path to a deployment change (shown above) |
+| [Duo flow sequence](docs/diagrams/duo-flow-sequence.png) | The mention trigger, the custom flow session and the note it posts |
+| [Incident state machine](docs/diagrams/incident-state-machine.png) | Every state and the transitions the code permits |
+| [Trust boundary](docs/diagrams/trust-boundary-layers.png) | The layers between agent reasoning and a deployment |
+| [Pipeline timeline](docs/diagrams/pipeline-timeline.png) | The measured timeline of pipeline 2932808602 |
+
+![Duo flow sequence](docs/diagrams/duo-flow-sequence.png)
+
+![Incident state machine](docs/diagrams/incident-state-machine.png)
+
+![Trust boundary layers](docs/diagrams/trust-boundary-layers.png)
+
+![Measured pipeline timeline](docs/diagrams/pipeline-timeline.png)
 
 ```bash
 .venv/bin/python scripts/render_diagrams.py         # self-check + render each diagram to PNG

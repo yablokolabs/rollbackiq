@@ -11,9 +11,12 @@ The defining constraint is that **agent reasoning never changes deployment state
 that can alter a deployment lives behind a gate that checks a human approval, and the agent
 has no tool that can reach it.
 
-See [`docs/diagrams/architecture.html`](diagrams/architecture.html) for the picture and
-[`docs/diagrams/trust-boundary-layers.html`](diagrams/trust-boundary-layers.html) for the
-enforcement stack.
+![System architecture](diagrams/architecture.png)
+
+![Trust boundary layers: the enforcement stack](diagrams/trust-boundary-layers.png)
+
+The sources are [`diagrams/architecture.html`](diagrams/architecture.html) and
+[`diagrams/trust-boundary-layers.html`](diagrams/trust-boundary-layers.html).
 
 ## Components
 
@@ -35,6 +38,10 @@ enforcement stack.
 
 ### 1. The recovery lifecycle (GitLab CI/CD)
 
+![Measured pipeline timeline](diagrams/pipeline-timeline.png)
+
+![Incident state machine](diagrams/incident-state-machine.png)
+
 ```
 push to main
    │
@@ -55,6 +62,8 @@ Two properties are deliberate:
 - **`verify:recovery` is a separate job.** A job that reports its own success is not evidence.
 
 ### 2. The investigation (GitLab Duo)
+
+![Duo flow sequence](diagrams/duo-flow-sequence.png)
 
 An incident exists as an issue. Mentioning the custom flow's service account triggers a Duo
 session; the flow reads the repository's committed evidence and posts its own report back to
