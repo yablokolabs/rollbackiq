@@ -1,9 +1,15 @@
 # RollbackIQ — Development Progress
 
-> Persistent checkpoint for Freebuff sessions (~1 hour). Update **at least every 15 minutes** and after milestones.  
+> Persistent checkpoint for coding sessions. Update **at least every 15 minutes** and after milestones.  
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
+**Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Open: the final video take with the approval played by hand, and the merge of this branch.
+
+**User decisions in session 009:** work on a branch, not on `main`; push the branch and open a merge request, the user merges; **use only the `showcase` project (`origin`)** — do not push to `rollbackiq-project`.
+
+State before session 009, kept for the record:
+
 **The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow exist in the AI Catalog**, are provisioned from the repository, enabled in the project, and **they now execute end-to-end through a real flow trigger**: session `9288744` finished and posted a genuine investigation note to incident issue #2. Getting there required fixing two real defects: the flow YAML (`OneOffComponent` has no `final_answer` output; inline prompts need `placeholder: history`; `params` must not be a mapping) and, more subtly, `scripts/duo_provision_catalog.py`, whose update path was a **silent no-op** — without `versionBump`/`release` the catalog kept serving the old revision while provisioning reported success. The script now passes both fields and reads the stored definition back, comparing it with the repository file by SHA-256. The flow's first successful audit caught a real transcription error in the incident record, which has been corrected. The headless CLI still cannot select a custom flow (inline config is declined; that finding stands). Two further Duo investigations ran earlier and one found a genuine bug in `safety.py`, now fixed and covered by tests. **The incident console now exists** (`backend/app/api/incident_api.py` + `dashboard/`, session 008): a read-only API over the pipeline's own artifacts, six views, and a Chromium render check that fails on any page or console error. **Session 008 also finished the graphics and the documentation**: five diagrams (`docs/diagrams/`) drawn with the `diagram-design` skill, each self-checked and geometry-audited; `docs/ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md` and `COMPETITION_COMPLIANCE.md`; and a real gap closed — the pipeline never ran the test suite, so a `test:pytest` job now gates it (which immediately exposed a test that passed locally and failed in the CI image, fixed properly). Remaining work is the demo video and the submission pass.
 
 ## GitLab pipeline: full lifecycle end to end (2026-10-10, `a192569`)
@@ -201,20 +207,9 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-Next, in order:
-
-1. ~~A custom Duo flow~~ — **done**: the flow executes through the project's flow trigger; evidence in `evidence/duo-flow-trigger-session.json` (session `9288744`, `FINISHED`, audit note on issue #2).
-2. ~~The GitLab issue / incident record~~ — **done**: issue #2 carries the artifact links and the flow's audit note; its three mis-transcribed values were corrected on 2026-10-10.
-3. ~~**The dashboard**~~ — **done this session**: `backend/app/api/incident_api.py` serves typed JSON read from `evidence/gitlab-ci-lifecycle-artifacts/`, the pipeline capture and the Duo session record, and `dashboard/` renders Overview, Timeline, Investigation, Approval centre, Verification and Incident report. `scripts/screenshot_dashboard.py` renders all six views and exits non-zero on a page or console error; the six captures are in `docs/screenshots/`.
-4. **The diagrams, the documentation set and the video** — five rendered diagrams into `docs/diagrams/`, then `ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`, then the under-3-minute recording.
-
-Exact next command (token comes from the user's `~/.hermes/.env`):
-
-```bash
-cd /home/azureuser/rollbackiq
-export GITLAB_TOKEN=$(grep -E '^GITLAB_TOKEN=' ~/.hermes/.env | head -1 | cut -d= -f2- | tr -d '"'"'"'' | tr -d '\r' | xargs)
-duo run --help   # inspect --flow-config / --flow-config-schema-version before writing a custom flow
-```
+1. Merge request for `submission-completion` on `showcase`: watch the pipeline, in particular `test:pytest`, which has not run on a runner before this branch.
+2. Final submission take with `deploy:regressed`, `approval:grant` and `rollback:managed` played **by hand in the GitLab UI** (needs the user).
+3. GitLab MCP: needs a token with the `mcp` scope, or the OAuth flow in a browser (needs the user). Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
 
 Resolved uncertainties from the first pipeline: `docker:27-dind` **is** permitted on the shared runner; the registry accepts the image once the job logs in; `apk add python3 py3-pip` plus `pip install --break-system-packages` works on the Alpine `docker:27` image; and `GITLAB_USER_LOGIN` **is** populated for manual jobs.
 
@@ -283,7 +278,7 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Incident state machine with illegal transitions rejected
 - [x] Safety gate: approval scope/expiry/actor, environment allowlist, known-good target, migration veto, idempotency
 - [x] Independent recovery verification (refuses non-independent or failed windows)
-- [x] Unit, negative and integration tests (98 passing)
+- [x] Unit, negative and integration tests (108 passing)
 - [x] Real GitLab Duo agent/flow execution — custom flow registered, enabled and executed (`evidence/duo-flow-trigger-session.json`)
 - [x] Real GitLab CI/CD deploy and rollback jobs (pipeline `2932808602`)
 - [x] Evidence-based investigation via Duo with GitLab context — the flow's audit note on issue #2 caught a real record error
@@ -292,14 +287,18 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Five diagrams, self-checked and geometry-audited (`docs/diagrams/`, `scripts/render_diagrams.py`, `scripts/check_diagram_geometry.py`)
 - [x] Documentation set (`ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`)
 - [x] The suite runs in CI as `test:pytest` (it did not before; see session 008)
-- [x] Demo recording of a real run + the live console (`docs/demo/rollbackiq-demo.mp4`, 1:44, produced by `scripts/record_demo.py`)
+- [x] Demo recording of a real run + the live console (`demo/videos/rollbackiq-demo.mp4`, 1:44, produced by `scripts/record_demo.py`)
+- [x] Repeated-run evaluation: 5/5 recovered and verified, 0/5 false positives (`scripts/evaluate_runs.py`, `evidence/evaluation/`)
+- [x] `docs/INCIDENT_RUNBOOK.md` and `.env.example`
+- [x] Fresh-clone check: 108 tests, guard clean, console builds (diagram render not rerun there; it needs the gitignored skill)
+- [ ] GitLab MCP — blocked: token has no `mcp` scope (`evidence/gitlab-mcp-probe.json`)
 - [ ] Final submission take with the approval played by hand in the GitLab UI, and the submission pass
 
 ## Work in progress
-Nothing left running locally except the console API, started with `.venv/bin/uvicorn app.api.incident_api:app --app-dir backend --port 8000` (reads artifacts only; no token needed). Two commits are **local only and unpushed**: `ae493d1` (console) and the diagrams/docs commit that follows it. Also installed this session: `.agents/skills/diagram-design/` (gitignored, third-party tooling — re-install with `npx skills add cathrynlavery/diagram-design`). `.venv` is installed; the demo workload is not running (Compose stack was torn down after verification). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` (event types `[0,1]` — mention and assign) with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
+Nothing is running. The evaluation containers were removed. Two older demo containers (`rollbackiq-local-workload`, `rollbackiq-local-workload-verify`) from session 008 are still up; they are harmless and `scripts/demo_lifecycle_local.sh` replaces them. An untracked `CLAUDE.md` is in the repository root; it was not made by this session, and the attribution guard flags its title, so it must not be committed as it is. `.agents/skills/diagram-design/` is gitignored (re-install with `npx skills add cathrynlavery/diagram-design`). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
 
 ## Last successful tests
-`.venv/bin/python -m pytest` → **98 passed** (90 + 8 for the incident API), and **98 passed in the CI image too**: the `test:pytest` job's exact commands were run in `python:3.12-slim` on this host. That second run mattered — see session 008. Covers:
+`.venv/bin/python -m pytest` → **108 passed** in session 009 (98 + 10: untrusted evidence, GitLab outage, evaluation summary), on this host and in a fresh clone. In session 008: **98 passed** (90 + 8 for the incident API), and **98 passed in the CI image too**: the `test:pytest` job's exact commands were run in `python:3.12-slim` on this host. That second run mattered — see session 008. Covers:
 
 | Area | Tests |
 | --- | --- |
@@ -333,16 +332,17 @@ None outstanding. Two problems found and fixed during this work:
 Also worth recording for future sessions: `git reset --hard` early in verification silently reverted an uncommitted fix; use `git reset --soft` when dropping scratch commits.
 
 ## Known blockers
-- None for GitLab access: the token has full access, project creation returns 201, and pushes to the protected `showcase` `main` work as ordinary fast-forwards.
-- **Resolved:** Duo execution (the custom flow runs via the project's flow trigger) and the GitLab CI/CD deploy/rollback jobs (pipeline `2932808602`).
-- The duplicate `rollbackiq` project still exists; deleting it needs the user's explicit approval because project deletion is not reversible.
-- `glab` is usable only through the container image here; a host install would need the prebuilt binary from the official releases page.
-- The group Observability **MCP server** endpoint is still unverified; do not claim GitLab MCP usage unless it is observed.
+- **GitLab MCP:** `POST https://gitlab.com/api/v4/mcp` returns 403 to the available token. The server's challenge requires scope `mcp`; the token has `api`, `ai_features` and others, not `mcp`. Needs a new token or the browser OAuth flow. Not claimed anywhere.
+- **Final video take:** the approval must be played by a person in the GitLab UI.
+- The duplicate `rollbackiq` project still exists; the user said to use only `showcase`. Deleting the duplicate needs the user's explicit approval.
+- `glab` is usable only through the container image here.
+- Novayagraph does not index this repository (it answers for another project), so it was not used.
+- Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`, `videowright`. VideoWright makes animated explainers and does not record a running system; it could add title cards to the final take.
 
 ## Next three actions
-1. **Record the final submission take** with the three manual jobs played **by hand in the GitLab UI** (the requirement the local capture cannot satisfy) — storyboard and timings in `docs/DEMO.md` §6. The existing `docs/demo/rollbackiq-demo.mp4` covers the run and the console and can be cut into that take.
-2. **Decide the push.** Commits `ae493d1` (console) and the diagrams/docs commit are local only; pushing is what makes the `test` stage and the new documentation visible in GitLab CI, but pushing has not been authorised in this session.
-3. **Re-verify the submission package** on a fresh clone: tests → guard → console build → diagram render, and confirm every evidence link in the README resolves to a real artifact.
+1. **Watch the merge request pipeline** on `showcase` and fix what it finds. `test:pytest` runs on a runner for the first time.
+2. **Record the final submission take** with the three manual jobs played by hand in the GitLab UI — storyboard in `docs/DEMO.md` §6.
+3. **GitLab MCP**, when a token with the `mcp` scope exists: `scripts/gitlab_mcp_probe.py`, then update `docs/COMPETITION_COMPLIANCE.md` only with what is observed.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
@@ -352,26 +352,21 @@ Resolved this session: the token now has full access, project creation returns 2
 
 ## Exact next command
 ```bash
-cd /home/azureuser/rollbackiq && .venv/bin/python -m pytest -q && git status --short && bash scripts/check_no_attribution.sh files
+cd /home/azureuser/rollbackiq && git switch submission-completion && .venv/bin/python -m pytest -q && bash scripts/check_no_attribution.sh staged && git log --oneline origin/main..HEAD
 ```
 
 ## Latest Git commit
-**Local `main` is four commits ahead of both remotes and nothing has been pushed this session:**
+Branch `submission-completion`, on top of local `main` (`bc021da`):
 
 | Commit | What it holds |
 | --- | --- |
-| `ae493d1` | The incident console and the read-only API over the pipeline's own artifacts |
-| `8fa6b1a` | The `test` stage (the suite now gates the pipeline), the five diagrams and the documentation set |
-| `4e3971f` | Ignoring the skill installer's local artifacts |
-| `30f03d1` | The one-host lifecycle reproduction, the demo recording, and the two bugs the recording found |
+| `9a3c65c` | Repeated-run evaluation, outage handling in the Duo trigger script, the new negative tests |
+| `199dfd2` | Incident runbook, `.env.example`, the GitLab MCP probe and its record, the `SECURITY.md` correction, the recording at `demo/videos/` |
 
-`origin/main` and `rollbackiq-project/main` are still at `5936280`. Pushing would run the new `test` stage
-and the guard over the diagrams and documentation for the first time on a runner; it has not been done
-because a push has not been authorised in this session, not because anything is failing locally. The last
-state known to be green in CI is pipeline `2932808602` (before the `test` stage existed).
+`origin/main` is still at `5936280`. The five session 008 commits (`ae493d1` … `bc021da`) reach GitLab through this branch's merge request, not through a push to `main`.
 
 ## Hindsight synchronization status
-Bank `rollbackiq` is active; Phase 0 findings, the Phase 1 verified results and the two fixed defects are retained this session. One earlier memory may still be extracting; re-check with `hindsight list_documents`. No secrets are stored.
+Bank `rollbackiq` is active and reachable over HTTP on port 8888 (the `hindsight` CLI is not installed; use `POST /v1/default/banks/rollbackiq/memories` and `…/memories/recall`). Session 009 findings are retained. No secrets are stored.
 
 ## Coding standard: no attribution footers
 
@@ -384,14 +379,25 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 
 ## Evidence links
 - `evidence/phase1-regression.json` — raw windows, detection decision, verification result and timings.
-- GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
+- `evidence/evaluation/summary.json` — repeated-run counts and timings; `evidence/gitlab-mcp-probe.json` — the MCP refusal.
+- Pipeline `2932808602`, Duo session `9288744` and incident issue #2 are linked in the sections above.
 
 ## Session log
+
+### Session 009 — Takeover, gap closure, and a measured success rate
+
+- **Context recovered** from the three documents, Git and Hindsight (199 facts). Git and tests agreed with this file, except that `main` was five commits ahead of `origin`, not four.
+- **Repeated-run evaluation.** `scripts/evaluate_runs.py` ran the unchanged local lifecycle five times and a healthy control five times. 5/5 recovered and verified; detection on window 2 every time at 8.50–9.07× baseline; rollback to verdict 17.8–18.5 s; 0/5 false positives, control windows at 0.82–1.17× the baseline (limit 3.0×). Limits are written in `docs/EVALUATION.md` §5: few runs, one fault setting, no false-negative count.
+- **Outage handling.** `duo_trigger_flow.py` crashed with a traceback when GitLab failed after the trigger note, and lost the record of the note. It now records `poll_errors`, polls until the timeout, and still writes the evidence file. Tested against a real local HTTP server.
+- **GitLab MCP spike.** 403 with the token; the unauthenticated challenge names scope `mcp`; the token does not have it. Recorded, not worked around.
+- **Documentation error found:** `docs/SECURITY.md` listed four check codes that the gate never emits. Corrected from `safety.py`.
+- **A note on the red phase:** the first run of the outage tests reached gitlab.com with a dummy token and got 401 (no effect), because the script had no configurable URL yet.
+- Tests **108 passed**; guard clean; fresh clone verified.
 
 ### Session 008 (continued) — The demo run, the recording, and two bugs only a recording could find
 
 - **`scripts/demo_lifecycle_local.sh` now reproduces the whole CI lifecycle on one host in ~32 s with real containers** — deploy v1 and measure the baseline, require the real detector to fire on v2, approve one hashed proposal, evaluate the gate by dry run, execute the gated rollback, then verify recovery from a new window. It uses the *same* scripts the CI jobs run; there is no demo-only code path. Final result: `recovered=True independent=True reasons=[]`, 200 samples, 6.01 s window, p95 0.96× baseline.
-- **`scripts/record_demo.py` produced `docs/demo/rollbackiq-demo.mp4`** (1:44, 1440×900, captions, no narration): a real run streamed live into the frame, then the console over that run's artifacts. It is **not** the final submission take, because the approval is the local run's rather than a person clicking Approve in the GitLab UI — recorded as such in `docs/DEMO.md`.
+- **`scripts/record_demo.py` produced `demo/videos/rollbackiq-demo.mp4`** (1:44, 1440×900, captions, no narration): a real run streamed live into the frame, then the console over that run's artifacts. It is **not** the final submission take, because the approval is the local run's rather than a person clicking Approve in the GitLab UI — recorded as such in `docs/DEMO.md`.
 - **Two bugs the recording found, both fixed at the source:**
   1. `ci_release.py` printed its command trace to **stdout**, so `$(ci_release.py digest …)` captured the trace plus the digest and the rollback then refused with a digest mismatch that looked nothing like the cause. Traces now go to stderr, keeping stdout machine-readable (GitLab captures both streams, so job logs are unaffected).
   2. The first take rendered a **blank log pane** for the whole run: the player page was loaded with `set_content()`, and a relative `fetch('/run.log')` cannot resolve on `about:blank`. The page is now served from a routed origin, and the recorder **refuses to keep a take whose log pane rendered fewer than 500 characters** — the guard exists because a blank pane still produced a perfectly valid-looking video file.
@@ -462,7 +468,7 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 
 ## Final checkpoint (session 008 close)
 - Tree clean after `30f03d1`; the suite is **98 passed** locally and **98 passed** in the `test:pytest` image; the attribution guard is clean over **210 units**.
-- Deliverables this session: the console (`dashboard/` + `backend/app/api/`), five diagrams (`docs/diagrams/`), the documentation set, the `test` stage, `scripts/demo_lifecycle_local.sh`, and `docs/demo/rollbackiq-demo.mp4`.
+- Deliverables this session: the console (`dashboard/` + `backend/app/api/`), five diagrams (`docs/diagrams/`), the documentation set, the `test` stage, `scripts/demo_lifecycle_local.sh`, and `demo/videos/rollbackiq-demo.mp4`.
 - Open: the final submission take (approval played by hand in the GitLab UI) and the push decision. Both need the user.
 
 ## Recovery procedure
