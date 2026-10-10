@@ -356,7 +356,19 @@ cd /home/azureuser/rollbackiq && .venv/bin/python -m pytest -q && git status --s
 ```
 
 ## Latest Git commit
-`9ddce6a` "Refresh the checkpoint with the final commit and workspace observability note" — the commit that contains this line is a documentation-only follow-up on top of it, because a file cannot record its own hash. At the time of writing, local `main`, `origin/main` and `rollbackiq-project/main` were all at `9ddce6a` with the tree clean, and both pipelines for it were green.
+**Local `main` is four commits ahead of both remotes and nothing has been pushed this session:**
+
+| Commit | What it holds |
+| --- | --- |
+| `ae493d1` | The incident console and the read-only API over the pipeline's own artifacts |
+| `8fa6b1a` | The `test` stage (the suite now gates the pipeline), the five diagrams and the documentation set |
+| `4e3971f` | Ignoring the skill installer's local artifacts |
+| `30f03d1` | The one-host lifecycle reproduction, the demo recording, and the two bugs the recording found |
+
+`origin/main` and `rollbackiq-project/main` are still at `5936280`. Pushing would run the new `test` stage
+and the guard over the diagrams and documentation for the first time on a runner; it has not been done
+because a push has not been authorised in this session, not because anything is failing locally. The last
+state known to be green in CI is pipeline `2932808602` (before the `test` stage existed).
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active; Phase 0 findings, the Phase 1 verified results and the two fixed defects are retained this session. One earlier memory may still be extracting; re-check with `hindsight list_documents`. No secrets are stored.
@@ -447,6 +459,11 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 ### Session 001 — Attribution guard
 - Completed: repository initialised, attribution guard (scanner, hooks, installer, CI job) with positive/negative/bypass/broken-environment verification.
 - Blockers: no `glab`/Duo tooling or GitLab remote at that time.
+
+## Final checkpoint (session 008 close)
+- Tree clean after `30f03d1`; the suite is **98 passed** locally and **98 passed** in the `test:pytest` image; the attribution guard is clean over **210 units**.
+- Deliverables this session: the console (`dashboard/` + `backend/app/api/`), five diagrams (`docs/diagrams/`), the documentation set, the `test` stage, `scripts/demo_lifecycle_local.sh`, and `docs/demo/rollbackiq-demo.mp4`.
+- Open: the final submission take (approval played by hand in the GitLab UI) and the push decision. Both need the user.
 
 ## Recovery procedure
 
