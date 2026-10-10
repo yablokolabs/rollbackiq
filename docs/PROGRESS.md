@@ -4,7 +4,47 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**Phase 0 GitLab bootstrap complete.** The project lives in the hackathon-provided `showcase` project (`main` = `7166d0de`) with the dedicated `rollbackiq` project mirroring it, and a real GitLab pipeline is green in both: the `attribution-guard` job succeeded on a GitLab.com shared runner, scanning 38 files and 10 commit messages. Next: the Duo capability spike (the Phase 0 gate), then Phase 2. Phase 1 remains complete and verified locally.
+**Phases 1, 3 and 4 now have real deployment control: the GitLab pipeline deploys, detects a regression, requires a human approval, runs a safety-gated rollback and verifies recovery independently.** OpenTelemetry is wired into both the workload and the control plane, and the telemetry export is proven from a GitLab runner. Two blockers remain and both need the user: the **Duo capability spike is still unrun** (the Phase 0 gate — `/home/azureuser/.local/bin/duo` is installed and real, but `duo run` needs a PAT with `api` scope and no token is present in this session), and **nothing is pushed** since my last commits, for the same reason. Everything committed so far is verified locally.
+
+## CI/CD lifecycle, approval gate and control-plane instrumentation (2026-10-10)
+
+The pipeline now carries the real lifecycle rather than stopping at detection. `main` = `05af988`.
+
+| Job | Stage | Trigger | What it actually does |
+| --- | --- | --- | --- |
+| `attribution-guard` | verify | automatic | existing attribution scan |
+| `build:workload-image` | build | automatic | builds and pushes the image, resolves and publishes its **immutable digest** |
+| `deploy:staging` | deploy | automatic | deploys v1, health-gated, captures the **healthy baseline window** artifact |
+| `deploy:regressed` | deploy | **manual** | deploys v2, measures, and fails **without writing a bundle** unless the real detector fires |
+| `approval:grant` | operate | **manual** | records the approval against `GITLAB_USER_LOGIN` for the person who played the job, scoped to the proposal hash |
+| `rollback:managed` | operate | **manual** | runs the control plane's `SafetyGate` over the bundle, then deploys the target |
+| `verify:recovery` | operate | automatic | fresh deploy and a **new** post-rollback window, then `verify_recovery` must prove it |
+| `telemetry-spike` | operate | manual | existing OTLP export proof |
+
+New scripts, all stdlib/`backend` only and runnable unchanged locally and in a job: `scripts/ci_release.py` (deploy/stop/probe/verify), `scripts/ci_incident.py` (regress/approve/combine), `scripts/ci_rollback.py` (the gated executor), `scripts/ci_probe.py` (paced independent probe).
+
+**Verified locally with real containers** (`evidence/local-ci-lifecycle/`, 41 new tests → suite **88 passed**):
+
+| Step | Measured result |
+| --- | --- |
+| deploy v1 + baseline (150 samples) | healthy, error rate 0% |
+| deploy v2 + detect | **p95 8.60x baseline, error rate 13.3% then 8.3%**, triggered on window 2 |
+| approval | APPROVED by `yablokolabs` for proposal `dd7fe7a306dd1183` |
+| rollback `--dry-run` | gate allowed, **nothing changed** |
+| rollback execute | executed; recovery **verified: `recovered=True, reasons=[]`** |
+| verify:recovery job | fresh deploy + new window: `recovered=True independent=True reasons=[]` |
+
+Six refusals were run, each required to name a *different* guard and all exited 2: no approval → `APPROVAL_PRESENT`; approver `duo` → `APPROVAL_ACTOR_IS_HUMAN`; environment `production` → `ENVIRONMENT_ALLOWLISTED`; target not known-good → `TARGET_IS_KNOWN_GOOD`; wrong image digest → digest mismatch; replay → `NOT_ALREADY_EXECUTED`. Proof the refusals changed nothing: the container's `StartedAt` (03:29:18) still matches the single successful rollback (`executed_at` 03:29:16.9), and the six refusals ran minutes later.
+
+**Two real bugs the local run found, both fixed:**
+1. The probe burst as fast as it could, producing a **1.1 s** post-rollback window, which the verifier correctly refused as shorter than a stabilization window. The verifier was right and the measurement was wrong, so the probe now takes `--min-duration` and paces itself.
+2. `verify` expected a `Baseline` object but the baseline artifact is the raw healthy *window*; it now builds the `Baseline` via `from_window` and **refuses to certify against an unverified baseline**.
+
+Also fixed: the health wait resolved `container:8000` from the job, which is not on the docker network (and under `dind` the job and daemon are separate containers), so it now reads `/release` via `docker exec` from inside the container. A bind mount is deliberately not used for the probe: under `dind` a mount resolves on the daemon's filesystem, not the job's.
+
+**Honest limitations of this design:** GitLab jobs are ephemeral, so a container does not survive from one job to the next; state travels as artifacts and each job re-establishes its deployment. The idempotency ledger is a JSON artifact, which makes a re-run inside a pipeline refuse but is **not a distributed lock**. The digest identity check proves *artifact* identity — v1 and v2 are the same build with different deployment inputs, which is what makes “roll back” a change of inputs rather than a rebuild. The CI networking and `docker:dind` assumptions are **not yet proven on a runner**.
+
+Control-plane telemetry: `backend/app/integrations/otel.py` adds OTLP export plus spans around `RegressionDetector.evaluate` and `verify_recovery`, recording the verdict **after** the decision so attributes describe the conclusion. Setup is guarded so telemetry can never break or change a decision; the test that matters runs the real detector and verifier sequences with and without a collector against an unroutable endpoint and asserts every verdict and reason is identical.
 
 ## GitLab CI evidence (first real pipeline)
 
@@ -48,7 +88,23 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-Complete the GitLab bootstrap: create the project in the hackathon workspace, push `main`, and get the first real pipeline (and the `attribution-guard` job) to run as evidence. Then the Duo capability spike.
+The exact next command, once a PAT with `api` scope is available in `GITLAB_TOKEN`:
+
+```bash
+cd /home/azureuser/rollbackiq && export GITLAB_TOKEN=... && export ORIGIN=$(git remote get-url origin)
+export GITLAB_TOKEN=... && export REMOTE=$(git remote get-url origin)
+# 1. Duo capability spike (the Phase 0 gate) — the CLI is installed and genuine:
+duo run --goal "Summarise what the RollbackIQ pipeline verifies about a rollback" \
+  --flow-config-id developer --output-format json \
+  --gitlab-project-path gitlab-ai-hackathon/transcend-october-2026/43178176/showcase \
+  --duo-workflow-project-id 87424071 2>/dev/null > evidence/duo-run.json
+# 2. Then push and watch the new pipeline (all jobs above are new and unproven on a runner)
+git push origin main && git push rollbackiq-project main
+```
+
+Known uncertainties to check on that first pipeline, in order: whether `docker:27-dind` is permitted on the shared runner; whether the container registry accepts the image; whether `apk add python3 py3-pip` + `pip install --break-system-packages -r backend/requirements.txt` works on the `docker:27` Alpine image; and whether `GITLAB_USER_LOGIN` is populated for the manual `approval:grant` job. Report whichever it actually is rather than assuming.
+
+The Duo spike is the Phase 0 gate and remains the top priority; the deploy/rollback jobs are already built and locally verified.
 
 ## GitLab access (verified 2026-10-09)
 
