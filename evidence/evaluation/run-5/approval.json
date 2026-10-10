@@ -1,0 +1,11 @@
+{
+  "id": "appr-inc-v2-20261010185721",
+  "incident_id": "inc-v2-20261010185721",
+  "proposal_hash": "9270297e38dbca49",
+  "actor": "azureuser",
+  "decision": "APPROVED",
+  "environment": "demo-staging",
+  "created_at": "2026-10-10T18:57:21.270753Z",
+  "expires_at": "2026-10-10T19:12:21.270753Z",
+  "scope_note": "played by azureuser in a local run"
+}

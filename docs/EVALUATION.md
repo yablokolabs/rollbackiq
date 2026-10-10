@@ -7,7 +7,7 @@ than it looks, the weakness is written next to it.
 
 | Command | Where | Result |
 | --- | --- | --- |
-| `.venv/bin/python -m pytest` | this host | **98 passed** |
+| `.venv/bin/python -m pytest` | this host | **108 passed** |
 | `pip install -r backend/requirements.txt; pip install -r demo/service/requirements.txt; python -m pytest` | `python:3.12-slim` in Docker, i.e. `test:pytest`'s exact commands | **98 passed** in 39 s |
 
 Coverage of the parts that decide:
@@ -21,6 +21,9 @@ Coverage of the parts that decide:
 | Detection chain | Real requests through the demo app: healthy baseline → faulted v2 detected → v1 restored → recovery independently verified |
 | Telemetry | The real detector and verifier sequences run with and without a collector against an unroutable endpoint produce **identical** verdicts and reasons |
 | Incident API | Detection parsed from the committed artifact, all 18 gate checks present, approver and proposal hash, `independent=True` only with a post-rollback window, `missing_artifacts` naming an unreadable file |
+| Untrusted evidence | A Duo note that contains instructions and markup is served verbatim by the incident API and changes no status or verdict |
+| GitLab outage | `duo_trigger_flow.py` against a local HTTP server that plays GitLab: unreachable → non-zero exit and no evidence file; failure after the trigger → the accepted note is kept and no session is reported; one transient error → the finished session is still recorded |
+| Evaluation summary | A run with no verification, a refused verification and a non-independent window are failures; a detection on a healthy control is a false positive; a control with no record is inconclusive |
 
 **Finding from adding the CI test job:** the suite passed locally and failed in the CI image —
 `test_enabled_telemetry_reports_its_resources_and_endpoint` asserted telemetry enabled while the
@@ -98,7 +101,40 @@ From `scripts/demo_regression.py` (`evidence/phase1-regression.json`), reproduce
 | Post-rollback window | 400 requests over ~5 s, 0 errors, p95 28.0 ms = 0.79× baseline |
 | Time to verify | 5.22 s; detection to verified recovery 5.43 s; total 13.16 s |
 
-## 5. Telemetry
+## 5. Repeated runs: success rate and false positives
+
+`scripts/evaluate_runs.py --runs 5 --controls 5`, on this host (4 CPUs, Docker version 29.8.1),
+at commit `bc021da`. Raw artifacts and the console log of every run: `evidence/evaluation/`.
+
+**Lifecycle runs** — `scripts/demo_lifecycle_local.sh`, unchanged, five times in sequence:
+
+| Measure | Result over 5 runs |
+| --- | --- |
+| Recovered **and** independently verified | **5 of 5** |
+| Windows needed to detect | 2 in every run (the sustained-window rule) |
+| p95 at detection, against the baseline | 8.50 – 9.07× |
+| First faulty window started → detection | 6.72 – 6.85 s |
+| Rollback executed → verification verdict | 17.84 – 18.48 s (includes the 6 s stabilization window) |
+| Verified p95, against the baseline | 0.950 – 1.006× ; error rate 0.0 in every run |
+| Wall time of one whole run | 32.12 – 32.72 s |
+
+**Healthy controls** — the same detection path (`ci_incident.py regress`) with both fault
+inputs set to zero, five times, four windows of 120 requests each:
+
+| Measure | Result over 5 controls |
+| --- | --- |
+| Detections on a healthy release (false positives) | **0 of 5** |
+| p95 of the 20 control windows, against the baseline | 0.82 – 1.17× (limit 3.0×) ; 0 errors |
+
+What this does and does not support: five runs and five controls show that the result
+repeats on this host. They are too few to state a rate with a confidence interval. No
+false-negative count is given, because only one fault setting (180 ms latency, 10% errors)
+was run; a fault near the thresholds was not tested. The approval is recorded by the host
+user without a wait, so no timing here contains human approval time. The control's window
+files are named `faulty-window-N.json` because the shared code names them; they hold healthy
+measurements.
+
+## 6. Telemetry
 
 `scripts/otel_export_evidence.py` against the group's real collector: **64 spans accepted, 0
 failures** from 12 genuine requests (`evidence/otel-export-spike.json`), reproduced **on a
@@ -110,7 +146,7 @@ context — `service.version` = the commit sha, `gitlab.project.name` = `showcas
 Not verified: that those spans render in the Observability UI. There is no public trace-query
 REST API, so collector acceptance is the strongest evidence obtainable from this host.
 
-## 6. GitLab Duo
+## 7. GitLab Duo
 
 | Run | Result |
 | --- | --- |
@@ -123,7 +159,7 @@ REST API, so collector acceptance is the strongest evidence obtainable from this
 The load-bearing result is the last one: the flow's value was not that it agreed with the
 incident, but that it refused to.
 
-## 7. What these numbers do not show
+## 8. What these numbers do not show
 
 - **One environment, one fault class.** A single `demo-staging` container on one host and on
   GitLab.com shared runners, with injected latency and error faults. No memory, disk, network or

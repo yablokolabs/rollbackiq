@@ -1,0 +1,38 @@
+{
+  "verified_with": "scripts/ci_release.py verify",
+  "baseline_source": "/home/azureuser/rollbackiq/evidence/evaluation/run-1/baseline-window.json",
+  "window_source": "/home/azureuser/rollbackiq/evidence/evaluation/run-1/verify-window.json",
+  "executed_at": "2026-10-10T18:55:13.197123+00:00",
+  "result": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 200,
+    "window_seconds": 6.009455,
+    "independent": true,
+    "p95_ms": 25.492497021332383,
+    "baseline_p95_ms": 26.64162201108411,
+    "p95_ratio_vs_baseline": 0.95686730375224,
+    "error_rate": 0.0,
+    "improved_vs_faulty": null,
+    "before": null,
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:55:24.295338Z",
+      "ended_at": "2026-10-10T18:55:30.304793Z",
+      "request_count": 200,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 21.787333011161536,
+      "p95_ms": 25.492497021332383,
+      "p99_ms": 27.4885650142096,
+      "mean_ms": 21.85813351563411,
+      "max_ms": 35.70354700786993,
+      "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+    },
+    "verified_at": "2026-10-10T18:55:31.033323Z"
+  }
+}

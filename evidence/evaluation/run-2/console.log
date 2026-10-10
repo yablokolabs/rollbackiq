@@ -1,0 +1,327 @@
++ docker image inspect --format '{{index .RepoDigests 0}}' rollbackiq-workload:local
+
+>>> deploy v1 and capture the healthy baseline (the same probe the CI job runs)
+    image rollbackiq-workload:local @ sha256:1aa319172df2c8f96…
++ docker network inspect rollbackiq-local
++ docker rm -f rollbackiq-eval-workload
++ docker run -d --name rollbackiq-eval-workload --network rollbackiq-local --network-alias rollbackiq-eval-workload -e RELEASE_VERSION=v1 -e RELEASE_COMMIT_SHA=bc021da -e RELEASE_PIPELINE_ID=local-20261010T185531Z -e RELEASE_IMAGE_DIGEST=sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 -e DEPLOY_ENV=demo-staging -e FAULT_LATENCY_MS=0 -e FAULT_ERROR_RATE=0 rollbackiq-workload:local
++ docker exec rollbackiq-eval-workload python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
++ docker exec rollbackiq-eval-workload python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
+deployed v1 as container 'rollbackiq-eval-workload' (image digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66)
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/deploy-healthy.json
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/baseline-window.json
+
+>>> deploy v2 and require the REAL detector to fire (no detection, no incident)
++ docker network inspect rollbackiq-local
++ docker rm -f rollbackiq-workload-v2
++ docker run -d --name rollbackiq-workload-v2 --network rollbackiq-local --network-alias rollbackiq-workload-v2 -e RELEASE_VERSION=v2 -e RELEASE_COMMIT_SHA=bc021da -e RELEASE_PIPELINE_ID=local-20261010T185531Z -e RELEASE_IMAGE_DIGEST=sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 -e DEPLOY_ENV=demo-staging -e FAULT_LATENCY_MS=180 -e FAULT_ERROR_RATE=0.10 rollbackiq-workload:local
++ docker exec rollbackiq-workload-v2 python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
++ docker exec rollbackiq-workload-v2 python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
+deployed v2 as container 'rollbackiq-workload-v2' (image digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66)
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/deploy-regressed.json
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/faulty-window-1.json
+window 1: samples=120 errors=16 error_rate=13.3% p95=233.9ms ratio=8.899073024425588 triggered=False (sustained-window requirement not met: 1 of 2)
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/faulty-window-2.json
+window 2: samples=120 errors=10 error_rate=8.3% p95=238.3ms ratio=9.067293737290784 triggered=True
+written: evidence/evaluation/run-2/incident-bundle.json
+written: evidence/evaluation/run-2/ci-detection.json
+
+incident inc-v2-20261010185544: P95_LATENCY, ERROR_RATE
+proposal rollback -> v1 (hash 4d59dfa8972e344e)
+
+>>> a human approves one exact proposal hash (actor: azureuser)
+written: evidence/evaluation/run-2/approval.json
+approval appr-inc-v2-20261010185544: APPROVED by 'azureuser' for proposal 4d59dfa8972e344e
+written: evidence/evaluation/run-2/incident-bundle-approved.json
+
+>>> evaluate the safety gate WITHOUT changing anything (dry run)
+{
+  "allowed": true,
+  "stage": "safety_gate",
+  "detail": "safety gate allowed the rollback",
+  "veto_codes": [],
+  "checks": [
+    {
+      "code": "ACTION_IS_ROLLBACK",
+      "passed": true,
+      "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+    },
+    {
+      "code": "ENVIRONMENT_ALLOWLISTED",
+      "passed": true,
+      "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+    },
+    {
+      "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+      "passed": true,
+      "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+    },
+    {
+      "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+    },
+    {
+      "code": "CURRENT_RELEASE_KNOWN",
+      "passed": true,
+      "detail": "current deployed release is 'v2'"
+    },
+    {
+      "code": "TARGET_RELEASE_KNOWN",
+      "passed": true,
+      "detail": "rollback target 'v1' is a release we have observed"
+    },
+    {
+      "code": "TARGET_IS_KNOWN_GOOD",
+      "passed": true,
+      "detail": "rollback target 'v1' was verified healthy by this system"
+    },
+    {
+      "code": "TARGET_DIFFERS_FROM_CURRENT",
+      "passed": true,
+      "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+    },
+    {
+      "code": "TARGET_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+    },
+    {
+      "code": "APPROVAL_PRESENT",
+      "passed": true,
+      "detail": "approval 'appr-inc-v2-20261010185544' supplied"
+    },
+    {
+      "code": "APPROVAL_ACTOR_IS_HUMAN",
+      "passed": true,
+      "detail": "approval actor 'azureuser' is an authorized human identity"
+    },
+    {
+      "code": "APPROVAL_GRANTED",
+      "passed": true,
+      "detail": "approval decision is APPROVED"
+    },
+    {
+      "code": "APPROVAL_IN_SCOPE",
+      "passed": true,
+      "detail": "approval matches proposal 4d59dfa8972e344e"
+    },
+    {
+      "code": "APPROVAL_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+    },
+    {
+      "code": "APPROVAL_NOT_EXPIRED",
+      "passed": true,
+      "detail": "approval expires_at=2026-10-10T19:10:44.374111+00:00"
+    },
+    {
+      "code": "APPROVAL_WITHIN_MAX_AGE",
+      "passed": true,
+      "detail": "approval validity window 900s is within 900s"
+    },
+    {
+      "code": "IDEMPOTENCY_KEY_PRESENT",
+      "passed": true,
+      "detail": "idempotency key 'rollback-inc-v2-20261010185544-v1' present"
+    },
+    {
+      "code": "NOT_ALREADY_EXECUTED",
+      "passed": true,
+      "detail": "idempotency key 'rollback-inc-v2-20261010185544-v1' has not been executed"
+    }
+  ],
+  "proposal_hash": "4d59dfa8972e344e",
+  "target_release": "v1"
+}
+  [pass] ACTION_IS_ROLLBACK: proposed action is 'rollback'; only 'rollback' executes a deployment change
+  [pass] ENVIRONMENT_ALLOWLISTED: environment 'demo-staging' allowlist=['demo-staging']
+  [pass] PHASE1_ENVIRONMENT_ALLOWLISTED: environment 'demo-staging' protected allowlist=['demo-staging']
+  [pass] PROPOSAL_ENVIRONMENT_MATCHES: proposal environment 'demo-staging' vs request environment 'demo-staging'
+  [pass] CURRENT_RELEASE_KNOWN: current deployed release is 'v2'
+  [pass] TARGET_RELEASE_KNOWN: rollback target 'v1' is a release we have observed
+  [pass] TARGET_IS_KNOWN_GOOD: rollback target 'v1' was verified healthy by this system
+  [pass] TARGET_DIFFERS_FROM_CURRENT: rollback target 'v1' differs from the deployed release 'v2'
+  [pass] TARGET_ENVIRONMENT_MATCHES: target release environment 'demo-staging' vs 'demo-staging'
+  [pass] APPROVAL_PRESENT: approval 'appr-inc-v2-20261010185544' supplied
+  [pass] APPROVAL_ACTOR_IS_HUMAN: approval actor 'azureuser' is an authorized human identity
+  [pass] APPROVAL_GRANTED: approval decision is APPROVED
+  [pass] APPROVAL_IN_SCOPE: approval matches proposal 4d59dfa8972e344e
+  [pass] APPROVAL_ENVIRONMENT_MATCHES: approval environment 'demo-staging' vs 'demo-staging'
+  [pass] APPROVAL_NOT_EXPIRED: approval expires_at=2026-10-10T19:10:44.374111+00:00
+  [pass] APPROVAL_WITHIN_MAX_AGE: approval validity window 900s is within 900s
+  [pass] IDEMPOTENCY_KEY_PRESENT: idempotency key 'rollback-inc-v2-20261010185544-v1' present
+  [pass] NOT_ALREADY_EXECUTED: idempotency key 'rollback-inc-v2-20261010185544-v1' has not been executed
+written: evidence/evaluation/run-2/rollback-dryrun.json
+
+DRY RUN: gate allows the rollback; nothing was changed.
+
+>>> execute the authorized rollback
+{
+  "allowed": true,
+  "stage": "safety_gate",
+  "detail": "safety gate allowed the rollback",
+  "veto_codes": [],
+  "checks": [
+    {
+      "code": "ACTION_IS_ROLLBACK",
+      "passed": true,
+      "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+    },
+    {
+      "code": "ENVIRONMENT_ALLOWLISTED",
+      "passed": true,
+      "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+    },
+    {
+      "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+      "passed": true,
+      "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+    },
+    {
+      "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+    },
+    {
+      "code": "CURRENT_RELEASE_KNOWN",
+      "passed": true,
+      "detail": "current deployed release is 'v2'"
+    },
+    {
+      "code": "TARGET_RELEASE_KNOWN",
+      "passed": true,
+      "detail": "rollback target 'v1' is a release we have observed"
+    },
+    {
+      "code": "TARGET_IS_KNOWN_GOOD",
+      "passed": true,
+      "detail": "rollback target 'v1' was verified healthy by this system"
+    },
+    {
+      "code": "TARGET_DIFFERS_FROM_CURRENT",
+      "passed": true,
+      "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+    },
+    {
+      "code": "TARGET_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+    },
+    {
+      "code": "APPROVAL_PRESENT",
+      "passed": true,
+      "detail": "approval 'appr-inc-v2-20261010185544' supplied"
+    },
+    {
+      "code": "APPROVAL_ACTOR_IS_HUMAN",
+      "passed": true,
+      "detail": "approval actor 'azureuser' is an authorized human identity"
+    },
+    {
+      "code": "APPROVAL_GRANTED",
+      "passed": true,
+      "detail": "approval decision is APPROVED"
+    },
+    {
+      "code": "APPROVAL_IN_SCOPE",
+      "passed": true,
+      "detail": "approval matches proposal 4d59dfa8972e344e"
+    },
+    {
+      "code": "APPROVAL_ENVIRONMENT_MATCHES",
+      "passed": true,
+      "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+    },
+    {
+      "code": "APPROVAL_NOT_EXPIRED",
+      "passed": true,
+      "detail": "approval expires_at=2026-10-10T19:10:44.374111+00:00"
+    },
+    {
+      "code": "APPROVAL_WITHIN_MAX_AGE",
+      "passed": true,
+      "detail": "approval validity window 900s is within 900s"
+    },
+    {
+      "code": "IDEMPOTENCY_KEY_PRESENT",
+      "passed": true,
+      "detail": "idempotency key 'rollback-inc-v2-20261010185544-v1' present"
+    },
+    {
+      "code": "NOT_ALREADY_EXECUTED",
+      "passed": true,
+      "detail": "idempotency key 'rollback-inc-v2-20261010185544-v1' has not been executed"
+    }
+  ],
+  "proposal_hash": "4d59dfa8972e344e",
+  "target_release": "v1"
+}
+  [pass] ACTION_IS_ROLLBACK: proposed action is 'rollback'; only 'rollback' executes a deployment change
+  [pass] ENVIRONMENT_ALLOWLISTED: environment 'demo-staging' allowlist=['demo-staging']
+  [pass] PHASE1_ENVIRONMENT_ALLOWLISTED: environment 'demo-staging' protected allowlist=['demo-staging']
+  [pass] PROPOSAL_ENVIRONMENT_MATCHES: proposal environment 'demo-staging' vs request environment 'demo-staging'
+  [pass] CURRENT_RELEASE_KNOWN: current deployed release is 'v2'
+  [pass] TARGET_RELEASE_KNOWN: rollback target 'v1' is a release we have observed
+  [pass] TARGET_IS_KNOWN_GOOD: rollback target 'v1' was verified healthy by this system
+  [pass] TARGET_DIFFERS_FROM_CURRENT: rollback target 'v1' differs from the deployed release 'v2'
+  [pass] TARGET_ENVIRONMENT_MATCHES: target release environment 'demo-staging' vs 'demo-staging'
+  [pass] APPROVAL_PRESENT: approval 'appr-inc-v2-20261010185544' supplied
+  [pass] APPROVAL_ACTOR_IS_HUMAN: approval actor 'azureuser' is an authorized human identity
+  [pass] APPROVAL_GRANTED: approval decision is APPROVED
+  [pass] APPROVAL_IN_SCOPE: approval matches proposal 4d59dfa8972e344e
+  [pass] APPROVAL_ENVIRONMENT_MATCHES: approval environment 'demo-staging' vs 'demo-staging'
+  [pass] APPROVAL_NOT_EXPIRED: approval expires_at=2026-10-10T19:10:44.374111+00:00
+  [pass] APPROVAL_WITHIN_MAX_AGE: approval validity window 900s is within 900s
+  [pass] IDEMPOTENCY_KEY_PRESENT: idempotency key 'rollback-inc-v2-20261010185544-v1' present
+  [pass] NOT_ALREADY_EXECUTED: idempotency key 'rollback-inc-v2-20261010185544-v1' has not been executed
++ docker image inspect --format '{{index .RepoDigests 0}}' rollbackiq-workload:local
++ docker network inspect rollbackiq-local
++ docker rm -f rollbackiq-eval-workload
++ docker run -d --name rollbackiq-eval-workload --network rollbackiq-local --network-alias rollbackiq-eval-workload -e RELEASE_VERSION=v1 -e RELEASE_COMMIT_SHA=bc021da -e RELEASE_PIPELINE_ID=local-20261010T185531Z -e RELEASE_IMAGE_DIGEST=sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 -e DEPLOY_ENV=demo-staging -e FAULT_LATENCY_MS=0 -e FAULT_ERROR_RATE=0 rollbackiq-workload:local
++ docker exec rollbackiq-eval-workload python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
++ docker exec rollbackiq-eval-workload python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
+deployed v1 as container 'rollbackiq-eval-workload' (image digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66)
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/rollback-post-window.json
+written: evidence/evaluation/run-2/rollback-execution.json
+
+verification: recovered=True reasons=[]
+
+executed: the rollback ran and its evidence is recorded.
+
+>>> independently verify recovery from a NEW window that starts after the rollback
++ docker network inspect rollbackiq-local
++ docker rm -f rollbackiq-eval-workload-verify
++ docker run -d --name rollbackiq-eval-workload-verify --network rollbackiq-local --network-alias rollbackiq-eval-workload-verify -e RELEASE_VERSION=v1 -e RELEASE_COMMIT_SHA=bc021da -e RELEASE_PIPELINE_ID=local-20261010T185531Z -e RELEASE_IMAGE_DIGEST=sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 -e DEPLOY_ENV=demo-staging -e FAULT_LATENCY_MS=0 -e FAULT_ERROR_RATE=0 rollbackiq-workload:local
++ docker exec rollbackiq-eval-workload-verify python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
++ docker exec rollbackiq-eval-workload-verify python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
+deployed v1 as container 'rollbackiq-eval-workload-verify' (image digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66)
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/deploy-verify.json
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/verify-window.json
+written: /home/azureuser/rollbackiq/evidence/evaluation/run-2/verification.json
+recovered=True independent=True reasons=[]
+
+>>> done — artifacts in evidence/evaluation/run-2
+    approval.json
+    baseline-window.json
+    ci-detection.json
+    console.log
+    deploy-healthy.json
+    deploy-regressed.json
+    deploy-verify.json
+    faulty-window-1.json
+    faulty-window-2.json
+    incident-bundle-approved.json
+    incident-bundle.json
+    rollback-dryrun.json
+    rollback-execution.json
+    rollback-post-window.json
+    rollback-state.json
+    verification.json
+    verify-window.json

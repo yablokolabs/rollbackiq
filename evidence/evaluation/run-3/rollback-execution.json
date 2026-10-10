@@ -1,0 +1,273 @@
+{
+  "incident_id": "inc-v2-20261010185616",
+  "environment": "demo-staging",
+  "idempotency_key": "rollback-inc-v2-20261010185616-v1",
+  "dry_run": false,
+  "decision": {
+    "allowed": true,
+    "stage": "safety_gate",
+    "detail": "safety gate allowed the rollback",
+    "veto_codes": [],
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is 'v2'"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target 'v1' was verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "approval 'appr-inc-v2-20261010185616' supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'azureuser' is an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval matches proposal 36ff8a81cd60f2f2"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T19:11:16.803595+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s is within 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185616-v1' present"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185616-v1' has not been executed"
+      }
+    ],
+    "proposal_hash": "36ff8a81cd60f2f2",
+    "target_release": "v1"
+  },
+  "safety_verdict": {
+    "allowed": true,
+    "target_release": "v1",
+    "proposal_hash": "36ff8a81cd60f2f2",
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is 'v2'"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target 'v1' was verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "approval 'appr-inc-v2-20261010185616' supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'azureuser' is an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval matches proposal 36ff8a81cd60f2f2"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T19:11:16.803595+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s is within 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185616-v1' present"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185616-v1' has not been executed"
+      }
+    ],
+    "checked_at": "2026-10-10T18:56:17.137613Z"
+  },
+  "evaluated_at": "2026-10-10T18:56:17.137783+00:00",
+  "resolved_image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+  "approved_target_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+  "executed_at": "2026-10-10T18:56:17.169717+00:00",
+  "verification": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 200,
+    "window_seconds": 6.019991,
+    "independent": true,
+    "p95_ms": 26.673016021959484,
+    "baseline_p95_ms": 27.148983965162188,
+    "p95_ratio_vs_baseline": 0.9824682962790258,
+    "error_rate": 0.0,
+    "improved_vs_faulty": true,
+    "before": {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:56:13.221079Z",
+      "ended_at": "2026-10-10T18:56:16.121819Z",
+      "request_count": 120,
+      "error_count": 10,
+      "error_rate": 0.08333333333333333,
+      "availability": 0.9166666666666666,
+      "p50_ms": 200.92620997456834,
+      "p95_ms": 238.19768900284544,
+      "p99_ms": 241.17144296178594,
+      "mean_ms": 187.76426932793888,
+      "max_ms": 241.20519601274282,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:56:19.920208Z",
+      "ended_at": "2026-10-10T18:56:25.940199Z",
+      "request_count": 200,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.470609983429313,
+      "p95_ms": 26.673016021959484,
+      "p99_ms": 37.79224900063127,
+      "mean_ms": 22.60382983571617,
+      "max_ms": 40.86037399247289,
+      "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+    },
+    "verified_at": "2026-10-10T18:56:26.598674Z"
+  },
+  "post_rollback_window": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "started_at": "2026-10-10T18:56:19.920208Z",
+    "ended_at": "2026-10-10T18:56:25.940199Z",
+    "request_count": 200,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "availability": 1.0,
+    "p50_ms": 22.470609983429313,
+    "p95_ms": 26.673016021959484,
+    "p99_ms": 37.79224900063127,
+    "mean_ms": 22.60382983571617,
+    "max_ms": 40.86037399247289,
+    "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+  },
+  "outcome": "executed",
+  "probe_exit_code": 0
+}
