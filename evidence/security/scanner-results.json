@@ -1,0 +1,138 @@
+{
+  "captured_with": "GitLab job artifacts API (gl-sast-report.json, gl-secret-detection-report.json)",
+  "project": "gitlab-ai-hackathon/transcend-october-2026/43178176/showcase",
+  "templates": [
+    "Jobs/SAST.gitlab-ci.yml",
+    "Jobs/Secret-Detection.gitlab-ci.yml"
+  ],
+  "first_run": {
+    "pipeline_id": 2934637949,
+    "commit": "5bc534b",
+    "sast_job": 17087189808,
+    "secret_detection_job": 17087189809,
+    "sast": {
+      "scanner": "Semgrep",
+      "scanner_version": "1.174.0",
+      "status": "success",
+      "findings": [
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/ci_probe.py",
+          "line": 56
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/ci_probe.py",
+          "line": 70
+        },
+        {
+          "severity": "Info",
+          "name": "Improper check for unusual or exceptional conditions",
+          "file": "scripts/demo_regression.py",
+          "line": 177
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/otel_export_evidence.py",
+          "line": 39
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/otel_export_evidence.py",
+          "line": 45
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/record_demo.py",
+          "line": 131
+        }
+      ]
+    },
+    "secret_detection": {
+      "scanner": "Gitleaks",
+      "scanner_version": "8.30.1",
+      "status": "success",
+      "findings": []
+    }
+  },
+  "run_after_the_fixes": {
+    "pipeline_id": 2934643614,
+    "commit": "59e4212",
+    "sast_job": 17087220439,
+    "secret_detection_job": 17087220440,
+    "sast": {
+      "scanner": "Semgrep",
+      "scanner_version": "1.174.0",
+      "status": "success",
+      "findings": [
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/ci_probe.py",
+          "line": 57
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/ci_probe.py",
+          "line": 71
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/otel_export_evidence.py",
+          "line": 39
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/otel_export_evidence.py",
+          "line": 45
+        },
+        {
+          "severity": "Medium",
+          "name": "Server-side request forgery (SSRF)",
+          "file": "scripts/record_demo.py",
+          "line": 131
+        }
+      ]
+    },
+    "secret_detection": {
+      "scanner": "Gitleaks",
+      "scanner_version": "8.30.1",
+      "status": "success",
+      "findings": []
+    }
+  },
+  "disposition": [
+    {
+      "file": "scripts/ci_probe.py",
+      "finding": "urllib with a non-literal URL (2 findings)",
+      "verdict": "real",
+      "action": "the probe now refuses a URL whose scheme is not http or https; tests in backend/tests/test_ci_probe.py. The scanner still reports the two calls, because it matches the call pattern and does not see the check before it."
+    },
+    {
+      "file": "scripts/otel_export_evidence.py",
+      "finding": "urllib with a non-literal URL (2 findings)",
+      "verdict": "not reachable",
+      "action": "none; every URL starts with the literal http://127.0.0.1"
+    },
+    {
+      "file": "scripts/record_demo.py",
+      "finding": "urllib with a non-literal URL (1 finding)",
+      "verdict": "not reachable",
+      "action": "none; the URL is the constant http://127.0.0.1:8000"
+    },
+    {
+      "file": "scripts/demo_regression.py",
+      "finding": "assert in non-test code (Info)",
+      "verdict": "harmless",
+      "action": "replaced with an explicit error"
+    }
+  ]
+}

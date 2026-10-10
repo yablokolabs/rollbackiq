@@ -19,6 +19,13 @@
 # The `demo-staging` environment is an isolated demo target. Nothing here is
 # wired to a customer system, and no job restores deleted data.
 
+# GitLab's own security scanners. SAST analyses the Python and TypeScript source,
+# and secret detection scans the commits for credentials. Both run in the `test`
+# stage and publish their findings as report artifacts.
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
 stages:
   - verify
   - test

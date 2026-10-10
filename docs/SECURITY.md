@@ -90,6 +90,32 @@ incident record was corrected afterwards.
 - The Duo CLI is invoked with `--session-tracking-enabled false` so it cannot append a session
   trailer to a commit.
 
+## GitLab security scanners
+
+The pipeline includes GitLab's own `Jobs/SAST.gitlab-ci.yml` and
+`Jobs/Secret-Detection.gitlab-ci.yml` templates. Both run in the `test` stage on every
+pipeline. The record of the runs and of each finding is `evidence/security/scanner-results.json`.
+
+| Scanner | First run (pipeline 2934637949) | After the fixes (pipeline 2934643614) |
+| --- | --- | --- |
+| Secret detection (Gitleaks) | 0 findings | 0 findings |
+| SAST (Semgrep) | 6 findings: 5 Medium, 1 Info | 5 findings: 5 Medium |
+
+What was done with each SAST finding:
+
+| Where | Finding | Verdict | Action |
+| --- | --- | --- | --- |
+| `scripts/ci_probe.py` (2) | `urllib` called with a URL that is not a literal | **Real.** The probe took its whole URL from the command line, and `urllib` also opens `file://`. A window could be measured from something that is not the service | The probe refuses a URL whose scheme is not `http` or `https` (`backend/tests/test_ci_probe.py`) |
+| `scripts/otel_export_evidence.py` (2) | the same | Not reachable: every URL starts with the literal `http://127.0.0.1` | None |
+| `scripts/record_demo.py` (1) | the same | Not reachable: the URL is a constant | None |
+| `scripts/demo_regression.py` (1, Info) | `assert` in code that is not a test | Harmless | Replaced with an explicit error |
+
+The scanner still reports the two calls in `ci_probe.py` after the fix. It matches the call
+pattern and does not see the check that runs before it. The findings are left visible; they are
+not suppressed with a comment.
+
+Not enabled: DAST, dependency scanning and container scanning. Nothing is claimed for them.
+
 ## No AI attribution
 
 `scripts/check_no_attribution.sh` is the single source of truth for the rule that no commit,

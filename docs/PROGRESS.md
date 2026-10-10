@@ -4,6 +4,18 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
+> **Record correction (2026-10-10, 21:27 UTC): the "silent no-op" claim is withdrawn.** Earlier
+> sections of this file say that `aiCatalogFlowUpdate` silently ignores `definition` unless
+> `versionBump` and `release` are given. Before reporting that to GitLab, it was reproduced on the
+> project's own flow: an update with only `id` and `definition` returned `errors: []` **and made a
+> new released version, v1.2.0, with the new definition**. The version history agrees: v1.1.0 was
+> made two minutes after v1.0.0 on the morning of 2026-10-10. The flow consumer is not pinned; it
+> resolves to the latest released version. So the catalog did update, and the failed sessions
+> `9283600` and `9288721` are explained by the defects in the flow YAML of that time, which were
+> real and were fixed. Why the earlier session saw no new version is not established. The flow was
+> restored from the repository after the test (v1.2.1, identical by SHA-256). Record:
+> `evidence/duo-catalog-update-repro.json`. The older text below is kept as history.
+
 **Merged.** Merge request !1 was merged by the user on 2026-10-10 as `78acd60`; `main` holds all of session 008 and 009. Pipeline `2934572189` on `main` passed `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` on a GitLab runner, and waits at the manual job `deploy:regressed`.
 
 **Submission state (2026-10-10, late).** Merge requests !1 to !4 are merged. The video is on YouTube: https://youtu.be/rvs6M7xOTR0 (uploaded by the user; it must be set to Public, not Unlisted). `docs/DEVPOST.md` holds the text for the Devpost form. The logo and icon are in `assets/brand/`. Each merge request was reviewed by GitLab Duo (`/request_review @GitLabDuo`); sessions `9290081`, `9290175`, `9290263`, `9290288`, `9290302`, `9290469`. The organisers' four checks pass: public repository, MIT licence detected, pipeline history visible, Duo Agent Platform use evidenced. A proposal for GitLab contributor points (a blog post, two bug reports, one docs fix) waits for the user's approval; nothing is filed.
@@ -303,7 +315,7 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [ ] A take with the approval played by hand in the GitLab UI, and the submission pass
 
 ## Work in progress
-Nothing is running. The evaluation containers were removed. Two older demo containers (`rollbackiq-local-workload`, `rollbackiq-local-workload-verify`) from session 008 are still up; they are harmless and `scripts/demo_lifecycle_local.sh` replaces them. An untracked `CLAUDE.md` is in the repository root; it was not made by this session, and the attribution guard flags its title, so it must not be committed as it is. `.agents/skills/diagram-design/` is gitignored (re-install with `npx skills add cathrynlavery/diagram-design`). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
+Nothing is running. The evaluation containers were removed. Two older demo containers (`rollbackiq-local-workload`, `rollbackiq-local-workload-verify`) from session 008 are still up; they are harmless and `scripts/demo_lifecycle_local.sh` replaces them. An untracked `CLAUDE.md` is in the repository root; it was not made by this session, and the attribution guard flags its title, so it must not be committed as it is. `.agents/skills/diagram-design/` is gitignored (re-install with `npx skills add cathrynlavery/diagram-design`). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` (not pinned: it resolves to the latest released flow version, v`1.2.1` on 2026-10-10), trigger `3013795` with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
 
 ## Last successful tests
 `.venv/bin/python -m pytest` → **108 passed** in session 009 (98 + 10: untrusted evidence, GitLab outage, evaluation summary), on this host and in a fresh clone. In session 008: **98 passed** (90 + 8 for the incident API), and **98 passed in the CI image too**: the `test:pytest` job's exact commands were run in `python:3.12-slim` on this host. That second run mattered — see session 008. Covers:

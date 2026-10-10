@@ -37,7 +37,7 @@ has not happened.
 | Diagrammed architecture, security model and evaluation | **Implemented and verified locally** — five diagrams, each self-checked and geometry-audited, plus the documentation set | `docs/diagrams/`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/EVALUATION.md`, `docs/DEMO.md`, `docs/COMPETITION_COMPLIANCE.md` |
 | Demonstration video | **Made** — 2:36, narrated, with a recording of a real lifecycle run inside it and the real GitLab pages. Not in it: a person playing the approval job in the GitLab UI | `demo/videos/rollbackiq-demo.mp4`, `demo/videowright/`, `docs/DEMO.md` |
 
-Test suite: **110 passing** (`pytest`).
+Test suite: **114 passing** (`pytest`).
 
 **On persistence:** `ROLLBACKIQ_BUILD.md` §9 allows SQLite "unless a simpler proven design
 suffices", and here it does. The pipeline's artifacts *are* the record — the console reads
@@ -68,7 +68,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r backend/requirements.txt
 
 # 2. Tests
-.venv/bin/python -m pytest            # 110 passing
+.venv/bin/python -m pytest            # 114 passing
 
 # 3. The full regression demonstration (healthy -> faulty -> detected -> rolled back -> verified)
 .venv/bin/python scripts/demo_regression.py

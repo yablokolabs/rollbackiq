@@ -7,9 +7,9 @@ than it looks, the weakness is written next to it.
 
 | Command | Where | Result |
 | --- | --- | --- |
-| `.venv/bin/python -m pytest` | this host | **110 passed** |
+| `.venv/bin/python -m pytest` | this host | **114 passed** |
 | `pip install -r backend/requirements.txt; pip install -r demo/service/requirements.txt; python -m pytest` | `python:3.12-slim` in Docker, i.e. `test:pytest`'s exact commands | 98 passed in 39 s, in session 008, before the session 009 tests existed |
-| the `test:pytest` job | GitLab.com shared runner, pipeline 2934572189 on `main` (job 17086793140) | **110 passed** in 44.66 s |
+| the `test:pytest` job | GitLab.com shared runner, pipeline 2934643614 (job 17087220441) | **114 passed** in 44.23 s |
 
 Coverage of the parts that decide:
 
@@ -25,6 +25,7 @@ Coverage of the parts that decide:
 | Untrusted evidence | A Duo note that contains instructions and markup is served verbatim by the incident API and changes no status or verdict |
 | GitLab outage | `duo_trigger_flow.py` against a local HTTP server that plays GitLab: unreachable → non-zero exit and no evidence file; failure after the trigger → the accepted note is kept and no session is reported; one transient error → the finished session is still recorded |
 | Evaluation summary | A run with no verification, a refused verification and a non-independent window are failures; a detection on a healthy control is a false positive; a control with no record is inconclusive |
+| Probe input | A URL that is not `http` or `https` is refused and no window is written; an HTTP service is measured with one sample for each request |
 
 **Finding from adding the CI test job:** the suite passed locally and failed in the CI image —
 `test_enabled_telemetry_reports_its_resources_and_endpoint` asserted telemetry enabled while the
@@ -153,7 +154,7 @@ REST API, so collector acceptance is the strongest evidence obtainable from this
 | --- | --- |
 | Session `9283219`, `developer/v1` | 7332-character grounded analysis; every claim was checked against the code and was accurate |
 | Sessions `9283214` | `success` with an **empty** response, because a headless run with no approved tools has no way to read anything. Kept as evidence that a green workflow alone proves only plumbing |
-| Sessions `9283600`, `9288721` | Died with `KeyError` — root cause: `aiCatalogFlowUpdate` silently ignores `definition` without `versionBump`/`release`, so sessions kept running the original revision |
+| Sessions `9283600`, `9288721` | Died with `KeyError`. The flow definition of that time had real defects, which were fixed before session `9288744`. An earlier revision of this row blamed the catalog API ("`aiCatalogFlowUpdate` silently ignores `definition` without `versionBump`/`release`"); a reproduction on 2026-10-10 did not confirm that, and the claim is withdrawn (`evidence/duo-catalog-update-repro.json`) |
 | Sessions `9283450`, `9283505`, `9283539`, `9283555` | Four probes that characterised the headless limit: the CLI transmits the custom definition, the service declines to instantiate an inline flow |
 | Session `9288744` (custom flow, via the flow trigger) | **`FINISHED`**, 86 s, 17 events, no errors; read the repository and the issue, then posted an investigation report to issue #2 recommending **HOLD**, and its audit caught three mis-transcribed values in this repository's own record |
 

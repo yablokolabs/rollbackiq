@@ -44,3 +44,7 @@ skills-lock.json
 # Demo video project: render intermediates. The final video, the narration audio and the
 # footage of the real run are committed.
 demo/videowright/build/
+
+# Local instructions for a coding assistant. They are a private working file, and
+# their title names an assistant, which AGENTS.md section 10 keeps out of the repository.
+/CLAUDE.md

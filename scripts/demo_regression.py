@@ -174,7 +174,8 @@ def main() -> int:
             if decision.triggered:
                 break
 
-        assert decision is not None
+        if decision is None:
+            raise RuntimeError("no faulty window was measured, so there is no detection decision")
         evidence["faulty_windows"] = [w.model_dump(mode="json") for w in windows]
         evidence["detection"] = decision.model_dump(mode="json")
         if not decision.triggered:

@@ -70,13 +70,15 @@ The agent never changes a deployment. It has no tool that can deploy, approve or
   flow trigger when its service account is mentioned on an issue.
 - **GitLab Duo Code Review** reviewed the merge requests of this project. Its first review found
   three real defects, which were fixed; the re-review was clean.
+- **GitLab SAST and secret detection** run in every pipeline. The first SAST run found a real
+  defect in our own probe, which is fixed; no secret was found.
 - **GitLab issues** hold the incident record, with links to the pipeline and to the Duo session.
 - **GitLab Observability**: the workload exports OpenTelemetry traces to the group's collector.
 - **Container registry and environments** hold the image and the `demo-staging` target.
 
 DevSecOps stages touched by real workflows: plan (incident issue), code review, build, test,
-compliance check, release, deploy, monitor, incident response and retrospective. Security
-scanning is not used and not claimed.
+security scanning (SAST and secret detection), compliance check, release, deploy, monitor,
+incident response and retrospective.
 
 ## Results we measured
 
@@ -90,8 +92,11 @@ scanning is not used and not claimed.
   verified; 5 healthy control runs gave 0 false positives.
 - **Six refusals**, each by a different guard: no approval, a non-human approver, a wrong
   environment, a target that was never observed healthy, a wrong image digest, and a replay.
-- **110 automated tests.** The `test:pytest` job runs them in every pipeline; its log in pipeline
-  2934572189 on `main` ends with `110 passed`.
+- **114 automated tests.** The `test:pytest` job runs them in every pipeline; its log in pipeline
+  2934643614 ends with `114 passed`.
+- **Security scanners:** 0 secrets found. SAST reported 6 findings on its first run; one was a
+  real defect (the probe accepted a URL that is not HTTP) and is fixed, and the others are
+  reviewed and listed in `docs/SECURITY.md`.
 
 ## The most useful thing the agent did
 
@@ -112,9 +117,12 @@ jobs and on one host, so the lifecycle can be reproduced with one command in abo
 
 ## Challenges
 
-- **A catalog update that did nothing.** Updating a flow in the AI Catalog returned success but
-  kept serving the old definition until the update carried a version bump and a release. The
-  provisioning script now reads the stored definition back and compares it by hash.
+- **A wrong diagnosis of our own.** When trigger sessions failed, we blamed the AI Catalog API:
+  we wrote that an update without a version bump changes nothing. Before reporting it upstream
+  we reproduced it, and it was not true: the update made a new released version. The defects
+  were in our flow definition. We withdrew the claim and kept the reproduction as evidence.
+  What stays from that episode is useful: the provisioning script reads the stored definition
+  back and compares it with the repository by hash.
 - **The headless CLI cannot select a custom flow.** We traced this to the CLI source, recorded
   it, and used the flow trigger, which is the supported path.
 - **A recovery window that proved nothing.** The first probe finished in 1.1 s. The verifier was
@@ -138,16 +146,17 @@ Every number in the video and in this text can be traced to an artifact.
 - In the recorded pipeline, the approval job was played through the API by the token owner. The
   gate enforces a real, non-agent identity; the recording does not show a person clicking.
 - The Duo flow investigates and recommends. It does not run the lifecycle.
-- GitLab MCP and GitLab security scanners are not used. No Google Cloud deployment is claimed.
+- GitLab MCP is not used. DAST, dependency scanning and container scanning are not enabled.
+  No Google Cloud deployment is claimed.
 
 ## What is next
 
-Security scanning in the pipeline, an approval through GitLab protected environments, a fault
+Dependency and container scanning, an approval through GitLab protected environments, a fault
 near the detection thresholds to measure false negatives, and a second service to test the
 design beyond one workload.
 
 ## Built with
 
-GitLab CI/CD, GitLab Duo Agent Platform, GitLab Duo Code Review, GitLab AI Catalog, GitLab
-Observability, Python, FastAPI, React, TypeScript, Tailwind CSS, Docker, OpenTelemetry, pytest,
+GitLab CI/CD, GitLab Duo Agent Platform, GitLab Duo Code Review, GitLab AI Catalog, GitLab SAST,
+GitLab Secret Detection, GitLab Observability, Python, FastAPI, React, TypeScript, Tailwind CSS, Docker, OpenTelemetry, pytest,
 Playwright
