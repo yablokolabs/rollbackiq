@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-10T04:59:36.249927+00:00",
+  "captured_at": "2026-10-10T05:06:36.948578+00:00",
   "captured_with": "scripts/duo_capture_run_evidence.py",
   "invocation": "duo run --output-format json (see docs/PROGRESS.md for the exact flags)",
   "excluded_and_why": "raw CLI stdout/stderr are not committed: the Duo CLI embeds AGENTS.md as plan_context and AGENTS.md quotes the prohibited attribution strings as policy, so the raw log trips the attribution guard. Only bounded fields above are kept.",
@@ -54,6 +54,45 @@
       "negotiated_flow_config_ids": [
         "developer"
       ]
+    },
+    {
+      "stdout_file": "duo-cf.json",
+      "session_id": "9283539",
+      "status": "success",
+      "exit_code": 0,
+      "schema_version": "1.0",
+      "response_chars": 115,
+      "response": "There was an error processing your request in the Duo Agent Platform, please contact support if the issue persists.",
+      "elements_total": 2,
+      "elements_by_type": {
+        "message": 1,
+        "tool": 1
+      },
+      "process_status": "exit=0",
+      "requested_actions": {},
+      "negotiated_flow_definition": [
+        "rollbackiq%2Frecovery-investigator%2Fv1"
+      ],
+      "negotiated_flow_config_ids": []
+    },
+    {
+      "stdout_file": "duo-cp.json",
+      "session_id": "9283555",
+      "status": "error",
+      "exit_code": 1,
+      "schema_version": "1.0",
+      "response_chars": 0,
+      "response": "",
+      "elements_total": 1,
+      "elements_by_type": {
+        "error": 1
+      },
+      "process_status": "exit=1",
+      "requested_actions": {},
+      "negotiated_flow_definition": [
+        "chat"
+      ],
+      "negotiated_flow_config_ids": []
     }
   ]
 }

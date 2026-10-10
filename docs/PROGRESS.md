@@ -4,7 +4,7 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow now exist in the AI Catalog** and are provisioned from the repository, but the headless CLI provably cannot select a custom flow (source line in the section below) — that is an evidenced blocker, not a silent gap. Two further real Duo investigations ran and one of them found a genuine bug in `safety.py`, now fixed and covered by tests. Remaining work is the dashboard, diagrams, the incident issue, the demo video, and the catalog-consumption route for custom-flow execution.
+**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow now exist in the AI Catalog**, are provisioned from the repository, and are enabled in the project; the headless CLI transmits the custom definition correctly but the Duo Workflow Service declines to instantiate it — an evidenced blocker with the wire output and the close code, not a silent gap. Two further real Duo investigations ran and one of them found a genuine bug in `safety.py`, now fixed and covered by tests. Remaining work is the dashboard, diagrams, the incident issue, the demo video, and the catalog-consumption route for custom-flow execution.
 
 ## GitLab pipeline: full lifecycle end to end (2026-10-10, `a192569`)
 
@@ -69,18 +69,35 @@ AGENTS.md §5 asks for **custom** Duo agent(s)/flow(s), not only a foundational 
 
 **Why that response means more than "green":** `definition` and `systemPrompt` are **write-only** — neither is exposed on `AiCatalogItemVersion` — so a re-assert is the only way to keep the catalog aligned with the repo, and the script states that instead of implying it diffed them. A clean response is evidence the definition *compiled server-side*, which is stronger than "the YAML parsed".
 
-### Blocker: the headless CLI cannot select a custom flow
+### Blocker: the custom flow reaches the service, which then refuses the session
 
-`duo run --flow-config <yaml>` **silently runs the developer flow instead**. Two captured runs (sessions `9283450` and `9283505`) both negotiated `workflow_definition=developer/v1` and `flowConfigId: developer`, and neither mentions the custom flow's component names. The cause is in the CLI's own published source:
+This took four runs to characterise, and the last two narrowed it properly rather than stopping at the first refusal. All four are in `evidence/duo-flow-runs.json`.
+
+**1 — `--flow-config` alone is silently ignored.** Sessions `9283450` and `9283505` negotiated `workflow_definition=developer/v1` and `flowConfigId: developer`, and never mention the custom flow's component names. The cause is in the CLI's own published source:
 
 ```ts
 // @gitlab/duo-cli — src/backend/gitlab/workflow_strategy.ts:407
 const legacy = !isHeadless && Boolean(backendOpts.legacy);
 ```
 
-A truthy `flow.developer` takes the branch at `gitlab_backend.ts:475` that sets `flowConfig = undefined`, and `--legacy` — the escape hatch to the branch that honours an explicit flow config — is disabled whenever the session is headless. So `duo run` always prefers the instance-advertised developer flow and `--flow-config` cannot override it. The catalog route (`ai_catalog_item_version_id`) exists in the workflow executor but is not exposed as a CLI flag; `aiCatalogItemConsumerCreate` is the remaining supported path, and it is the next Duo task.
+A truthy `flow.developer` takes the branch at `gitlab_backend.ts:475` that sets `flowConfig = undefined`, and `--legacy` — the escape hatch to the branch that honours an explicit flow config — is disabled whenever the session is headless. So plain `duo run` always prefers the instance-advertised developer flow.
 
-Recorded as a **blocker with evidence**, not worked around. The correct claim today is: *a custom Duo agent and custom flow exist in the AI Catalog and validate server-side; the headless CLI path provably cannot select one.*
+**2 — `--workflow-type` *is* honoured headless, and that escapes the override.** The neighbouring line is the key one:
+
+```ts
+// workflow_strategy.ts:406 — headless DOES honour the workflow type override
+const workflowTypeOverride = isHeadless ? backendOpts.workflowType : undefined;
+```
+
+It returns a `plainDescriptor`, which carries no `developer` field, so the session falls through to `#resolveExplicitFlowConfig()` and the explicit flow config *is* sent.
+
+**3 — the CLI then transmits the custom flow, pinned to my own definition.** Session `9283539` ran with `--workflow-type rollbackiq/recovery-investigator/v1 --flow-config duo/flows/…yaml`. The wire shows exactly what was intended: `workflow_definition=rollbackiq%2Frecovery-investigator%2Fv1`, and the log contains `"flowConfig": "# RollbackIQ Recovery Investigator — GitLab Duo custom f…"`. **So the mechanism works** — the custom flow definition genuinely reaches the Duo Workflow Service.
+
+**4 — the service refuses to run it.** Session `9283539` came back with an in-band service error (`There was an error processing your request in the Duo Agent Platform`), and session `9283555` — retried with `--workflow-type chat` and the CLI's own inline `environment: chat-partial` — failed with `WebSocket closed abnormally`, code `4400`. The service accepts the transport but will not instantiate a flow from an inline definition that is not registered in the flow registry.
+
+**Where that leaves it.** The flow is now **enabled in the project** (`aiCatalogItemConsumerCreate` with `itemId` + `target: {projectId: …}` returned `errors: []`; the group-level target was correctly refused with a permission error). Executing a custom flow therefore needs a surface that resolves a *registered* catalog flow — the Agent Platform / IDE / trigger path — not headless inline config.
+
+Recorded as a **blocker with evidence**, not worked around, and not glossed as success. The correct claim today is: *a real Duo flow executes and does genuine tool-driven investigation; a custom agent and custom flow exist in the AI Catalog, validate server-side, and are enabled in the project; the headless CLI transmits the custom definition correctly but the service declines to instantiate it.*
 
 ### Two real investigations, and the bug the first one found
 
