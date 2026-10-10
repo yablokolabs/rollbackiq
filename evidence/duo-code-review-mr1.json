@@ -1,0 +1,74 @@
+{
+  "captured_with": "GitLab REST API (merge request discussions) and GraphQL (duoWorkflowWorkflows)",
+  "merge_request": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/merge_requests/1",
+  "reviewed_commit": "c0e27a38",
+  "session": {
+    "id": "9290081",
+    "workflow_definition": "code_review/v1",
+    "agent_name": "Code Review",
+    "status": "FINISHED",
+    "created_at": "2026-10-10T20:00:25Z",
+    "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9290081"
+  },
+  "started_by": "the project owner, from GitLab Duo Chat",
+  "reviewer_limit_stated_by_the_review": "the tool output was truncated (about 45% shown), so docs, evidence and later files were not reviewed",
+  "notes": [
+    {
+      "note_id": 3990854715,
+      "discussion_id": "41c636a5871f308f27d2ff46ac149c0219b17192",
+      "author": "GitLabDuo",
+      "created_at": "2026-10-10T20:03:17.548Z",
+      "file": null,
+      "line": null,
+      "body": "I left three comments: two recommendations on `incident_api.py` (the timeline sort key, and a hardcoded rollback target that conflicts with the \"nothing invented\" rule) and one on npm scripts in `demo/videowright/package.json` that point at files I couldn't find. Note: the tool output was truncated (about 45% shown), so docs, evidence and later files were not reviewed. I estimate a small amount of work.",
+      "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/merge_requests/1#note_3990854715"
+    },
+    {
+      "note_id": 3990854725,
+      "discussion_id": "6c03a41b2bef11c78a9497546b1b92e80d749b14",
+      "author": "GitLabDuo",
+      "created_at": "2026-10-10T20:03:18.209Z",
+      "file": "backend/app/api/incident_api.py",
+      "line": 384,
+      "body": "Timeline events are ordered by comparing the raw timestamp strings, and the artifacts mix formats. Examples are `...:12Z` with no fractional part, `...:12.983406Z`, and `...:22.541698+00:00`. Compared as strings, `Z` (0x5A) sorts after `.` (0x2E) and `+` (0x2B). So an event stamped `12Z` is placed after a `12.98` event from the same second, even though it happened earlier. `test_timeline_is_ordered_and_contains_the_duo_report` cannot catch this, because it compares the output against a string sort of itself. Sort on parsed datetimes instead.\n```suggestion:-0+0\n    return sorted(\n        (e for e in events if e.at),\n        key=lambda e: datetime.fromisoformat(e.at.replace(\"Z\", \"+00:00\")),\n    )\n```\n",
+      "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/merge_requests/1#note_3990854725"
+    },
+    {
+      "note_id": 3990854745,
+      "discussion_id": "43077bd9144d80de03c83c160f7abde07cbcef31",
+      "author": "GitLabDuo",
+      "created_at": "2026-10-10T20:03:19.064Z",
+      "file": "backend/app/api/incident_api.py",
+      "line": 325,
+      "body": "The module promises not to invent anything that isn't in an artifact, but this timeline detail hardcodes \"target release v1\". The rollback target is already in the artifact, as `decision_data[\"decision\"][\"target_release\"]`, and `rollback-execution.json` records it. If the incident ever targets another release, the timeline will state the wrong one. Pass the target release into `_build_timeline` and format it from there.\n",
+      "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/merge_requests/1#note_3990854745"
+    },
+    {
+      "note_id": 3990854759,
+      "discussion_id": "b5d2a26705158b50161ed9aab73484d7656e227e",
+      "author": "GitLabDuo",
+      "created_at": "2026-10-10T20:03:19.579Z",
+      "file": "demo/videowright/package.json",
+      "line": 12,
+      "body": "The `screens` and `assets` scripts point at `scripts/capture_app_screens.mjs` and `scripts/sync_screens_to_assets.mjs`. Neither file appears in this MR's `demo/videowright/scripts/` directory, so `npm run screens` and `npm run assets` will fail. The README rebuild steps use `capture_gitlab_screens.py` instead. Either add the missing scripts or remove these two entries.\n",
+      "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/merge_requests/1#note_3990854759"
+    }
+  ],
+  "outcome": [
+    {
+      "finding": "timeline sorted by timestamp strings of mixed formats",
+      "verified": "true; the real timeline listed the baseline window before the v1 deployment",
+      "fix": "sort by parsed datetime; two tests"
+    },
+    {
+      "finding": "rollback timeline detail hardcodes 'target release v1'",
+      "verified": "true; decision.target_release exists in rollback-execution.json",
+      "fix": "read the target from the artifact; one test"
+    },
+    {
+      "finding": "npm scripts 'screens' and 'assets' point at missing files",
+      "verified": "true; copied with the scaffold",
+      "fix": "entries removed"
+    }
+  ]
+}

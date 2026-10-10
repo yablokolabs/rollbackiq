@@ -46,6 +46,7 @@ the truth.
 | GitLab Duo Agent Platform — custom **agent** and custom **flow** in the AI Catalog, provisioned from this repository | **Used and verified** | items `1016480` (agent) and `1016482` (flow); `scripts/duo_provision_catalog.py` reads stored content back and compares by SHA-256 |
 | Duo flow **trigger** on the project (event types: mention, assign) | **Used and verified** | trigger `3013795`; session `9288744` |
 | Duo CLI (`@gitlab/duo-cli`, foundational `developer` flow) | **Used and verified** | session `9283219` |
+| GitLab Duo Code Review on a merge request | **Used and verified** | session `9290081` (`code_review/v1`) on merge request !1: three findings, all confirmed against the code and fixed. `evidence/duo-code-review-mr1.json`. The review states that it saw about 45% of the diff |
 | Duo CLI selecting a **custom** flow headless | **Blocker, characterised** | the CLI transmits the custom definition; the service declines to instantiate it. Recorded with source lines in `docs/PROGRESS.md` |
 | GitLab Observability (OTLP collector) | **Used and verified at the collector** | 64 spans accepted, 0 failures |
 | GitLab MCP server (`POST /api/v4/mcp`) | **Blocker, characterised — not claimed** | the server answers `403 Forbidden` to `initialize` and `tools/list`: its own challenge requires the `mcp` scope, and the available token does not have it. `evidence/gitlab-mcp-probe.json`, written by `scripts/gitlab_mcp_probe.py` |

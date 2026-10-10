@@ -278,7 +278,7 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Incident state machine with illegal transitions rejected
 - [x] Safety gate: approval scope/expiry/actor, environment allowlist, known-good target, migration veto, idempotency
 - [x] Independent recovery verification (refuses non-independent or failed windows)
-- [x] Unit, negative and integration tests (108 passing)
+- [x] Unit, negative and integration tests (110 passing)
 - [x] Real GitLab Duo agent/flow execution — custom flow registered, enabled and executed (`evidence/duo-flow-trigger-session.json`)
 - [x] Real GitLab CI/CD deploy and rollback jobs (pipeline `2932808602`)
 - [x] Evidence-based investigation via Duo with GitLab context — the flow's audit note on issue #2 caught a real record error
@@ -295,6 +295,7 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Narrated demonstration video, 2:36, with a recording of a real run inside it (`demo/videos/rollbackiq-demo.mp4`, `demo/videowright/`)
 - [x] `test:pytest` observed green on a GitLab runner (pipeline `2934281629`, 61.8 s)
 - [x] Diagrams embedded in the README and rendered whole
+- [x] GitLab Duo Code Review on merge request !1: three findings fixed (`evidence/duo-code-review-mr1.json`)
 - [ ] A take with the approval played by hand in the GitLab UI, and the submission pass
 
 ## Work in progress
@@ -397,6 +398,7 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - **What the video does not show:** a person playing `approval:grant` in the GitLab UI. The Decide scene states that the token owner played it through the API.
 - **Console finding:** the 18 check details in the pipeline `2932808602` artifact carry the old failure-style wording beside a passed mark (the artifact predates the `safety.py` wording fix). The video therefore shows the approval record card only; the live footage shows the checks with the corrected wording.
 - **Diagrams.** The README named only the HTML sources, so GitLab showed no pictures; the five PNG files are now embedded. All five PNG files were also cut by 64 px on the right, because the renderer's viewport was narrower than the SVG. Fixed in `scripts/render_diagrams.py`.
+- **Duo Code Review on !1.** The user started it from Duo Chat: session `9290081`, workflow `code_review/v1`, `FINISHED`. Three findings, each verified before a change, all true: the timeline sorted timestamp strings of mixed formats (the console listed the baseline before the v1 deployment); the rollback event hardcoded "target release v1"; two npm scripts pointed at missing files. Fixed in `19f2660` and `bdac477`, with three tests (**110 passed**). The review saw about 45% of the diff, by its own statement. Record: `evidence/duo-code-review-mr1.json`. **Standing practice from the user:** assign the bot `duo-code-review-gitlab-ai-hackathon` (user id `33073382`) as reviewer on every merge request.
 - **CI.** Pipeline `2934281629` on the branch: `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` succeeded on a GitLab runner. The manual jobs wait.
 
 ### Session 008 (continued) — The demo run, the recording, and two bugs only a recording could find
