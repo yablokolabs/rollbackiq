@@ -18,7 +18,7 @@
 
 **Merged.** Merge request !1 was merged by the user on 2026-10-10 as `78acd60`; `main` holds all of session 008 and 009. Pipeline `2934572189` on `main` passed `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` on a GitLab runner, and waits at the manual job `deploy:regressed`.
 
-**Submission state (2026-10-10, late).** Merge requests !1 to !4 are merged. The video is on YouTube: https://youtu.be/rvs6M7xOTR0 (uploaded by the user; it must be set to Public, not Unlisted). `docs/DEVPOST.md` holds the text for the Devpost form. The logo and icon are in `assets/brand/`. Each merge request was reviewed by GitLab Duo (`/request_review @GitLabDuo`); sessions `9290081`, `9290175`, `9290263`, `9290288`, `9290302`, `9290469`. The organisers' four checks pass: public repository, MIT licence detected, pipeline history visible, Duo Agent Platform use evidenced. A proposal for GitLab contributor points (a blog post, two bug reports, one docs fix) waits for the user's approval; nothing is filed.
+**Ready to submit (2026-10-10, 21:50 UTC).** Merge requests !1 to !6 are merged; `main` is `96de2e1`. Pipeline `2934658911` on `main` passed `attribution-guard`, `semgrep-sast`, `secret_detection`, `test:pytest` (114 tests), `build:workload-image` and `deploy:staging` on a GitLab runner. The user confirmed that the YouTube video is Public. The video is on YouTube (https://youtu.be/rvs6M7xOTR0), `docs/DEVPOST.md` holds the text for the Devpost form, and the logo and icon are in `assets/brand/`. Each merge request was reviewed by GitLab Duo (`/request_review @GitLabDuo`); the finished review sessions up to this checkpoint are `9290081`, `9290175`, `9290261`, `9290263`, `9290287`, `9290288`, `9290302`, `9290468`, `9290469`, `9290537`, `9290538`, `9290565`, `9290724`, `9290725`, `9290768`, `9290782`, `9290833`, `9290834`, `9290847`. The organisers' four checks pass: public repository, MIT licence detected, pipeline history visible, Duo Agent Platform use evidenced. What is left is the user's Devpost form, and optional work: the hand-played approval take, GitLab MCP (needs the user's sign-in), and contributor points (a blog draft and a verified Duo CLI issue draft exist in `docs/blog/` and `docs/contributions/`; neither is published or filed).
 
 **Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Later in the session: the narrated demonstration video was built (`demo/videos/rollbackiq-demo.mp4`, 2:36, VideoWright project in `demo/videowright/`), the diagrams were embedded in the README and re-rendered whole, and the branch pipeline ran `test:pytest` on a runner for the first time (success). Open: a take with the approval played by hand in the GitLab UI, and the GitLab MCP token.
 
@@ -223,9 +223,9 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-1. **Submit on Devpost** (the user): paste `docs/DEVPOST.md`, the repository link and https://youtu.be/rvs6M7xOTR0; name GitLab in Built With.
-2. **A take with the approval played by hand** (the user, optional for the submission): pipeline `2934572189` on `main`, steps in `docs/DEMO.md` §6.
-3. **GitLab MCP** (needs a token with the `mcp` scope) and the **contributor-points proposal** (needs the user's approval).
+1. **Submit on Devpost** (the user): paste `docs/DEVPOST.md`, the repository link and the YouTube link; name GitLab in Built With.
+2. **Contributor points** (optional): publish `docs/blog/duo-reviewed-my-recovery-agent.md` and file `docs/contributions/duo-cli-flow-config-ignored.md` (both by the user; this session may not write to GitLab's own projects). Reproduce each remaining candidate before anything else is filed.
+3. **Optional:** the hand-played approval take on the newest `main` pipeline (`docs/DEMO.md` §6), and GitLab MCP after the user signs in with `/mcp`.
 
 Resolved uncertainties from the first pipeline: `docker:27-dind` **is** permitted on the shared runner; the registry accepts the image once the job logs in; `apk add python3 py3-pip` plus `pip install --break-system-packages` works on the Alpine `docker:27` image; and `GITLAB_USER_LOGIN` **is** populated for manual jobs.
 
@@ -360,9 +360,11 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`. VideoWright is a project dependency in `demo/videowright/` (`npm ci`). `context-mode` is installed as a CLI (`context-mode index|search`).
 
 ## Next three actions
-1. **The user submits on Devpost** and confirms that the YouTube video is Public.
-2. **Contributor points**, if the user approves: draft the blog post first; then search for duplicates and reproduce before any issue is filed on a GitLab project.
-3. **The hand-played approval take**, and GitLab MCP when a token with the `mcp` scope exists.
+1. **The user submits on Devpost.**
+2. **Contributor points:** the user publishes the blog post and files the verified Duo CLI issue (`docs/contributions/`); other candidates are reproduced first.
+3. **Housekeeping that this session could not do** (blocked by its permission system): archive the duplicate `rollbackiq` project, remove the local remote `rollbackiq-project`, delete the merged local branches.
+
+Optional work is not in this list; it is tracked under "Current task": the hand-played approval take, and GitLab MCP after the user signs in.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
@@ -376,7 +378,7 @@ cd /home/azureuser/rollbackiq && git switch main && git pull --ff-only origin ma
 ```
 
 ## Latest Git commit
-`main` = `origin/main` = `78acd60` (merge of !1, tip `53815d7`), plus the small checkpoint merge request that follows it. New work goes on a branch with a merge request to `showcase`, and each merge request gets `/request_review @GitLabDuo`. The remote `rollbackiq-project` is not used.
+`main` = `origin/main` = `96de2e1` (merge of !6), plus the small documents merge request that follows it. New work goes on a branch with a merge request to `showcase`, and each merge request gets `/request_review @GitLabDuo`.
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active and reachable over HTTP on port 8888 (the `hindsight` CLI is not installed; use `POST /v1/default/banks/rollbackiq/memories` and `…/memories/recall`). Session 009 findings are retained. No secrets are stored.
