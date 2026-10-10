@@ -77,15 +77,17 @@
   ],
   "what_ran": "attribution-guard; build and push of the workload image with its immutable digest; a health-gated deploy of v1 plus a baseline window; a deliberate v2 regression that required the real detector to fire; a human approval recorded against GITLAB_USER_LOGIN; the safety-gated rollback; and an independent verification job.",
   "detection_measured_in_ci": {
-    "window_1_p95_ratio": 6.31,
+    "window_1_p95_ratio": 8.59,
     "window_1_error_rate": 0.133,
-    "window_2_p95_ratio": 6.43,
+    "window_2_p95_ratio": 8.75,
     "window_2_error_rate": 0.083,
     "breaches": [
       "P95_LATENCY",
       "ERROR_RATE"
     ],
-    "triggered_on_window": 2
+    "triggered_on_window": 2,
+    "baseline_p95_ms": 27.242767000018375,
+    "source": "evidence/gitlab-ci-lifecycle-artifacts/ci-detection.json"
   },
   "verification_measured_in_ci": {
     "recovered": true,

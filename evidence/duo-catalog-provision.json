@@ -1,0 +1,49 @@
+{
+  "captured_at": "2026-10-10T17:35:29.485309+00:00",
+  "captured_with": "scripts/duo_provision_catalog.py (GitLab GraphQL AI Catalog API)",
+  "project_id": "87424071",
+  "graphql_endpoint": "https://gitlab.com/api/graphql",
+  "dry_run": false,
+  "definition_source": "duo/flows/rollbackiq-recovery-investigator.yaml",
+  "agent_prompt_source": "duo/agents/rollbackiq-recovery-investigator.md",
+  "write_only_fields": [
+    "definition",
+    "systemPrompt"
+  ],
+  "items": [
+    {
+      "item_type": "AGENT",
+      "name": "RollbackIQ Recovery Investigator",
+      "action": "updated",
+      "id": "gid://gitlab/Ai::Catalog::Item/1016480",
+      "version_name": null,
+      "source_file": "duo/agents/rollbackiq-recovery-investigator.md",
+      "read_back": {
+        "version": "1.1.0",
+        "identical": true,
+        "note": null
+      }
+    },
+    {
+      "item_type": "FLOW",
+      "name": "RollbackIQ Recovery Investigator Flow",
+      "action": "updated",
+      "id": "gid://gitlab/Ai::Catalog::Item/1016482",
+      "version_name": "1.0.0",
+      "source_file": "duo/flows/rollbackiq-recovery-investigator.yaml",
+      "read_back": {
+        "version": "1.1.2",
+        "identical": true,
+        "note": null
+      }
+    }
+  ],
+  "operations": [
+    "aiCatalogItems(search='RollbackIQ Recovery Investigator')",
+    "AGENT update 'RollbackIQ Recovery Investigator'",
+    "read back gid://gitlab/Ai::Catalog::Item/1016480",
+    "aiCatalogItems(search='RollbackIQ Recovery Investigator Flow')",
+    "FLOW update 'RollbackIQ Recovery Investigator Flow'",
+    "read back gid://gitlab/Ai::Catalog::Item/1016482"
+  ]
+}

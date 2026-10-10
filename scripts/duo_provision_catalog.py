@@ -18,14 +18,22 @@ file re-asserts the edited content onto the catalog item.
     GITLAB_TOKEN=... .venv/bin/python scripts/duo_provision_catalog.py --evidence PATH
     GITLAB_TOKEN=... .venv/bin/python scripts/duo_provision_catalog.py --dry-run
 
-Two API facts, learned by probing the live schema, shape this script:
+Three API facts, each learned the hard way against the live schema, shape this script:
 
-* ``definition`` and ``systemPrompt`` are **write-only**. Neither is exposed on
-  ``AiCatalogItemVersion``, so the script cannot read the stored value back and diff it.
-  A re-assert is the only available way to guarantee the catalog matches this repository,
-  and the script says so instead of implying it verified equality.
-* The flow definition is validated server-side and rejects with per-field errors, so a
-  clean response is real evidence the definition compiled rather than merely parsed.
+* An update that omits ``versionBump`` and ``release`` is a **silent no-op**: the mutation
+  returns ``errors: []`` while creating no version and leaving the stored definition
+  unchanged. Flow-trigger sessions keep running the old revision while the script reports
+  success. Updates therefore pass ``versionBump: "PATCH"`` and ``release: true``.
+* The stored content **is** readable, just not through the interface type.
+  ``AiCatalogItemVersion`` has no ``definition``/``systemPrompt`` field, but the concrete
+  version types do, so an inline fragment (``... on AiCatalogFlowVersion { definition }``
+  / ``... on AiCatalogAgentVersion { systemPrompt }``) reads the value back. The script
+  compares that value with the repository file by SHA-256, so drift or a silent no-op is
+  reported rather than assumed away.
+* The flow definition is validated server-side and rejects with per-field errors (for
+  example, a ``params`` mapping is refused: ``params`` must be a string or a list of
+  strings). A clean response is real evidence the definition compiled rather than merely
+  parsed.
 
 The token is read from ``GITLAB_TOKEN`` and is never printed, logged or written to the
 evidence file.
@@ -34,6 +42,7 @@ evidence file.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -90,6 +99,19 @@ query FindItems($search: String!) {
       itemType
       public
       ... on AiCatalogFlow { versions { nodes { id versionName } } }
+    }
+  }
+}
+"""
+READ_BACK = """
+query ReadBack($id: AiCatalogItemID!) {
+  aiCatalogItem(id: $id) {
+    versions(first: 3) {
+      nodes {
+        versionName
+        ... on AiCatalogFlowVersion { definition }
+        ... on AiCatalogAgentVersion { systemPrompt }
+      }
     }
   }
 }
@@ -191,9 +213,37 @@ class CatalogClient:
         if dry_run:
             return "would-update", existing["id"], _version_name(existing)
 
-        variables = {"input": {"id": existing["id"], payload_field: payload}}
+        # versionBump/release are not optional decoration: without them the mutation
+        # reports no errors and changes nothing, which is how the catalog once kept
+        # serving an old flow revision while provisioning reported success.
+        variables = {
+            "input": {
+                "id": existing["id"],
+                payload_field: payload,
+                "versionBump": "PATCH",
+                "release": True,
+            }
+        }
         self.execute(update_query, variables, f"{item_type} update {name!r}")
         return "updated", existing["id"], _version_name(existing)
+
+    def read_back(self, item_id: str, payload: str) -> Tuple[Optional[str], Optional[bool], Optional[str]]:
+        """Read the newest stored version and compare it with the repository payload.
+
+        Returns ``(version_name, identical, note)``. ``identical`` is ``None`` only when
+        the server returned no readable content for the item, and ``note`` then says why.
+        """
+        data = self.execute(READ_BACK, {"id": item_id}, f"read back {item_id}")
+        nodes = ((data.get("aiCatalogItem") or {}).get("versions") or {}).get("nodes") or []
+        for node in nodes:
+            stored = node.get("definition") or node.get("systemPrompt")
+            if stored is None:
+                continue
+            identical = hashlib.sha256(stored.encode()).hexdigest() == hashlib.sha256(
+                payload.encode()
+            ).hexdigest()
+            return node.get("versionName"), identical, None
+        return None, None, "the server returned no definition/systemPrompt for this item"
 
 
 def _version_name(item: Dict[str, Any]) -> Optional[str]:
@@ -254,19 +304,25 @@ def main(argv: List[str]) -> int:
                     update_query=update,
                     dry_run=args.dry_run,
                 )
-                actions.append(
-                    {
-                        "item_type": item_type,
-                        "name": name,
-                        "action": action,
-                        "id": item_id,
-                        "version_name": version,
-                        "source_file": str(
-                            (AGENT_PROMPT_PATH if item_type == "AGENT" else FLOW_DEFINITION_PATH)
-                            .relative_to(REPO_ROOT)
-                        ),
+                record = {
+                    "item_type": item_type,
+                    "name": name,
+                    "action": action,
+                    "id": item_id,
+                    "version_name": version,
+                    "source_file": str(
+                        (AGENT_PROMPT_PATH if item_type == "AGENT" else FLOW_DEFINITION_PATH)
+                        .relative_to(REPO_ROOT)
+                    ),
+                }
+                if not args.dry_run:
+                    rb_version, identical, note = client.read_back(item_id, payload)
+                    record["read_back"] = {
+                        "version": rb_version,
+                        "identical": identical,
+                        "note": note,
                     }
-                )
+                actions.append(record)
             operations = [call["operation"] for call in client.calls]
     except (httpx.HTTPError, ProvisionError) as exc:
         print(f"catalog provisioning failed: {exc}", file=sys.stderr)
@@ -276,12 +332,20 @@ def main(argv: List[str]) -> int:
         version = f" v{action['version_name']}" if action["version_name"] else ""
         print(f"{action['action']:>9}  {action['item_type']:<5} {action['id']}{version}")
         print(f"           from {action['source_file']}")
+        read_back = action.get("read_back") or {}
+        if read_back.get("identical") is True:
+            print(f"           read back v{read_back['version']}: identical to the repository file")
+        elif read_back.get("identical") is False:
+            print(f"           read back v{read_back['version']}: DIFFERS from the repository file")
+        elif read_back:
+            print(f"           read back: not verifiable ({read_back.get('note')})")
 
     if not args.dry_run:
         print(
-            "\nNote: `definition` and `systemPrompt` are write-only, so this re-asserted the\n"
-            "repository content onto the items rather than proving the catalog already\n"
-            "matched. A clean response means each definition compiled server-side."
+            "\nNote: updates pass versionBump/release, because an update without them is a\n"
+            "silent no-op that returns no errors and changes nothing. The read-back above is\n"
+            "the actual verification: the stored definition/systemPrompt is compared with\n"
+            "the repository file by SHA-256."
         )
 
     if args.evidence:
@@ -306,7 +370,12 @@ def main(argv: List[str]) -> int:
 
     if args.dry_run:
         return 0
-    return 0 if all(a["action"] in {"created", "updated"} for a in actions) else 1
+    verified = all(
+        a["action"] in {"created", "updated"}
+        and (a.get("read_back") or {}).get("identical") is True
+        for a in actions
+    )
+    return 0 if verified else 1
 
 
 if __name__ == "__main__":

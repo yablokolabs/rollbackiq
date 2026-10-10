@@ -1,0 +1,153 @@
+{
+  "captured_at": "2026-10-10T17:26:01.399765+00:00",
+  "captured_with": "scripts/duo_trigger_flow.py (GitLab REST + GraphQL APIs)",
+  "trigger_surface": "flow trigger event type 'mention' (service account mentioned in an issue comment)",
+  "project_id": "87424071",
+  "issue_iid": "2",
+  "service_account": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+  "trigger_note": {
+    "id": 3990209130,
+    "url": "https://gitlab.com/api/v4/projects/87424071/issues/2/notes/3990209130"
+  },
+  "fired_at": "2026-10-10T17:24:59.319930+00:00",
+  "session": {
+    "id": "gid://gitlab/Ai::DuoWorkflows::Workflow/9288721",
+    "status": "FAILED",
+    "humanStatus": "failed",
+    "workflowDefinition": "ai_catalog_agent",
+    "agentName": "RollbackIQ Recovery Investigator Flow",
+    "goal": "Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+    "createdAt": "2026-10-10T17:25:00Z",
+    "updatedAt": "2026-10-10T17:25:51Z"
+  },
+  "events": [
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "There was an error processing your request in the Duo Agent Platform, please contact support if the issue persists.\n```\nError: KeyError\n```",
+      "message_type": "agent"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": "Starting Flow: Input: <!-- All non-system discussion messages through the triggering message are included. -->\n<message id=\"3990209130\" author=\"@yablokolabs\">\n@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this work item and the repository, and mark anything you could not retrieve as missing. Keep the reply under 400 words.\n</message>\nContext: {Issue IID: 2}",
+      "message_type": "tool"
+    },
+    {
+      "workflow_status": "FAILED",
+      "execution_status": "Failed",
+      "errors": [],
+      "last_message": null,
+      "message_type": null
+    }
+  ],
+  "issue_notes_after_run": [
+    {
+      "id": 3990210263,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": true,
+      "created_at": "2026-10-10T17:25:51.289Z",
+      "body": "session [9288721](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9288721) failed (dropped)"
+    },
+    {
+      "id": 3990209148,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": true,
+      "created_at": "2026-10-10T17:25:00.525Z",
+      "body": "started session [9288721](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9288721) triggered by @yablokolabs"
+    },
+    {
+      "id": 3990209138,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": false,
+      "created_at": "2026-10-10T17:25:00.151Z",
+      "body": "\u2705 RollbackIQ Recovery Investigator Flow has started. You can view progress <a href=\"https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9288721\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
+    },
+    {
+      "id": 3990209130,
+      "author": "yablokolabs",
+      "system": false,
+      "created_at": "2026-10-10T17:24:59.610Z",
+      "body": "@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this"
+    },
+    {
+      "id": 3988495439,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": true,
+      "created_at": "2026-10-10T05:12:44.149Z",
+      "body": "session [9283600](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9283600) failed (dropped)"
+    },
+    {
+      "id": 3988494399,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": true,
+      "created_at": "2026-10-10T05:11:54.099Z",
+      "body": "started session [9283600](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9283600) triggered by @yablokolabs"
+    },
+    {
+      "id": 3988494349,
+      "author": "ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon",
+      "system": false,
+      "created_at": "2026-10-10T05:11:53.763Z",
+      "body": "\u2705 RollbackIQ Recovery Investigator Flow has started. You can view progress <a href=\"https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/automate/agent-sessions/9283600\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
+    },
+    {
+      "id": 3988494341,
+      "author": "yablokolabs",
+      "system": false,
+      "created_at": "2026-10-10T05:11:53.325Z",
+      "body": "@ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon investigate this incident and recommend a course of action.\n\nState which hypotheses the evidence supports and which it contradicts, name what you cannot distinguish and what observation would resolve it, and recommend roll back, hold or escalate with the residual risk of that choice.\n\nReport only what you can actually retrieve from this"
+    },
+    {
+      "id": 3988494176,
+      "author": "yablokolabs",
+      "system": true,
+      "created_at": "2026-10-10T05:11:43.668Z",
+      "body": "set status to **To do**"
+    }
+  ]
+}
