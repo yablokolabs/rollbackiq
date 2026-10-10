@@ -54,8 +54,8 @@ saw only part of a large diff, which I appreciated.
 
 I added GitLab's SAST and secret detection templates late. Secret detection found nothing. SAST
 reported six findings. Five were the same pattern, and three of those were not reachable. But
-two were real: my probe took its whole URL from the command line, and `urllib` also opens
-`file://`. The probe produces the evidence for detection and for recovery, so it must measure an
+one real defect produced the other two: my probe took its whole URL from the command line, and
+`urllib` also opens `file://`. The probe produces the evidence for detection and for recovery, so it must measure an
 HTTP service and nothing else. Now it refuses any other scheme.
 
 The scanner still reports those two calls, because it matches the pattern and not the check
