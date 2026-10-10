@@ -28,6 +28,7 @@ has not happened.
 | GitLab CI/CD deploy, approval gate and rollback | **Implemented and verified in CI** — pipeline `2932808602`, every job green | `evidence/gitlab-ci-lifecycle-artifacts/`, `docs/PROGRESS.md` |
 | GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
 | Control-plane API and incident console | **Implemented and verified locally** — the API serves typed JSON read from the pipeline's own artifacts, and every dashboard view renders with no page or console errors | `backend/app/api/incident_api.py`, `dashboard/`, `docs/screenshots/` |
+| Diagrammed architecture, security model and evaluation | **Implemented and verified locally** — five diagrams, each self-checked and geometry-audited, plus the documentation set | `docs/diagrams/`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/EVALUATION.md`, `docs/DEMO.md`, `docs/COMPETITION_COMPLIANCE.md` |
 
 Test suite: **98 passing** (`pytest`).
 
@@ -130,12 +131,32 @@ backend/app/models/       incident state machine, metric windows, releases, appr
 backend/app/services/     detector, safety gate, verifier, collector, stats
 backend/tests/            unit, negative and integration tests (98)
 dashboard/                the incident console (React + TypeScript + Tailwind)
+docs/diagrams/            five diagrams (HTML + SVG source, rendered PNG) and their checks
+docs/ARCHITECTURE.md      components, the two flows, the constraints and known limitations
+docs/SECURITY.md          the trust boundary, every gate check, injection and secret handling
+docs/EVALUATION.md        measured results, how each was verified, and what they do not show
+docs/DEMO.md              reproduction paths and the under-3-minute video storyboard
+docs/COMPETITION_COMPLIANCE.md   stage-by-stage coverage, and what is not claimed
 demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
 duo/                      custom Duo agent prompt + flow definition (provisioned to the AI Catalog)
 scripts/                  demo regression runner, attribution guard, catalog provisioning, Git hooks
 evidence/                 raw measured records from real runs
 docs/PROGRESS.md          session checkpoint and current blockers
 ```
+
+## Diagrams and documentation
+
+```bash
+.venv/bin/python scripts/render_diagrams.py         # self-check + render each diagram to PNG
+.venv/bin/python scripts/check_diagram_geometry.py  # measured audit of the connector rules
+```
+
+The five diagrams (architecture, Duo sequence, incident state machine, trust-boundary layers,
+measured pipeline timeline) are drawn with the [`diagram-design`](https://github.com/cathrynlavery/diagram-design)
+skill and each is one self-contained HTML file with an inline SVG. `render_diagrams.py` runs the
+skill's own accessible-SVG check and then screenshots only the `<svg>` node; the geometry audit
+measures what cannot be eyeballed — text collisions, off-canvas text, diagonal connectors, and
+label masks sitting on node boxes. See `docs/diagrams/README.md`.
 
 ## The incident console
 

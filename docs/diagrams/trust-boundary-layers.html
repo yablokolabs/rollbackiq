@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RollbackIQ trust boundary — where each control is enforced</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #f5f5f5;
+      --color-paper-2:#ececec;
+      --color-ink:    #2d3142;
+      --color-muted:  #4f5d75;
+      --color-soft:   #5a6580;
+      --color-accent: #bf4520;
+      --color-link:   #2e5aa8;
+      --color-rule:   rgba(45,49,66,0.12);
+      --font-sans:  'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', serif;
+      --font-mono:  'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1360px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 0.75rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--color-muted);
+      max-width: 68ch;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 1280px; display: block; }
+    .cards {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 0.9fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--color-rule);
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+    .card .eyebrow { margin-bottom: 0.75rem; }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-header h3 { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+    .card-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
+    .card-dot.coral { background: var(--color-accent); }
+    .card-dot.ink { background: var(--color-ink); }
+    .card-dot.link { background: var(--color-link); }
+    .card ul { list-style: none; }
+    .card li {
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      line-height: 1.5;
+      padding-left: 0.9rem;
+      position: relative;
+      margin-bottom: 0.35rem;
+    }
+    .card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 1px;
+      background: var(--color-soft);
+    }
+    .footer {
+      margin-top: 1.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-rule);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--color-muted);
+      line-height: 1.6;
+    }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Trust boundary · RollbackIQ</p>
+    <h1>Five registers between a recommendation and a running deployment</h1>
+    <p class="subtitle">The agent's output is a proposal. Authority to change a deployment lives in the register
+      below it, and each register can only act through the one underneath — which is why a green rollback job is
+      not what certifies recovery.</p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rollbackiq-trust-title rollbackiq-trust-desc">
+        <title id="rollbackiq-trust-title">Where each RollbackIQ control is enforced</title>
+        <desc id="rollbackiq-trust-desc">A five-layer stack from the Duo flow's proposal through the incident state machine, the safety gate's eighteen checks, an allowlisted CI/CD job, to the demo-staging container, with the six observed refusal codes below it.</desc>
+        <defs>
+          <marker id="arrow-down" markerWidth="6" markerHeight="8" refX="3" refY="7" orient="auto">
+            <polygon points="0 0, 6 0, 3 8" fill="#bf4520"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- Stack silhouette -->
+        <rect x="120" y="140" width="1000" height="320" rx="8" fill="#f5f5f5" stroke="#4f5d75" stroke-width="1"/>
+
+        <!-- 01 PROPOSE -->
+        <rect x="120" y="140" width="1000" height="64" fill="none"/>
+        <text x="144" y="178" fill="#5a6580" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">01</text>
+        <text x="200" y="172" fill="#2d3142" font-size="15" font-weight="600" font-family="'Geist', system-ui, sans-serif">Duo flow recommendation</text>
+        <text x="200" y="190" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">proposes only · the flow has no deploy, approve or rollback tool</text>
+        <text x="1096" y="178" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="end">duo/flows · 1016482</text>
+        <line x1="120" y1="204" x2="1120" y2="204" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+
+        <!-- 02 RECORD -->
+        <text x="144" y="242" fill="#5a6580" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">02</text>
+        <text x="200" y="236" fill="#2d3142" font-size="15" font-weight="600" font-family="'Geist', system-ui, sans-serif">Incident state machine</text>
+        <text x="200" y="254" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">a denied or expired approval escalates · an illegal move raises</text>
+        <text x="1096" y="242" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="end">models/incident.py</text>
+        <line x1="120" y1="268" x2="1120" y2="268" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+
+        <!-- 03 AUTHORIZE (focal) -->
+        <rect x="120" y="268" width="1000" height="64" fill="rgba(191,69,32,0.08)"/>
+        <text x="144" y="306" fill="#bf4520" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">03</text>
+        <text x="200" y="300" fill="#2d3142" font-size="15" font-weight="600" font-family="'Geist', system-ui, sans-serif">Safety gate</text>
+        <text x="200" y="318" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">18 checks, every veto reported · fails closed on anything unknown</text>
+        <text x="1096" y="306" fill="#bf4520" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="end">services/safety.py</text>
+        <line x1="120" y1="332" x2="1120" y2="332" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+
+        <!-- 04 EXECUTE -->
+        <text x="144" y="370" fill="#5a6580" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">04</text>
+        <text x="200" y="364" fill="#2d3142" font-size="15" font-weight="600" font-family="'Geist', system-ui, sans-serif">Allowlisted CI/CD job</text>
+        <text x="200" y="382" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">one target, one environment, one idempotency key per attempted action</text>
+        <text x="1096" y="370" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="end">scripts/ci_rollback.py</text>
+        <line x1="120" y1="396" x2="1120" y2="396" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+
+        <!-- 05 TARGET -->
+        <text x="144" y="434" fill="#5a6580" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">05</text>
+        <text x="200" y="428" fill="#2d3142" font-size="15" font-weight="600" font-family="'Geist', system-ui, sans-serif">demo-staging container</text>
+        <text x="200" y="446" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">one image, two deployment input sets · never customer infrastructure</text>
+        <text x="1096" y="434" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="end">docker compose</text>
+
+        <!-- Direction indicator (left margin) -->
+        <line x1="92" y1="176" x2="92" y2="424" stroke="#bf4520" stroke-width="1.2" marker-end="url(#arrow-down)"/>
+        <text x="24" y="292" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">AUTHORITY</text>
+        <text x="24" y="304" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">ONLY DOWN</text>
+
+        <!-- Refusal evidence -->
+        <text x="120" y="512" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">SIX REFUSALS RUN AGAINST THE REAL GATE · EACH NAMED A DIFFERENT GUARD AND EXITED 2</text>
+
+        <rect x="120" y="524" width="105" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="172" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">APPROVAL_PRESENT</text>
+
+        <rect x="241" y="524" width="150" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="316" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">APPROVAL_ACTOR_IS_HUMAN</text>
+
+        <rect x="407" y="524" width="139" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="476" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">ENVIRONMENT_ALLOWLISTED</text>
+
+        <rect x="562" y="524" width="128" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="626" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">TARGET_IS_KNOWN_GOOD</text>
+
+        <rect x="706" y="524" width="100" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="756" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">DIGEST_MISMATCH</text>
+
+        <rect x="822" y="524" width="128" height="28" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+        <text x="886" y="542" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">NOT_ALREADY_EXECUTED</text>
+
+        <!-- Callout -->
+        <line x1="120" y1="592" x2="120" y2="628" stroke="#bf4520" stroke-width="1.2"/>
+        <text x="136" y="606" fill="#2d3142" font-family="'Instrument Serif', serif" font-style="italic" font-size="14">Proof the refusals changed nothing: the container's StartedAt (03:29:18) still matches the one successful rollback at 03:29:16.9.</text>
+        <text x="136" y="628" fill="#2d3142" font-family="'Instrument Serif', serif" font-style="italic" font-size="14">Code rollback does not restore deleted data; that is a separate, human-controlled operation this system does not perform.</text>
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">Refusals</p>
+        <div class="card-header">
+          <span class="card-dot coral"></span>
+          <h3>What the gate refuses</h3>
+        </div>
+        <ul>
+          <li>A missing, denied, expired or out-of-scope approval</li>
+          <li>An approver that is not a human identity</li>
+          <li>An environment that is not on the allowlist</li>
+          <li>A target this system never observed as healthy</li>
+          <li>Migration compatibility that is unknown rather than compatible</li>
+          <li>A replay of an idempotency key the ledger already consumed</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Failure behaviour</p>
+        <div class="card-header">
+          <span class="card-dot ink"></span>
+          <h3>How it fails</h3>
+        </div>
+        <ul>
+          <li>Fails closed: unknown means refuse, never "probably fine"</li>
+          <li>Reports every veto, not just the first one</li>
+          <li><code>deploy:regressed</code> exits non-zero and writes no bundle unless the real detector fires</li>
+          <li><code>verify:recovery</code> fails the pipeline when the window cannot prove stability</li>
+          <li>A rollback job that exited zero is never recorded as recovery</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Source of truth</p>
+        <div class="card-header">
+          <span class="card-dot link"></span>
+          <h3>Where it lives</h3>
+        </div>
+        <ul>
+          <li><code>services/safety.py</code> — the gate</li>
+          <li><code>models/incident.py</code> — legal transitions</li>
+          <li><code>scripts/ci_rollback.py</code> — gated executor and ledger</li>
+          <li><code>services/verifier.py</code> — refuses to certify from reused data</li>
+          <li><code>duo/flows/…yaml</code> — no deploy tool exists</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">Refusal codes and the container timestamps are the measured results in
+      <code>docs/PROGRESS.md</code> and <code>evidence/local-ci-lifecycle/</code>, not illustrations.</p>
+  </div>
+</body>
+</html>
