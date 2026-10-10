@@ -64,7 +64,11 @@ def main(argv: list[str]) -> int:
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
-        page = browser.new_page(device_scale_factor=args.scale)
+        # Wider than the SVG's 1280px minimum plus the page padding. In a narrower
+        # viewport the scroll container cuts off the right edge of the diagram.
+        page = browser.new_page(
+            viewport={"width": 1440, "height": 900}, device_scale_factor=args.scale
+        )
         problems: list[str] = []
         page.on("pageerror", lambda exc: problems.append(f"pageerror: {exc}"))
         page.on(
