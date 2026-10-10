@@ -258,11 +258,15 @@ verify:recovery:
         --network "$DOCKER_NETWORK" --environment "$DEPLOY_ENV" \
         --commit-sha "$CI_COMMIT_SHA" --pipeline-id "$CI_PIPELINE_ID" --digest "$DIGEST" \
         --out evidence/deploy-verify.json
+    # --min-duration is not decoration. A healthy service answers as fast as it
+    # is asked, so an unpaced burst produces a window about a second long, which
+    # the verifier refuses as too short to demonstrate stability — correctly, and
+    # it failed this job the first time the pipeline ran.
     - |
       python3 scripts/ci_release.py probe \
         --target "$WORKLOAD_CONTAINER-verify:8000" --in-container "$WORKLOAD_IMAGE" \
         --network "$DOCKER_NETWORK" --samples 200 --concurrency 4 \
-        --environment "$DEPLOY_ENV" --expect-release v1 \
+        --environment "$DEPLOY_ENV" --expect-release v1 --min-duration 6 \
         --out evidence/verify-window.json
     - |
       python3 scripts/ci_release.py verify \
