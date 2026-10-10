@@ -8,7 +8,8 @@ than it looks, the weakness is written next to it.
 | Command | Where | Result |
 | --- | --- | --- |
 | `.venv/bin/python -m pytest` | this host | **110 passed** |
-| `pip install -r backend/requirements.txt; pip install -r demo/service/requirements.txt; python -m pytest` | `python:3.12-slim` in Docker, i.e. `test:pytest`'s exact commands | **98 passed** in 39 s |
+| `pip install -r backend/requirements.txt; pip install -r demo/service/requirements.txt; python -m pytest` | `python:3.12-slim` in Docker, i.e. `test:pytest`'s exact commands | 98 passed in 39 s, in session 008, before the session 009 tests existed |
+| the `test:pytest` job | GitLab.com shared runner, pipeline 2934572189 on `main` (job 17086793140) | **110 passed** in 44.66 s |
 
 Coverage of the parts that decide:
 
