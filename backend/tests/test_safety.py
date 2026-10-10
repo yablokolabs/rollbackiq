@@ -230,3 +230,46 @@ def test_audit_context_contains_veto_codes():
     context = verdict.to_audit_context()
     assert context["allowed"] == "False"
     assert "TARGET_RELEASE_KNOWN" in context["veto_codes"]
+
+
+def test_a_passing_check_detail_describes_the_passing_outcome():
+    """A passing check must not carry its failure wording.
+
+    The verdict is the artifact an operator reads, so a check that passed while
+    rendering "actor is not an authorized human identity" contradicts its own
+    ``passed`` field. A real Duo investigation of this gate found exactly that
+    inversion across several checks, alongside ``passed: true``.
+    """
+    verdict = run_gate()
+    assert verdict.allowed is True
+    details = {c.code: c.detail for c in verdict.checks}
+
+    assert details["APPROVAL_ACTOR_IS_HUMAN"] == (
+        "approval actor 'sre@example.com' is an authorized human identity"
+    )
+    assert details["CURRENT_RELEASE_KNOWN"] == "current deployed release is 'v2'"
+    assert details["NOT_ALREADY_EXECUTED"] == (
+        "idempotency key 'rollback-inc-1-v1' has not been executed"
+    )
+    assert "was verified healthy" in details["TARGET_IS_KNOWN_GOOD"]
+    assert details["APPROVAL_PRESENT"] == "approval 'appr-1' supplied"
+
+
+def test_a_refused_check_detail_still_reads_as_a_refusal():
+    """Fixing the inversion must not soften the refusal path.
+
+    What an operator sees on a veto has to stay the same wording, otherwise the
+    audit trail loses the reason the rollback was refused.
+    """
+    verdict = run_gate(target=None)
+    details = {c.code: c.detail for c in verdict.checks}
+
+    assert details["TARGET_RELEASE_KNOWN"] == (
+        "rollback target 'v1' is not a release we have observed"
+    )
+    assert details["TARGET_IS_KNOWN_GOOD"] == (
+        "rollback target has not been verified healthy by this system"
+    )
+    assert details["TARGET_DIFFERS_FROM_CURRENT"] != (
+        "rollback target 'v1' differs from the deployed release 'v2'"
+    )

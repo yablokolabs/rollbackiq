@@ -25,11 +25,11 @@ has not happened.
 | Docker image and Compose stack for both releases | **Implemented and verified** | `docker-compose.yml`, `demo/service/Dockerfile` |
 | Attribution guard (no AI attribution footers) in hooks and CI | **Implemented and verified locally** | `scripts/check_no_attribution.sh`, `.gitlab-ci.yml` |
 | OpenTelemetry export to GitLab Observability | **Implemented and verified against the real collector** (64 spans accepted, 0 failures) | `demo/service/otel_setup.py`, `evidence/otel-export-spike.json` |
-| GitLab CI/CD deploy and rollback jobs | **Not yet implemented** | plan in `ROLLBACKIQ_BUILD.md` |
-| GitLab Duo agent/flow investigation | **Not yet implemented** | Duo flows confirmed enabled on the project; no flow executed yet |
-| Control-plane API, persistence and dashboard | **Not yet implemented** | — |
+| GitLab CI/CD deploy, approval gate and rollback | **Implemented and verified in CI** — pipeline `2932808602`, every job green | `evidence/gitlab-ci-lifecycle-artifacts/`, `docs/PROGRESS.md` |
+| GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
+| Control-plane API, persistence and dashboard | **Not yet implemented** | the services exist (`detector.py`, `safety.py`, `verifier.py`); no HTTP API or dashboard yet |
 
-Test suite: **51 passing** (`pytest`).
+Test suite: **90 passing** (`pytest`).
 
 ## Measured end-to-end run
 
@@ -41,7 +41,7 @@ twice with the same class of result on a local machine:
 | Healthy `v1` baseline | 150 real requests, 0 errors, p95 **35.6 ms** |
 | Faulty `v2` | 11.3% then 8.7% error rate; p95 **238.9 ms = 6.72x** baseline |
 | Detection | breached `P95_LATENCY` and `ERROR_RATE` on the second sustained window, after **7.72 s** |
-| Rollback | 0.51 s — *a local process restart standing in for the GitLab CI job, which is not implemented yet* |
+| Rollback | 0.51 s — *a local process restart at the time; the GitLab CI/CD job now exists and is verified in pipeline `2932808602`* |
 | Post-rollback window | 400 requests over ~5 s, 0 errors, p95 **28.0 ms = 0.79x** baseline |
 | Verification | `recovered=True`, `independent=True` |
 | Totals | time to verify 5.22 s; detection-to-verified-recovery 5.43 s; total **13.16 s** |
@@ -54,7 +54,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r backend/requirements.txt
 
 # 2. Tests
-.venv/bin/python -m pytest            # 51 passing
+.venv/bin/python -m pytest            # 90 passing
 
 # 3. The full regression demonstration (healthy -> faulty -> detected -> rolled back -> verified)
 .venv/bin/python scripts/demo_regression.py
@@ -85,7 +85,7 @@ deployment (GitLab CI/CD)            real user traffic
         |                         incident state machine  (HEALTHY -> ... -> RECOVERED / ESCALATED)
         |                                    |
         |                                    v
-        |                       GitLab Duo investigation  (planned: evidence + hypotheses)
+        |                       GitLab Duo investigation  (custom flow in the AI Catalog)
         |                                    |
         |                                    v
         |                            recovery proposal + risk
@@ -94,7 +94,7 @@ deployment (GitLab CI/CD)            real user traffic
         |                            SAFETY GATE (human approval, allowlist, known-good target,
         |                                    |         migration veto, idempotency)
         |                                    v
-        |                          GitLab CI/CD rollback job  (planned)
+        |                          GitLab CI/CD rollback job  (approval-gated, implemented)
         |                                    |
         v                                    v
      previous release  <--------  independent verifier  (new post-rollback observations only)
@@ -121,9 +121,10 @@ Design rules that make this trustworthy:
 ```
 backend/app/models/       incident state machine, metric windows, releases, approvals
 backend/app/services/     detector, safety gate, verifier, collector, stats
-backend/tests/            unit, negative and integration tests (51)
+backend/tests/            unit, negative and integration tests (90)
 demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
-scripts/                  demo regression runner, attribution guard, Git hooks
+duo/                      custom Duo agent prompt + flow definition (provisioned to the AI Catalog)
+scripts/                  demo regression runner, attribution guard, catalog provisioning, Git hooks
 evidence/                 raw measured records from real runs
 docs/PROGRESS.md          session checkpoint and current blockers
 ```

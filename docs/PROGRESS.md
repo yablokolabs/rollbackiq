@@ -4,7 +4,7 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. Remaining work is the **custom** Duo flow (see below), the dashboard, diagrams, the incident issue, and the demo video.
+**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow now exist in the AI Catalog** and are provisioned from the repository, but the headless CLI provably cannot select a custom flow (source line in the section below) — that is an evidenced blocker, not a silent gap. Two further real Duo investigations ran and one of them found a genuine bug in `safety.py`, now fixed and covered by tests. Remaining work is the dashboard, diagrams, the incident issue, the demo video, and the catalog-consumption route for custom-flow execution.
 
 ## GitLab pipeline: full lifecycle end to end (2026-10-10, `a192569`)
 
@@ -52,7 +52,53 @@ The Phase 0 gate required a genuinely executed Duo agent or flow. It is now met,
 
 **The raw CLI log is deliberately not committed.** It embeds `AGENTS.md` as flow context, so it contains the attribution strings the guard forbids; the guard blocked the commit and was right. A policy quotation is not a reason to add an exemption, so only bounded fields are extracted into `evidence/duo-flow-developer-run.summary.txt`.
 
-**Honest gap:** this ran the foundational `developer` flow, not a **custom** flow orchestrating the recovery lifecycle, which is what AGENTS.md §5 asks for. The capability `inline_flow_config_binding` is the likely route (`duo run --flow-config <yaml>`), and that is the next Duo task. Until then, the claim is "a real Duo flow executed", not "a custom Duo flow orchestrates the lifecycle".
+**Honest gap at the time:** that run used the foundational `developer` flow, not a **custom** flow. `inline_flow_config_binding` looked like the route. It is not, and the reason is established below with the source line — see *Blocker: the headless CLI cannot select a custom flow*.
+
+## Custom Duo agent and flow in the AI Catalog, and the headless blocker (2026-10-10)
+
+AGENTS.md §5 asks for **custom** Duo agent(s)/flow(s), not only a foundational flow. Both now exist in the project's AI Catalog, provisioned **from the repository** rather than clicked into existence:
+
+| Catalog item | Type | GID | Version | Source of truth |
+| --- | --- | --- | --- | --- |
+| RollbackIQ Recovery Investigator | `AGENT` | `1016480` | 1.0.0 | `duo/agents/rollbackiq-recovery-investigator.md` |
+| RollbackIQ Recovery Investigator Flow | `FLOW` | `1016482` | 1.0.0 | `duo/flows/rollbackiq-recovery-investigator.yaml` |
+
+`scripts/duo_provision_catalog.py` creates or re-asserts both from those files (`--dry-run` reports without mutating). The definition is a real component graph, not a prompt: `recall_incident_evidence` (`OneOffComponent`) gathers deployment and telemetry evidence, then `assess_and_propose` (`AgentComponent`) turns it into supported/contradicted hypotheses, named unknowns, and one of roll back / hold / escalate. The flow has **no tool that can deploy, approve or roll back**; execution authority stays in `backend/app/services/safety.py`.
+
+**The schema was established by probing, not guessing.** GraphQL introspection returned a schema blob, so the shape came from the server's own per-field rejections: `One and only one of [public, visibility] is required` → add `public`; `Flow definition is missing and cannot be validated` → the definition travels in the mutation; `prompts.N.unit_primitives: Field required` → a prompt field the docs do not mention. Re-running the provisioning script against the committed YAML returned `errors: []`, so the file that ships is the file that compiled.
+
+**Why that response means more than "green":** `definition` and `systemPrompt` are **write-only** — neither is exposed on `AiCatalogItemVersion` — so a re-assert is the only way to keep the catalog aligned with the repo, and the script states that instead of implying it diffed them. A clean response is evidence the definition *compiled server-side*, which is stronger than "the YAML parsed".
+
+### Blocker: the headless CLI cannot select a custom flow
+
+`duo run --flow-config <yaml>` **silently runs the developer flow instead**. Two captured runs (sessions `9283450` and `9283505`) both negotiated `workflow_definition=developer/v1` and `flowConfigId: developer`, and neither mentions the custom flow's component names. The cause is in the CLI's own published source:
+
+```ts
+// @gitlab/duo-cli — src/backend/gitlab/workflow_strategy.ts:407
+const legacy = !isHeadless && Boolean(backendOpts.legacy);
+```
+
+A truthy `flow.developer` takes the branch at `gitlab_backend.ts:475` that sets `flowConfig = undefined`, and `--legacy` — the escape hatch to the branch that honours an explicit flow config — is disabled whenever the session is headless. So `duo run` always prefers the instance-advertised developer flow and `--flow-config` cannot override it. The catalog route (`ai_catalog_item_version_id`) exists in the workflow executor but is not exposed as a CLI flag; `aiCatalogItemConsumerCreate` is the remaining supported path, and it is the next Duo task.
+
+Recorded as a **blocker with evidence**, not worked around. The correct claim today is: *a custom Duo agent and custom flow exist in the AI Catalog and validate server-side; the headless CLI path provably cannot select one.*
+
+### Two real investigations, and the bug the first one found
+
+Both runs were real tool-driven investigations of the incident (6 and 7 file reads, 8 and 2 shell commands) rather than summarisation. The first returned a finding that was **correct, and about my own code**:
+
+> several of the 18 check `detail` strings read as if the check *failed* but the `passed` field is `true`
+
+Verified in `backend/app/services/safety.py`: every detail was written as the failure phrasing unconditionally, so a passing check emitted `approval actor 'yablokolabs' is not an authorized human identity` beside `passed: true`. **Fixed**, keeping the failure wording byte-identical on the refusal path — the path that matters most — with two regression tests added. The first attempt at the fix was itself wrong: a plain f-string default is evaluated even on the failing path, so `target_release.id` raised on `None`; the suite caught it and `on_pass` became a lazy callable.
+
+The second run added a caveat worth keeping: the demo's regression is **injected deployment configuration (fault-injection environment variables), not a binary code change**, and it named the one question the available evidence cannot answer — whether v2's ~240 HTTP 500 responses caused write-side data inconsistency. It refused to assert data consistency was fine. Both responses are in `evidence/duo-flow-runs.json`.
+
+### Demo video — acceptance criteria (user-provided, 2026-10-10)
+
+1. **Under three minutes.**
+2. **Shows the automation actually running** — not slides, not a mockup.
+3. **Explains the problem, the solution, and how GitLab was used.**
+
+Consequences: the deploy → detect → approve → rollback → verify chain must be shown running for real, and the approval must be played **by hand in the UI** so the recorded approver is a person, not the token owner. Because of the blocker above, the Duo segment must not imply the custom flow orchestrates the lifecycle; it shows what actually executed.
 
 ## CI/CD lifecycle, approval gate and control-plane instrumentation (2026-10-10)
 

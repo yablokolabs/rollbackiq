@@ -1,0 +1,59 @@
+{
+  "captured_at": "2026-10-10T04:59:36.249927+00:00",
+  "captured_with": "scripts/duo_capture_run_evidence.py",
+  "invocation": "duo run --output-format json (see docs/PROGRESS.md for the exact flags)",
+  "excluded_and_why": "raw CLI stdout/stderr are not committed: the Duo CLI embeds AGENTS.md as plan_context and AGENTS.md quotes the prohibited attribution strings as policy, so the raw log trips the attribution guard. Only bounded fields above are kept.",
+  "runs": [
+    {
+      "stdout_file": "duo-flow-run.json",
+      "session_id": "9283450",
+      "status": "success",
+      "exit_code": 0,
+      "schema_version": "1.0",
+      "response_chars": 1314,
+      "response": "---\n\nA few things worth flagging before you decide what to do next:\n\n**One important caveat in the safety gate artifacts:** several of the 18 check `detail` strings read as if the check *failed* but the `passed` field is `true` \u2014 for example `\"detail\": \"rollback target 'v1' is not a release we have observed\"` alongside `\"passed\": true`. This is a wording inversion in the detail messages (the detail describes the negative case, not the positive outcome). The `passed: true` values are what the gate acted on, and the rollback executed, so the gate logic is correct \u2014 but the detail strings are misleading and worth fixing before a production demo.\n\n**The numbers in your prompt vs. the CI artifacts differ slightly:** the 238.9 ms / 6.72\u00d7 / 11.3% figures are from the local simulation (`phase1-regression.json`, baseline p95 35.6 ms). The CI run (`inc-v2-20261010042632`) measured 238 ms / **8.75\u00d7** / 8.3\u201313.3% against a faster baseline of 27.2 ms. Both are real measurements; they differ because the CI runner environment is faster than the local simulation environment.\n\nWould you like me to: (a) open a GitLab incident issue with these findings linked to the pipeline artifacts, (b) fix the misleading safety gate detail strings, or (c) continue with the next task from `docs/PROGRESS.md` (custom Duo flow)?",
+      "elements_total": 20,
+      "elements_by_type": {
+        "message": 2,
+        "tool": 18
+      },
+      "process_status": "exit=0",
+      "requested_actions": {
+        "runReadFile": 1,
+        "runReadFiles": 5,
+        "runShellCommand": 8
+      },
+      "negotiated_flow_definition": [
+        "developer%2Fv1"
+      ],
+      "negotiated_flow_config_ids": [
+        "developer"
+      ]
+    },
+    {
+      "stdout_file": "duo-custom-run.json",
+      "session_id": "9283505",
+      "status": "success",
+      "exit_code": 0,
+      "schema_version": "1.0",
+      "response_chars": 590,
+      "response": "---\n\n**Summary for the record:**\n\nThe evidence is internally consistent and complete for the detection-to-recovery path. The regression was real, measured, and caused by deployment configuration (fault injection env vars), not a binary code change. The rollback was safe, gated, approved, executed, and independently verified twice. The one genuine open question \u2014 whether v2's ~240 HTTP 500 errors caused any write-side data inconsistency \u2014 cannot be answered from the available evidence and would require application write logs or database transaction records from the 6-second v2 window.",
+      "elements_total": 14,
+      "elements_by_type": {
+        "message": 2,
+        "tool": 12
+      },
+      "process_status": "exit=0",
+      "requested_actions": {
+        "runReadFiles": 7,
+        "runShellCommand": 2
+      },
+      "negotiated_flow_definition": [
+        "developer%2Fv1"
+      ],
+      "negotiated_flow_config_ids": [
+        "developer"
+      ]
+    }
+  ]
+}
