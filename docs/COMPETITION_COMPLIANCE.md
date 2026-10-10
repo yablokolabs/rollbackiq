@@ -28,8 +28,8 @@ the truth.
 | **Plan** | The incident exists as a GitLab **issue** with the evidence links; the workspace onboarding issue is kept | issue #2, `evidence/gitlab-pipeline-2932808602.json` | No issue templates, iterations or boards are used |
 | **Code** | Conventional commits, one focused change per commit; commit and pipeline context travel into every artifact (sha, pipeline id) | `git log`, `evidence/gitlab-ci-lifecycle-artifacts/deploy-regressed.json` | No merge-request review flow — this is a solo repository, changes land on `main` behind protected-branch rules |
 | **Build** | `build:workload-image` builds the real image, pushes it, and publishes its **immutable digest** as an artifact | job 17076805676, `image-digest.txt` | One image, one service |
-| **Test** | `test:pytest` runs the full suite in CI (98 tests), including the detector's and the gate's negative cases | the new `test` stage; verified locally by running the job's exact commands in `python:3.12-slim` | No coverage gate, and no JUnit report is uploaded to GitLab yet |
-| **Secure** | The attribution guard; the safety gate's 18 checks; secret handling (token from env only, registry login via `--password-stdin`); prompt-injection handling treated as untrusted evidence | `attribution-guard` job; `backend/tests/test_safety.py`; [`SECURITY.md`](SECURITY.md) | **GitLab Secure scanning (SAST, DAST, dependency, container scanning) is not enabled and is not claimed.** The "secure" coverage here is application-level safety, not GitLab's scanners |
+| **Test** | `test:pytest` runs the full suite in CI (114 tests), including the detector's and the gate's negative cases | the new `test` stage; verified locally by running the job's exact commands in `python:3.12-slim` | No coverage gate, and no JUnit report is uploaded to GitLab yet |
+| **Secure** | **GitLab SAST and secret detection run in every pipeline** (GitLab's job templates, `test` stage). The first run reported 6 SAST findings and 0 secrets; one finding was a real defect in the probe and is fixed. Also: the attribution guard; the safety gate's 18 checks; secret handling (token from the environment only, registry login through `--password-stdin`); retrieved content treated as untrusted evidence | pipelines 2934637949 and 2934643614; `evidence/security/scanner-results.json`; [`SECURITY.md`](SECURITY.md); `backend/tests/test_safety.py` | DAST, dependency scanning and container scanning are not enabled and not claimed. Five SAST findings stay reported; their disposition is in `SECURITY.md` |
 | **Release** | A release is a set of deployment inputs on one image; the digest is the identity a rollback may target | `evidence/gitlab-ci-lifecycle-artifacts/rollback-execution.json` | No release objects, changelogs or semantic-release tooling |
 | **Deploy** | `deploy:staging` (health-gated, captures the baseline), `deploy:regressed` (manual), `rollback:managed` (manual, gated) inside GitLab environments | jobs 17076805677/78/80; the `demo-staging` environment | The target is an isolated demo environment, never customer infrastructure |
 | **Operate / observe** | Real OpenTelemetry traces to the workspace's GitLab Observability collector, from the workload and from the detection/verification decisions | `evidence/otel-export-spike.json` (64 spans, 0 failures), `evidence/otel-export-ci.json` (same, from a runner) | Nothing is claimed about how those traces render in the UI: no public trace-query API exists to prove it from here |
@@ -50,7 +50,8 @@ the truth.
 | Duo CLI selecting a **custom** flow headless | **Blocker, characterised** | the CLI transmits the custom definition; the service declines to instantiate it. Recorded with source lines in `docs/PROGRESS.md` |
 | GitLab Observability (OTLP collector) | **Used and verified at the collector** | 64 spans accepted, 0 failures |
 | GitLab MCP server (`POST /api/v4/mcp`) | **Blocker, characterised — not claimed** | the server answers `403 Forbidden` to `initialize` and `tools/list`: its own challenge requires the `mcp` scope, and the available token does not have it. `evidence/gitlab-mcp-probe.json`, written by `scripts/gitlab_mcp_probe.py` |
-| GitLab Secure scanners, DORA metrics, merge request approvals | **Not used — not claimed** | — |
+| GitLab SAST and secret detection | **Used and verified** | `semgrep-sast` and `secret_detection` jobs in pipelines 2934637949 and 2934643614; `evidence/security/scanner-results.json` |
+| DAST, dependency and container scanning, DORA metrics, merge request approval rules | **Not used — not claimed** | — |
 
 ## Judging dimensions
 
@@ -66,6 +67,6 @@ the truth.
 
 - No prize, eligibility or award is asserted anywhere.
 - No Google Cloud or AWS deployment: all of it runs on GitLab.com shared runners and one Azure VM.
-- No GitLab Secure scanning, MCP usage, production deployment, customer data, or data-restore capability.
+- No DAST, dependency or container scanning, no MCP usage, no production deployment, no customer data, and no data-restore capability.
 - The fault is **injected deployment configuration on one image**, not a binary regression, and
   the documentation says so next to every set of numbers.
