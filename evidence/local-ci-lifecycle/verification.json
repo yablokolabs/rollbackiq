@@ -1,0 +1,38 @@
+{
+  "verified_with": "scripts/ci_release.py verify",
+  "baseline_source": "evidence/local-ci-lifecycle/baseline-window.json",
+  "window_source": "evidence/local-ci-lifecycle/verify-window.json",
+  "executed_at": "2026-10-10T03:29:16.935580+00:00",
+  "result": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 200,
+    "window_seconds": 8.008745,
+    "independent": true,
+    "p95_ms": 26.932660024613142,
+    "baseline_p95_ms": 27.23688498372212,
+    "p95_ratio_vs_baseline": 0.9888304055588296,
+    "error_rate": 0.0,
+    "improved_vs_faulty": null,
+    "before": null,
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T03:29:29.124542Z",
+      "ended_at": "2026-10-10T03:29:37.133287Z",
+      "request_count": 200,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.603333985898644,
+      "p95_ms": 26.932660024613142,
+      "p99_ms": 37.92344802059233,
+      "mean_ms": 22.928488574980292,
+      "max_ms": 40.31453200150281,
+      "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 8.0s)"
+    },
+    "verified_at": "2026-10-10T03:29:49.277437Z"
+  }
+}

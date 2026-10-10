@@ -1,0 +1,148 @@
+{
+  "incident_id": "inc-v2-20261010032827",
+  "environment": "demo-staging",
+  "idempotency_key": "rollback-inc-v2-20261010032827-v1",
+  "dry_run": false,
+  "decision": {
+    "allowed": false,
+    "stage": "safety_gate",
+    "detail": "safety gate refused the rollback: APPROVAL_PRESENT",
+    "veto_codes": [
+      "APPROVAL_PRESENT"
+    ],
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is unknown, so rollback effect cannot be predicted"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is not a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target has not been verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target is the release that is already deployed"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": false,
+        "detail": "no approval record supplied"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "rollback requires an idempotency key"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010032827-v1' has already been executed"
+      }
+    ],
+    "proposal_hash": "dd7fe7a306dd1183",
+    "target_release": "v1"
+  },
+  "safety_verdict": {
+    "allowed": false,
+    "target_release": "v1",
+    "proposal_hash": "dd7fe7a306dd1183",
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is unknown, so rollback effect cannot be predicted"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is not a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target has not been verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target is the release that is already deployed"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": false,
+        "detail": "no approval record supplied"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "rollback requires an idempotency key"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010032827-v1' has already been executed"
+      }
+    ],
+    "checked_at": "2026-10-10T03:29:59.648479Z"
+  },
+  "evaluated_at": "2026-10-10T03:29:59.648633+00:00",
+  "outcome": "refused"
+}

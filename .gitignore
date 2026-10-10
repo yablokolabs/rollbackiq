@@ -22,5 +22,11 @@ dist/
 *.sqlite3
 *.db
 
+# Per-pipeline CI runtime state. The idempotency ledger records which keys a run
+# consumed, so committing it would make a later pipeline refuse a fresh rollback.
+evidence/rollback-state.json
+evidence/**/state-*.json
+evidence/**/*-state.json
+
 # OS / editor
 .DS_Store
