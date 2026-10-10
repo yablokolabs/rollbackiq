@@ -1,9 +1,8 @@
 # Devpost submission text (draft)
 
 Paste the sections below into the Devpost form. Every figure comes from an artifact in this
-repository; `docs/COMPETITION_COMPLIANCE.md` maps each claim to its evidence. Two fields are
-still empty and only the entrant can fill them: the **YouTube link** (the rules require the
-video to be public on YouTube) and the final choice of prize category.
+repository; `docs/COMPETITION_COMPLIANCE.md` maps each claim to its evidence. One choice is
+left to the entrant: the prize category.
 
 ---
 
@@ -15,7 +14,7 @@ video to be public on YouTube) and the final choice of prize category.
 
 **Repository:** https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase (public, MIT)
 
-**Video:** _YouTube link — to be added_ (source file: `demo/videos/rollbackiq-demo.mp4`, 2:36)
+**Video:** https://youtu.be/rvs6M7xOTR0 (2:36; source file: `demo/videos/rollbackiq-demo.mp4`)
 
 ---
 
