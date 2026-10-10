@@ -1,4 +1,5 @@
 import { defineScene } from "../../components/scene.js";
+import logoUrl from "../../videos/rollbackiq-demo/assets/rollbackiq-icon.png";
 
 export default defineScene({
 	id: "outro",
@@ -8,8 +9,9 @@ export default defineScene({
 	html: `
 		<div class="rq-scene centered">
 			<div class="brand" data-beat="0">
+				<img class="logo small" src="${logoUrl}" alt="">
 				<div>
-					<div class="wordmark small">RollbackIQ</div>
+					<div class="wordmark small">Rollback<span class="iq">IQ</span></div>
 					<div class="lede">A code rollback does not restore deleted data.</div>
 				</div>
 			</div>
