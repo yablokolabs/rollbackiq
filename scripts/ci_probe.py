@@ -27,6 +27,7 @@ import sys
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
@@ -191,6 +192,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="print the window as JSON on stdout and nothing else, for callers that capture it",
     )
     args = parser.parse_args(argv)
+
+    # The window is evidence of an HTTP service. urllib also opens other schemes,
+    # such as file://, and a window measured from one of those would be false evidence.
+    if urllib.parse.urlsplit(args.url).scheme not in ("http", "https"):
+        parser.error(f"--url must be an http:// or https:// URL, not {args.url!r}")
 
     window = probe(
         args.url,
