@@ -12,7 +12,7 @@ Captions are drawn as an overlay because a terminal session cannot type narratio
 and the recording is honest about it: the caption bar is styled as an overlay, not
 as part of the product UI.
 
-    .venv/bin/python scripts/record_demo.py                 # -> docs/demo/rollbackiq-demo.mp4
+    .venv/bin/python scripts/record_demo.py                 # -> demo/videos/rollbackiq-demo.mp4
     .venv/bin/python scripts/record_demo.py --skip-run      # console tour only
 
 The run is ~35 s and the tour ~80 s, which keeps the recording under the
@@ -157,7 +157,7 @@ def ensure_console(console_url: str) -> subprocess.Popen | None:
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out", default="docs/demo/rollbackiq-demo.mp4")
+    parser.add_argument("--out", default="demo/videos/rollbackiq-demo.mp4")
     parser.add_argument("--workdir", default="/tmp/rollbackiq-video")
     parser.add_argument("--skip-run", action="store_true", help="record the console tour only")
     args = parser.parse_args(argv[1:])

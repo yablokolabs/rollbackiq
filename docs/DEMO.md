@@ -60,7 +60,7 @@ Both need `GITLAB_TOKEN` in the environment; the token is never stored in the re
 
 ## 5. The recording that exists today
 
-`docs/demo/rollbackiq-demo.mp4` — **1:44, 1440×900, real data, captions and no narration**, produced by
+`demo/videos/rollbackiq-demo.mp4` — **1:44, 1440×900, real data, captions and no narration**, produced by
 `scripts/record_demo.py` at 18:19 UTC.
 
 What is in it:

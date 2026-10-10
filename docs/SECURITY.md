@@ -24,20 +24,24 @@ Every check is exercised by `backend/tests/test_safety.py`, including negative c
 | --- | --- |
 | `APPROVAL_PRESENT` | No approval for this proposal |
 | `APPROVAL_ACTOR_IS_HUMAN` | The approver is an agent or system identity |
-| `APPROVAL_SCOPE` | The approval names a different proposal hash |
+| `APPROVAL_IN_SCOPE` | The approval names a different proposal hash |
 | `APPROVAL_NOT_EXPIRED` | The approval's TTL has passed |
 | `ENVIRONMENT_ALLOWLISTED` | The target environment is not on the allowlist |
-| `PROTECTED_ENVIRONMENT` | The environment is not the protected one |
+| `PHASE1_ENVIRONMENT_ALLOWLISTED` | The environment is not on the protected allowlist |
 | `TARGET_IS_KNOWN_GOOD` | The rollback target is not a release this system observed as healthy |
-| `TARGET_IS_NOT_CURRENT` | The target is the release that is already deployed |
-| `MIGRATION_COMPATIBLE` | Migration compatibility is unknown — unknown is treated as unsafe |
+| `TARGET_DIFFERS_FROM_CURRENT` | The target is the release that is already deployed |
+| `MIGRATION_COMPATIBLE` | The proposal requires a migration and compatibility is unknown — unknown is treated as unsafe. Evaluated only when the proposal requires a migration |
 | `IDEMPOTENCY_KEY_PRESENT` | No idempotency key for the attempted action |
 | `NOT_ALREADY_EXECUTED` | The ledger already consumed that key |
-| `IMAGE_DIGEST_MATCHES` | The image digest does not match the artifact the target was verified with |
-| … | plus the checks that assert the proposal's action is `rollback`, not `hold` or `escalate` |
+| `ACTION_IS_ROLLBACK` | The proposed action is `hold` or `escalate` |
+| … | plus `PROPOSAL_ENVIRONMENT_MATCHES`, `CURRENT_RELEASE_KNOWN`, `TARGET_RELEASE_KNOWN`, `TARGET_ENVIRONMENT_MATCHES`, `APPROVAL_GRANTED`, `APPROVAL_ENVIRONMENT_MATCHES` and `APPROVAL_WITHIN_MAX_AGE` |
 
 The gate **reports every veto, not just the first**, and it fails closed: anything it cannot
 establish is a refusal, never a default.
+
+The image identity check is a separate step after the gate, in `scripts/ci_rollback.py`
+(`verify_target_identity`): the rollback is refused when the resolved image digest is unknown
+or differs from the digest recorded for the target release.
 
 Six refusals were run against the real gate, each required to name a *different* guard and all
 exiting non-zero: no approval, a non-human approver (`duo`), an unlisted environment, a target

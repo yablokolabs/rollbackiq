@@ -14,7 +14,7 @@ anything written here. This document records what exists, and what does not.
 | --- | --- | --- |
 | Public GitLab repository | Yes | `gitlab-ai-hackathon/transcend-october-2026/43178176/showcase`, primary remote `origin` |
 | MIT licence | Yes | `LICENSE` |
-| Under-3-minute video showing the automation running | Storyboard and reproduction path ready in [`DEMO.md`](DEMO.md); **recording not yet made** | — |
+| Under-3-minute video showing the automation running | **Recorded, not final**: 1:44 of a real local run and the console. The submission take needs the approval played by hand in the GitLab UI; see [`DEMO.md`](DEMO.md) | `demo/videos/rollbackiq-demo.mp4` |
 | Genuine GitLab AI use, visible | Yes | Custom Duo agent + flow provisioned from `duo/`, executed via the project's flow trigger; session `9288744` finished and posted its report to issue #2 |
 | No AI attribution footers anywhere | Yes | `scripts/check_no_attribution.sh`, enforced by hooks and the `attribution-guard` job |
 
@@ -48,7 +48,7 @@ the truth.
 | Duo CLI (`@gitlab/duo-cli`, foundational `developer` flow) | **Used and verified** | session `9283219` |
 | Duo CLI selecting a **custom** flow headless | **Blocker, characterised** | the CLI transmits the custom definition; the service declines to instantiate it. Recorded with source lines in `docs/PROGRESS.md` |
 | GitLab Observability (OTLP collector) | **Used and verified at the collector** | 64 spans accepted, 0 failures |
-| GitLab MCP server | **Not verified — not claimed** | the group's Observability page mentions an MCP endpoint being provisioned; it has never been observed here |
+| GitLab MCP server (`POST /api/v4/mcp`) | **Blocker, characterised — not claimed** | the server answers `403 Forbidden` to `initialize` and `tools/list`: its own challenge requires the `mcp` scope, and the available token does not have it. `evidence/gitlab-mcp-probe.json`, written by `scripts/gitlab_mcp_probe.py` |
 | GitLab Secure scanners, DORA metrics, merge request approvals | **Not used — not claimed** | — |
 
 ## Judging dimensions

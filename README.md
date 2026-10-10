@@ -29,9 +29,9 @@ has not happened.
 | GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
 | Control-plane API and incident console | **Implemented and verified locally** — the API serves typed JSON read from the pipeline's own artifacts, and every dashboard view renders with no page or console errors | `backend/app/api/incident_api.py`, `dashboard/`, `docs/screenshots/` |
 | Diagrammed architecture, security model and evaluation | **Implemented and verified locally** — five diagrams, each self-checked and geometry-audited, plus the documentation set | `docs/diagrams/`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/EVALUATION.md`, `docs/DEMO.md`, `docs/COMPETITION_COMPLIANCE.md` |
-| Demo recording of a real run and the console | **Recorded** — 1:44, captions, real containers; **not** the final submission take, which needs the approval played by hand in the GitLab UI | `docs/demo/rollbackiq-demo.mp4`, `scripts/record_demo.py` |
+| Demo recording of a real run and the console | **Recorded** — 1:44, captions, real containers; **not** the final submission take, which needs the approval played by hand in the GitLab UI | `demo/videos/rollbackiq-demo.mp4`, `scripts/record_demo.py` |
 
-Test suite: **98 passing** (`pytest`).
+Test suite: **108 passing** (`pytest`).
 
 **On persistence:** `ROLLBACKIQ_BUILD.md` §9 allows SQLite "unless a simpler proven design
 suffices", and here it does. The pipeline's artifacts *are* the record — the console reads
@@ -62,7 +62,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r backend/requirements.txt
 
 # 2. Tests
-.venv/bin/python -m pytest            # 98 passing
+.venv/bin/python -m pytest            # 108 passing
 
 # 3. The full regression demonstration (healthy -> faulty -> detected -> rolled back -> verified)
 .venv/bin/python scripts/demo_regression.py
@@ -130,13 +130,14 @@ Design rules that make this trustworthy:
 backend/app/api/          read-only incident API over the pipeline's own artifacts (+ serves the console)
 backend/app/models/       incident state machine, metric windows, releases, approvals
 backend/app/services/     detector, safety gate, verifier, collector, stats
-backend/tests/            unit, negative and integration tests (98)
+backend/tests/            unit, negative and integration tests
 dashboard/                the incident console (React + TypeScript + Tailwind)
 docs/diagrams/            five diagrams (HTML + SVG source, rendered PNG) and their checks
 docs/ARCHITECTURE.md      components, the two flows, the constraints and known limitations
 docs/SECURITY.md          the trust boundary, every gate check, injection and secret handling
 docs/EVALUATION.md        measured results, how each was verified, and what they do not show
 docs/DEMO.md              reproduction paths and the under-3-minute video storyboard
+docs/INCIDENT_RUNBOOK.md  what the person on call does, step by step, and what each refusal means
 docs/COMPETITION_COMPLIANCE.md   stage-by-stage coverage, and what is not claimed
 demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
 duo/                      custom Duo agent prompt + flow definition (provisioned to the AI Catalog)
@@ -155,7 +156,7 @@ It runs the same scripts the CI jobs run: deploy v1 and measure the baseline, re
 to fire on v2, approve one hashed proposal, evaluate the gate without changing anything, execute the
 authorized rollback, then verify recovery from a **new** window. It exits non-zero when the verifier
 refuses, which is a correct outcome rather than a bug. `scripts/record_demo.py` records that run and the
-console into `docs/demo/rollbackiq-demo.mp4`.
+console into `demo/videos/rollbackiq-demo.mp4`.
 
 ## Diagrams and documentation
 
