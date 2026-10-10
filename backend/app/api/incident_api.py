@@ -240,6 +240,7 @@ def _build_timeline(
     detection: Optional[Detection],
     approval: Optional[Approval],
     executed_at: Optional[str],
+    rollback_target: Optional[str],
     verification: Optional[VerificationResult],
     duo: Optional[DuoSession],
 ) -> List[TimelineEvent]:
@@ -322,7 +323,11 @@ def _build_timeline(
                 at=executed_at,
                 kind="rollback",
                 title="Safety-gated rollback executed",
-                detail="target release v1; see the safety gate checks in this incident",
+                detail=(
+                    f"target release {rollback_target}; see the safety gate checks in this incident"
+                    if rollback_target
+                    else "the artifact does not name the target release; see the safety gate checks"
+                ),
             )
         )
 
@@ -381,7 +386,12 @@ def _build_timeline(
             )
         )
 
-    return sorted((e for e in events if e.at), key=lambda e: e.at)
+    # The artifacts mix timestamp formats ("...:31Z", "...:31.767894+00:00"), so the
+    # order comes from the parsed moment. As text, "Z" sorts after "." and "+".
+    return sorted(
+        (e for e in events if e.at),
+        key=lambda e: datetime.fromisoformat(e.at.replace("Z", "+00:00")),
+    )
 
 
 def _duo_session(missing: List[str]) -> Optional[DuoSession]:
@@ -550,6 +560,7 @@ def load_incident() -> Incident:
         detection=detection,
         approval=approval,
         executed_at=decision_data.get("executed_at"),
+        rollback_target=decision.get("target_release"),
         verification=verification,
         duo=duo,
     )

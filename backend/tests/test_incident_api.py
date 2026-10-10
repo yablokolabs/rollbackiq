@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import shutil
+from datetime import datetime
 
 from fastapi.testclient import TestClient
 
@@ -88,10 +89,14 @@ def test_honesty_fields_travel_with_the_document() -> None:
     assert "does not restore deleted data" in incident["code_rollback_note"]
 
 
+def _moment(stamp: str) -> datetime:
+    return datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+
+
 def test_timeline_is_ordered_and_contains_the_duo_report() -> None:
     incident = client.get(f"/api/incidents/{INCIDENT_ID}").json()
-    stamps = [event["at"] for event in incident["timeline"]]
-    assert stamps == sorted(stamps)
+    moments = [_moment(event["at"]) for event in incident["timeline"]]
+    assert moments == sorted(moments)
     assert any(event["kind"] == "duo-report" for event in incident["timeline"])
     assert incident["duo"]["session_id"] == "9288744"
     assert incident["duo"]["report_note_id"] == "3990222263"
@@ -134,6 +139,33 @@ def test_instructions_inside_evidence_do_not_change_the_verdict(tmp_path, monkey
     assert incident["verification"]["recovered"] is False
     assert summary["status"] == "escalated"
     assert summary["recovered"] is False
+
+
+def test_timeline_puts_a_deployment_before_the_window_measured_on_it() -> None:
+    """The artifacts mix timestamp formats, and the order must follow time, not text."""
+    incident = client.get(f"/api/incidents/{INCIDENT_ID}").json()
+    kinds = [event["kind"] for event in incident["timeline"]]
+    assert kinds.index("deploy") < kinds.index("baseline")
+
+
+def test_timeline_names_the_rollback_target_from_the_artifact(tmp_path, monkeypatch) -> None:
+    from app.api import incident_api
+
+    evidence = tmp_path / "evidence"
+    shutil.copytree(incident_api.EVIDENCE_DIR, evidence)
+    lifecycle = evidence / "gitlab-ci-lifecycle-artifacts"
+    execution_path = lifecycle / "rollback-execution.json"
+    execution = json.loads(execution_path.read_text())
+    execution["decision"]["target_release"] = "v0-stable"
+    execution_path.write_text(json.dumps(execution))
+
+    monkeypatch.setattr(incident_api, "EVIDENCE_DIR", evidence)
+    monkeypatch.setattr(incident_api, "LIFECYCLE_DIR", lifecycle)
+    incident = TestClient(incident_api.create_app()).get(f"/api/incidents/{INCIDENT_ID}").json()
+
+    rollback = next(event for event in incident["timeline"] if event["kind"] == "rollback")
+    assert "v0-stable" in rollback["detail"]
+    assert "v1" not in rollback["detail"]
 
 
 def test_unknown_incident_is_a_404() -> None:
