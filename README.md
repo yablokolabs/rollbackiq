@@ -4,6 +4,8 @@
 
 # RollbackIQ — Detect. Decide. Recover.
 
+**Demonstration video (2:36):** https://youtu.be/rvs6M7xOTR0
+
 **RollbackIQ is a GitLab-native agentic production recovery engineer.** It detects a
 deployment regression, gathers evidence, proposes a safe response, requires explicit
 human approval before any consequential action, drives a controlled rollback through

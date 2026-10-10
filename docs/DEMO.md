@@ -60,6 +60,8 @@ Both need `GITLAB_TOKEN` in the environment; the token is never stored in the re
 
 ## 5. The demonstration video
 
+**On YouTube: https://youtu.be/rvs6M7xOTR0**
+
 `demo/videos/rollbackiq-demo.mp4` — **2:36, 1920×1080, narrated** (British English, female voice),
 with subtitles in `demo/videos/rollbackiq-demo.srt` and `.vtt`. It is built in `demo/videowright/`;
 `demo/videowright/README.md` lists the source of every picture and number, and the rebuild commands.

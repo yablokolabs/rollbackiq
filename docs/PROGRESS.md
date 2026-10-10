@@ -6,6 +6,8 @@
 ## Current phase
 **Merged.** Merge request !1 was merged by the user on 2026-10-10 as `78acd60`; `main` holds all of session 008 and 009. Pipeline `2934572189` on `main` passed `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` on a GitLab runner, and waits at the manual job `deploy:regressed`.
 
+**Submission state (2026-10-10, late).** Merge requests !1 to !4 are merged. The video is on YouTube: https://youtu.be/rvs6M7xOTR0 (uploaded by the user; it must be set to Public, not Unlisted). `docs/DEVPOST.md` holds the text for the Devpost form. The logo and icon are in `assets/brand/`. Each merge request was reviewed by GitLab Duo (`/request_review @GitLabDuo`); sessions `9290081`, `9290175`, `9290263`, `9290288`, `9290302`, `9290469`. The organisers' four checks pass: public repository, MIT licence detected, pipeline history visible, Duo Agent Platform use evidenced. A proposal for GitLab contributor points (a blog post, two bug reports, one docs fix) waits for the user's approval; nothing is filed.
+
 **Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Later in the session: the narrated demonstration video was built (`demo/videos/rollbackiq-demo.mp4`, 2:36, VideoWright project in `demo/videowright/`), the diagrams were embedded in the README and re-rendered whole, and the branch pipeline ran `test:pytest` on a runner for the first time (success). Open: a take with the approval played by hand in the GitLab UI, and the GitLab MCP token.
 
 **User decisions in session 009:** work on a branch, not on `main`; push the branch and open a merge request, the user merges; **use only the `showcase` project (`origin`)** — do not push to `rollbackiq-project`; the video uses a **British female ElevenLabs voice**, with `~/mender/demo/videos` and `~/sightops/demo/videos` as references; the video rules are: under three minutes, shows the automation running (not slides or a mockup), explains the problem, the solution and the use of GitLab.
@@ -209,9 +211,9 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-1. **A take with the approval played by hand** (needs the user): pipeline `2934572189` on `main` waits at `deploy:regressed`. Steps in `docs/DEMO.md` §6.
-2. **GitLab MCP** (needs the user): a token with the `mcp` scope, or the OAuth flow in a browser. Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
-3. **Submission pass**: the Devpost text from `docs/COMPETITION_COMPLIANCE.md`, with the video and the repository link.
+1. **Submit on Devpost** (the user): paste `docs/DEVPOST.md`, the repository link and https://youtu.be/rvs6M7xOTR0; name GitLab in Built With.
+2. **A take with the approval played by hand** (the user, optional for the submission): pipeline `2934572189` on `main`, steps in `docs/DEMO.md` §6.
+3. **GitLab MCP** (needs a token with the `mcp` scope) and the **contributor-points proposal** (needs the user's approval).
 
 Resolved uncertainties from the first pipeline: `docker:27-dind` **is** permitted on the shared runner; the registry accepts the image once the job logs in; `apk add python3 py3-pip` plus `pip install --break-system-packages` works on the Alpine `docker:27` image; and `GITLAB_USER_LOGIN` **is** populated for manual jobs.
 
@@ -346,9 +348,9 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`. VideoWright is a project dependency in `demo/videowright/` (`npm ci`). `context-mode` is installed as a CLI (`context-mode index|search`).
 
 ## Next three actions
-1. **The user plays the three manual jobs by hand** on pipeline `2934572189` and records the screen (`docs/DEMO.md` §6).
-2. **GitLab MCP**, when a token with the `mcp` scope exists.
-3. **Write the Devpost submission text** from the documents; every claim must point to an artifact.
+1. **The user submits on Devpost** and confirms that the YouTube video is Public.
+2. **Contributor points**, if the user approves: draft the blog post first; then search for duplicates and reproduce before any issue is filed on a GitLab project.
+3. **The hand-played approval take**, and GitLab MCP when a token with the `mcp` scope exists.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
