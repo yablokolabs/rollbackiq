@@ -9,8 +9,6 @@
     "dev": "npx videowright dev",
     "render": "npx videowright render",
     "script": "npx videowright script",
-    "screens": "node scripts/capture_app_screens.mjs",
-    "assets": "node scripts/sync_screens_to_assets.mjs",
     "layout": "node scripts/check_scene_layout.mjs",
     "sync-audio": "python3 scripts/sync_audio.py",
     "typecheck": "tsc --noEmit"
