@@ -27,9 +27,15 @@ has not happened.
 | OpenTelemetry export to GitLab Observability | **Implemented and verified against the real collector** (64 spans accepted, 0 failures) | `demo/service/otel_setup.py`, `evidence/otel-export-spike.json` |
 | GitLab CI/CD deploy, approval gate and rollback | **Implemented and verified in CI** — pipeline `2932808602`, every job green | `evidence/gitlab-ci-lifecycle-artifacts/`, `docs/PROGRESS.md` |
 | GitLab Duo investigation | **A real Duo flow executed and returned grounded findings**; a custom agent + custom flow are registered in the AI Catalog and validate server-side | `duo/`, `evidence/duo-flow-runs.json`, `evidence/duo-catalog-items.json` |
-| Control-plane API, persistence and dashboard | **Not yet implemented** | the services exist (`detector.py`, `safety.py`, `verifier.py`); no HTTP API or dashboard yet |
+| Control-plane API and incident console | **Implemented and verified locally** — the API serves typed JSON read from the pipeline's own artifacts, and every dashboard view renders with no page or console errors | `backend/app/api/incident_api.py`, `dashboard/`, `docs/screenshots/` |
 
-Test suite: **90 passing** (`pytest`).
+Test suite: **98 passing** (`pytest`).
+
+**On persistence:** `ROLLBACKIQ_BUILD.md` §9 allows SQLite "unless a simpler proven design
+suffices", and here it does. The pipeline's artifacts *are* the record — the console reads
+`evidence/gitlab-ci-lifecycle-artifacts/` and the Duo session capture directly, so there is no
+second copy that can drift from what the pipeline actually wrote. A file the API cannot find is
+reported in `missing_artifacts` rather than filled in.
 
 ## Measured end-to-end run
 
@@ -54,7 +60,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r backend/requirements.txt
 
 # 2. Tests
-.venv/bin/python -m pytest            # 90 passing
+.venv/bin/python -m pytest            # 98 passing
 
 # 3. The full regression demonstration (healthy -> faulty -> detected -> rolled back -> verified)
 .venv/bin/python scripts/demo_regression.py
@@ -119,15 +125,38 @@ Design rules that make this trustworthy:
 ## Repository layout
 
 ```
+backend/app/api/          read-only incident API over the pipeline's own artifacts (+ serves the console)
 backend/app/models/       incident state machine, metric windows, releases, approvals
 backend/app/services/     detector, safety gate, verifier, collector, stats
-backend/tests/            unit, negative and integration tests (90)
+backend/tests/            unit, negative and integration tests (98)
+dashboard/                the incident console (React + TypeScript + Tailwind)
 demo/service/             the deployed workload (v1 healthy, v2 faulty) + Dockerfile
 duo/                      custom Duo agent prompt + flow definition (provisioned to the AI Catalog)
 scripts/                  demo regression runner, attribution guard, catalog provisioning, Git hooks
 evidence/                 raw measured records from real runs
 docs/PROGRESS.md          session checkpoint and current blockers
 ```
+
+## The incident console
+
+The console is one service that answers "what happened, and what proves it". It has no write path: it
+reads the artifacts the pipeline and the Duo flow themselves wrote and renders them.
+
+```bash
+ .venv/bin/uvicorn app.api.incident_api:app --app-dir backend --port 8000
+#  -> http://127.0.0.1:8000/            the console (requires dashboard/dist)
+#  -> http://127.0.0.1:8000/api/incidents
+
+cd dashboard && npm install && npm run build     # build the console
+.venv/bin/python scripts/screenshot_dashboard.py # render every view; fails on a page or console error
+```
+
+The views are Overview, Timeline, Investigation (the real Duo session and the note it posted),
+Approval centre (all 18 safety-gate checks, the approver, the proposal hash), Verification, and the
+Incident report. `scripts/screenshot_dashboard.py` doubles as the render check: it waits for each
+view's real content and exits non-zero on any uncaught page error or `console.error`, because a
+bundle that compiles but renders nothing is still a broken console. It writes
+`docs/screenshots/*.png` from the real incident, not from fixtures.
 
 ## Safety model
 

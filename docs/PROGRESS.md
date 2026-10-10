@@ -4,7 +4,7 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow exist in the AI Catalog**, are provisioned from the repository, enabled in the project, and **they now execute end-to-end through a real flow trigger**: session `9288744` finished and posted a genuine investigation note to incident issue #2. Getting there required fixing two real defects: the flow YAML (`OneOffComponent` has no `final_answer` output; inline prompts need `placeholder: history`; `params` must not be a mapping) and, more subtly, `scripts/duo_provision_catalog.py`, whose update path was a **silent no-op** — without `versionBump`/`release` the catalog kept serving the old revision while provisioning reported success. The script now passes both fields and reads the stored definition back, comparing it with the repository file by SHA-256. The flow's first successful audit caught a real transcription error in the incident record, which has been corrected. The headless CLI still cannot select a custom flow (inline config is declined; that finding stands). Two further Duo investigations ran earlier and one found a genuine bug in `safety.py`, now fixed and covered by tests. Remaining work is the dashboard, diagrams, the documentation set, and the demo video.
+**The end-to-end lifecycle now runs on GitLab, and a real Duo flow has executed.** As of `a192569`, one pipeline (`2932808602`, showcase) carries build → deploy → deliberate regression → human approval → safety-gated rollback → independently verified recovery, every job green, with the measured numbers recorded in `evidence/`. The Phase 0 Duo gate is met: `duo run` completed session `9283219` on the `developer/v1` flow and returned a grounded 7332-character analysis whose every claim was checked against the code. OpenTelemetry is wired into the workload and the control plane. A **custom Duo agent and custom flow exist in the AI Catalog**, are provisioned from the repository, enabled in the project, and **they now execute end-to-end through a real flow trigger**: session `9288744` finished and posted a genuine investigation note to incident issue #2. Getting there required fixing two real defects: the flow YAML (`OneOffComponent` has no `final_answer` output; inline prompts need `placeholder: history`; `params` must not be a mapping) and, more subtly, `scripts/duo_provision_catalog.py`, whose update path was a **silent no-op** — without `versionBump`/`release` the catalog kept serving the old revision while provisioning reported success. The script now passes both fields and reads the stored definition back, comparing it with the repository file by SHA-256. The flow's first successful audit caught a real transcription error in the incident record, which has been corrected. The headless CLI still cannot select a custom flow (inline config is declined; that finding stands). Two further Duo investigations ran earlier and one found a genuine bug in `safety.py`, now fixed and covered by tests. **The incident console now exists** (`backend/app/api/incident_api.py` + `dashboard/`, session 008): a read-only API over the pipeline's own artifacts, six views, and a Chromium render check that fails on any page or console error. Remaining work is the five diagrams, the documentation set, and the demo video.
 
 ## GitLab pipeline: full lifecycle end to end (2026-10-10, `a192569`)
 
@@ -205,8 +205,8 @@ Next, in order:
 
 1. ~~A custom Duo flow~~ — **done**: the flow executes through the project's flow trigger; evidence in `evidence/duo-flow-trigger-session.json` (session `9288744`, `FINISHED`, audit note on issue #2).
 2. ~~The GitLab issue / incident record~~ — **done**: issue #2 carries the artifact links and the flow's audit note; its three mis-transcribed values were corrected on 2026-10-10.
-3. **The dashboard** (React/TS/Tailwind) over incidents, timeline, approval and verification.
-4. Docs (`ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`), five rendered diagrams, and the under-3-minute video.
+3. ~~**The dashboard**~~ — **done this session**: `backend/app/api/incident_api.py` serves typed JSON read from `evidence/gitlab-ci-lifecycle-artifacts/`, the pipeline capture and the Duo session record, and `dashboard/` renders Overview, Timeline, Investigation, Approval centre, Verification and Incident report. `scripts/screenshot_dashboard.py` renders all six views and exits non-zero on a page or console error; the six captures are in `docs/screenshots/`.
+4. **The diagrams, the documentation set and the video** — five rendered diagrams into `docs/diagrams/`, then `ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`, then the under-3-minute recording.
 
 Exact next command (token comes from the user's `~/.hermes/.env`):
 
@@ -243,6 +243,7 @@ Both URL forms return HTTP 200, which is why the wrong link was not self-evident
 `/api/v4/namespaces` confirms exactly one hackathon workspace namespace for this user: `gitlab-ai-hackathon/transcend-october-2026/43178176` (id 144345494).
 
 ## Last completed milestone
+**The incident console renders the real incident.** `backend/app/api/incident_api.py` serves typed JSON read from the pipeline's own artifacts (18 safety checks, the approval scoped to proposal `70f980983c184108`, the Duo session and the note it posted, the independent verification window) and `dashboard/` renders Overview, Timeline, Investigation, Approval centre, Verification and Incident report. `scripts/screenshot_dashboard.py` captured all six views with **no page or console errors**, and the API is covered by 8 new tests (**98 passed**).
 **A custom GitLab Duo flow executes end-to-end.** Session `9288744` — started by mentioning the flow's service account on incident issue #2 — finished, read the repository's committed evidence artifacts, and posted its own investigation note recommending HOLD and escalating the data-consistency question; its audit caught a real transcription error in the incident record, now corrected in the issue, this file and `evidence/gitlab-pipeline-2932808602.json`. On the CI side, pipeline `2932808602` still carries the full build → deploy → regression → approval → rollback → verification lifecycle with every job green.
 
 ## Phase 0 capability matrix (initial snapshot on this host, 2026-10-09)
@@ -282,19 +283,19 @@ Because the chosen destination is a **new** project in the workspace group, the 
 - [x] Incident state machine with illegal transitions rejected
 - [x] Safety gate: approval scope/expiry/actor, environment allowlist, known-good target, migration veto, idempotency
 - [x] Independent recovery verification (refuses non-independent or failed windows)
-- [x] Unit, negative and integration tests (90 passing)
+- [x] Unit, negative and integration tests (98 passing)
 - [x] Real GitLab Duo agent/flow execution — custom flow registered, enabled and executed (`evidence/duo-flow-trigger-session.json`)
 - [x] Real GitLab CI/CD deploy and rollback jobs (pipeline `2932808602`)
 - [x] Evidence-based investigation via Duo with GitLab context — the flow's audit note on issue #2 caught a real record error
-- [ ] Control-plane API and SQLite persistence
-- [ ] Dashboard
+- [x] Read-only control-plane API over the pipeline's own artifacts (`backend/app/api/incident_api.py`)
+- [x] Incident console (React + TypeScript + Tailwind) with every view rendered and checked (`scripts/screenshot_dashboard.py`)
 - [ ] Diagrams, documentation set, demo video
 
 ## Work in progress
-Nothing left running locally. `.venv` is installed; the demo workload is not running (Compose stack was torn down after verification). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` (event types `[0, 1]` — mention and assign) with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
+Nothing left running locally except the console API, started with `.venv/bin/uvicorn app.api.incident_api:app --app-dir backend --port 8000` (reads artifacts only; no token needed). `.venv` is installed; the demo workload is not running (Compose stack was torn down after verification). The GitLab side is live: catalog items `1016480` (AGENT) and `1016482` (FLOW), consumer `12491887` pinned to flow v`1.1.2`, trigger `3013795` (event types `[0,1]` — mention and assign) with service account `ai-rollbackiq-recovery-investigator-flow-gitlab-ai-hackathon`.
 
 ## Last successful tests
-`.venv/bin/python -m pytest` → **90 passed**. Covers:
+`.venv/bin/python -m pytest` → **98 passed** (90 + 8 for the incident API). Covers:
 
 | Area | Tests |
 | --- | --- |
@@ -335,9 +336,9 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - The group Observability **MCP server** endpoint is still unverified; do not claim GitLab MCP usage unless it is observed.
 
 ## Next three actions
-1. **Build the incident dashboard** (React + TypeScript + Tailwind): overview, release timeline, investigation evidence (including the flow's audit note), approval centre and verification verdict, reading the real artifacts under `evidence/`.
-2. **Render five diagrams** (architecture, Duo flow/sequence, incident state machine, approval trust boundary, rollback/verification pipeline) into `docs/diagrams/`, and write the documentation set.
-3. **Record the under-3-minute demo video** with the automation actually running; the approval must be played by a human, and the narration must not imply the custom flow orchestrates the whole lifecycle — execution authority stays in the CI/CD safety gate.
+1. **Render the five diagrams** (architecture, Duo flow/sequence, incident state machine, approval trust boundary, rollback/verification pipeline) into `docs/diagrams/`, and write the documentation set (`ARCHITECTURE.md`, `SECURITY.md`, `EVALUATION.md`, `DEMO.md`, `COMPETITION_COMPLIANCE.md`).
+2. **Record the under-3-minute demo video** with the automation actually running; the approval must be played by a human, and the narration must not imply the custom flow orchestrates the whole lifecycle — execution authority stays in the CI/CD safety gate.
+3. **Re-verify the submission package**: fresh clone → tests → guard → console build, and confirm every evidence link in the README resolves to a real artifact.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
@@ -370,6 +371,16 @@ Rule: commits, merge requests, issues, documentation, source files, diagrams, re
 - GitLab pipeline / Duo session / incident issue links are still to be created (blocked on Phase 0 access).
 
 ## Session log
+
+### Session 008 — Incident console built, and its render check
+
+- **What was built.** `backend/app/api/incident_api.py` (FastAPI) is a **read-only** control plane: it parses `evidence/gitlab-ci-lifecycle-artifacts/`, `evidence/gitlab-pipeline-2932808602.json` and the Duo session record into typed models (`Incident`, `Detection`, `SafetyDecision`, `Approval`, `VerificationResult`, `DuoSession`, `TimelineEvent`) and serves `GET /healthz`, `GET /api/incidents`, `GET /api/incidents/{id}` plus the built console at `/`. `dashboard/` is React + TypeScript + Tailwind with six views; the Overview shows the p95 ratio and error rate per window against the baseline, Approval centre renders all 18 gate checks, and Verification shows why `independent=True` is provable (window starts after `executed_at`).
+- **Two deliberate honesty mechanisms, not decorations.** A missing or unparseable artifact is named in `missing_artifacts` instead of being defaulted, and every incident response carries the fixed `fault_nature` (v1 and v2 share one image digest; the fault is injected deployment configuration) and `code_rollback_note` (a code rollback does not restore deleted data) so no consumer can present the incident as something it was not.
+- **Persistence decision.** `ROLLBACKIQ_BUILD.md` §9 permits SQLite "unless a simpler proven design suffices"; here it does. The artifacts *are* the record, and a second copy could only drift from what the pipeline wrote. Recorded in the README rather than silently skipped.
+- **Tests: 90 → 98 passed**, the 8 new ones covering the API's real behaviour: detection parsed from the committed artifact, all 18 safety checks present, the approver and proposal hash, `independent=True` only with a post-rollback window, and `missing_artifacts` naming a file the API cannot read.
+- **The render check is the point.** `scripts/screenshot_dashboard.py` drives Chromium over every view, waits for real content in each, and **exits non-zero on any uncaught page error or `console.error`** — so "it built" is never mistaken for "it renders". Result: six views captured, **no page or console errors**, one fix applied during the pass (a React type import and a missing tag in `Report.tsx`).
+- Console screenshots: `docs/screenshots/{overview,timeline,investigation,approval-centre,verification,incident-report}.png`.
+- Tests **98 passed**; next: five diagrams, the documentation set, the video.
 
 ### Session 007 — Custom Duo flow executes end-to-end; its audit corrects the record
 

@@ -1,0 +1,25 @@
+{
+  "name": "rollbackiq-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "RollbackIQ incident console: overview, timeline, investigation, approval, verification and report over the real evidence artifacts served by the control-plane API.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
