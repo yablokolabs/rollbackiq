@@ -4,6 +4,18 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
+> **Record correction (2026-10-10, 21:27 UTC): the "silent no-op" claim is withdrawn.** Earlier
+> sections of this file say that `aiCatalogFlowUpdate` silently ignores `definition` unless
+> `versionBump` and `release` are given. Before reporting that to GitLab, it was reproduced on the
+> project's own flow: an update with only `id` and `definition` returned `errors: []` **and made a
+> new released version, v1.2.0, with the new definition**. The version history agrees: v1.1.0 was
+> made two minutes after v1.0.0 on the morning of 2026-10-10. The flow consumer is not pinned; it
+> resolves to the latest released version. So the catalog did update, and the failed sessions
+> `9283600` and `9288721` are explained by the defects in the flow YAML of that time, which were
+> real and were fixed. Why the earlier session saw no new version is not established. The flow was
+> restored from the repository after the test (v1.2.1, identical by SHA-256). Record:
+> `evidence/duo-catalog-update-repro.json`. The older text below is kept as history.
+
 **Merged.** Merge request !1 was merged by the user on 2026-10-10 as `78acd60`; `main` holds all of session 008 and 009. Pipeline `2934572189` on `main` passed `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` on a GitLab runner, and waits at the manual job `deploy:regressed`.
 
 **Submission state (2026-10-10, late).** Merge requests !1 to !4 are merged. The video is on YouTube: https://youtu.be/rvs6M7xOTR0 (uploaded by the user; it must be set to Public, not Unlisted). `docs/DEVPOST.md` holds the text for the Devpost form. The logo and icon are in `assets/brand/`. Each merge request was reviewed by GitLab Duo (`/request_review @GitLabDuo`); sessions `9290081`, `9290175`, `9290263`, `9290288`, `9290302`, `9290469`. The organisers' four checks pass: public repository, MIT licence detected, pipeline history visible, Duo Agent Platform use evidenced. A proposal for GitLab contributor points (a blog post, two bug reports, one docs fix) waits for the user's approval; nothing is filed.

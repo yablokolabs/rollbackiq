@@ -117,9 +117,12 @@ jobs and on one host, so the lifecycle can be reproduced with one command in abo
 
 ## Challenges
 
-- **A catalog update that did nothing.** Updating a flow in the AI Catalog returned success but
-  kept serving the old definition until the update carried a version bump and a release. The
-  provisioning script now reads the stored definition back and compares it by hash.
+- **A wrong diagnosis of our own.** When trigger sessions failed, we blamed the AI Catalog API:
+  we wrote that an update without a version bump changes nothing. Before reporting it upstream
+  we reproduced it, and it was not true: the update made a new released version. The defects
+  were in our flow definition. We withdrew the claim and kept the reproduction as evidence.
+  What stays from that episode is useful: the provisioning script reads the stored definition
+  back and compares it with the repository by hash.
 - **The headless CLI cannot select a custom flow.** We traced this to the CLI source, recorded
   it, and used the flow trigger, which is the supported path.
 - **A recovery window that proved nothing.** The first probe finished in 1.1 s. The verifier was

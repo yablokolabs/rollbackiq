@@ -1,0 +1,138 @@
+{
+  "captured_at": "2026-10-10T21:27:18.908928+00:00",
+  "flow": "gid://gitlab/Ai::Catalog::Item/1016482",
+  "sent": {
+    "fields": [
+      "id",
+      "definition"
+    ],
+    "definition_sha256": "b558a3d2b62a48c0",
+    "definition_len": 6201
+  },
+  "before": {
+    "latest": {
+      "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032259",
+      "versionName": "1.1.2",
+      "humanVersionName": "v1.1.2",
+      "released": true,
+      "updatedAt": "2026-10-10T17:35:29Z",
+      "definition_sha256": "dd9aced18c3cd4c1",
+      "definition_len": 6157
+    },
+    "versions": [
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032259",
+        "versionName": "1.1.2",
+        "humanVersionName": "v1.1.2",
+        "released": true,
+        "updatedAt": "2026-10-10T17:35:29Z",
+        "definition_sha256": "dd9aced18c3cd4c1",
+        "definition_len": 6157
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032258",
+        "versionName": "1.1.1",
+        "humanVersionName": "v1.1.1",
+        "released": true,
+        "updatedAt": "2026-10-10T17:30:08Z",
+        "definition_sha256": "507b064e22c548bf",
+        "definition_len": 5801
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032151",
+        "versionName": "1.1.0",
+        "humanVersionName": "v1.1.0",
+        "released": true,
+        "updatedAt": "2026-10-10T04:41:47Z",
+        "definition_sha256": "f2385a06321a2dbd",
+        "definition_len": 3608
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032149",
+        "versionName": "1.0.0",
+        "humanVersionName": "v1.0.0",
+        "released": true,
+        "updatedAt": "2026-10-10T04:39:10Z",
+        "definition_sha256": "3467fc54402c7d0b",
+        "definition_len": 2011
+      }
+    ]
+  },
+  "mutation_response": {
+    "data": {
+      "aiCatalogFlowUpdate": {
+        "errors": [],
+        "item": {
+          "id": "gid://gitlab/Ai::Catalog::Item/1016482",
+          "latestVersion": {
+            "versionName": "1.2.0",
+            "humanVersionName": "v1.2.0",
+            "released": true
+          }
+        }
+      }
+    }
+  },
+  "after": {
+    "latest": {
+      "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032293",
+      "versionName": "1.2.0",
+      "humanVersionName": "v1.2.0",
+      "released": true,
+      "updatedAt": "2026-10-10T21:27:18Z",
+      "definition_sha256": "b558a3d2b62a48c0",
+      "definition_len": 6201
+    },
+    "versions": [
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032293",
+        "versionName": "1.2.0",
+        "humanVersionName": "v1.2.0",
+        "released": true,
+        "updatedAt": "2026-10-10T21:27:18Z",
+        "definition_sha256": "b558a3d2b62a48c0",
+        "definition_len": 6201
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032259",
+        "versionName": "1.1.2",
+        "humanVersionName": "v1.1.2",
+        "released": true,
+        "updatedAt": "2026-10-10T17:35:29Z",
+        "definition_sha256": "dd9aced18c3cd4c1",
+        "definition_len": 6157
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032258",
+        "versionName": "1.1.1",
+        "humanVersionName": "v1.1.1",
+        "released": true,
+        "updatedAt": "2026-10-10T17:30:08Z",
+        "definition_sha256": "507b064e22c548bf",
+        "definition_len": 5801
+      },
+      {
+        "id": "gid://gitlab/Ai::Catalog::ItemVersion/1032151",
+        "versionName": "1.1.0",
+        "humanVersionName": "v1.1.0",
+        "released": true,
+        "updatedAt": "2026-10-10T04:41:47Z",
+        "definition_sha256": "f2385a06321a2dbd",
+        "definition_len": 3608
+      }
+    ]
+  },
+  "definition_applied": true,
+  "anything_changed": true,
+  "purpose": "Reproduction of the claim that aiCatalogFlowUpdate ignores 'definition' when versionBump and release are not given. Result: NOT reproduced; the update made a new released version.",
+  "restored": {
+    "with": "scripts/duo_provision_catalog.py",
+    "flow_version_after_restore": "1.2.1",
+    "stored_definition": "identical to duo/flows/rollbackiq-recovery-investigator.yaml by SHA-256"
+  },
+  "consumer": {
+    "id": "12491887",
+    "pinned_version_prefix": null,
+    "resolves_to": "the latest released version"
+  }
+}

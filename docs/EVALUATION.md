@@ -154,7 +154,7 @@ REST API, so collector acceptance is the strongest evidence obtainable from this
 | --- | --- |
 | Session `9283219`, `developer/v1` | 7332-character grounded analysis; every claim was checked against the code and was accurate |
 | Sessions `9283214` | `success` with an **empty** response, because a headless run with no approved tools has no way to read anything. Kept as evidence that a green workflow alone proves only plumbing |
-| Sessions `9283600`, `9288721` | Died with `KeyError` — root cause: `aiCatalogFlowUpdate` silently ignores `definition` without `versionBump`/`release`, so sessions kept running the original revision |
+| Sessions `9283600`, `9288721` | Died with `KeyError`. The flow definition of that time had real defects, which were fixed before session `9288744`. An earlier revision of this row blamed the catalog API ("`aiCatalogFlowUpdate` silently ignores `definition` without `versionBump`/`release`"); a reproduction on 2026-10-10 did not confirm that, and the claim is withdrawn (`evidence/duo-catalog-update-repro.json`) |
 | Sessions `9283450`, `9283505`, `9283539`, `9283555` | Four probes that characterised the headless limit: the CLI transmits the custom definition, the service declines to instantiate an inline flow |
 | Session `9288744` (custom flow, via the flow trigger) | **`FINISHED`**, 86 s, 17 events, no errors; read the repository and the issue, then posted an investigation report to issue #2 recommending **HOLD**, and its audit caught three mis-transcribed values in this repository's own record |
 

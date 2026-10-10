@@ -20,16 +20,17 @@ file re-asserts the edited content onto the catalog item.
 
 Three API facts, each learned the hard way against the live schema, shape this script:
 
-* An update that omits ``versionBump`` and ``release`` is a **silent no-op**: the mutation
-  returns ``errors: []`` while creating no version and leaving the stored definition
-  unchanged. Flow-trigger sessions keep running the old revision while the script reports
-  success. Updates therefore pass ``versionBump: "PATCH"`` and ``release: true``.
+* Updates pass ``versionBump: "PATCH"`` and ``release: true``, so each run makes one
+  released patch version. An earlier note here said that an update without those two
+  fields is a silent no-op. A reproduction on 2026-10-10 did not confirm that: the
+  update made a new released minor version with the new definition
+  (``evidence/duo-catalog-update-repro.json``). The claim is withdrawn.
 * The stored content **is** readable, just not through the interface type.
   ``AiCatalogItemVersion`` has no ``definition``/``systemPrompt`` field, but the concrete
   version types do, so an inline fragment (``... on AiCatalogFlowVersion { definition }``
   / ``... on AiCatalogAgentVersion { systemPrompt }``) reads the value back. The script
-  compares that value with the repository file by SHA-256, so drift or a silent no-op is
-  reported rather than assumed away.
+  compares that value with the repository file by SHA-256, so drift is reported rather
+  than assumed away.
 * The flow definition is validated server-side and rejects with per-field errors (for
   example, a ``params`` mapping is refused: ``params`` must be a string or a list of
   strings). A clean response is real evidence the definition compiled rather than merely
@@ -213,9 +214,8 @@ class CatalogClient:
         if dry_run:
             return "would-update", existing["id"], _version_name(existing)
 
-        # versionBump/release are not optional decoration: without them the mutation
-        # reports no errors and changes nothing, which is how the catalog once kept
-        # serving an old flow revision while provisioning reported success.
+        # An explicit PATCH bump and release, so each run makes one released version
+        # with a predictable name.
         variables = {
             "input": {
                 "id": existing["id"],
@@ -342,10 +342,8 @@ def main(argv: List[str]) -> int:
 
     if not args.dry_run:
         print(
-            "\nNote: updates pass versionBump/release, because an update without them is a\n"
-            "silent no-op that returns no errors and changes nothing. The read-back above is\n"
-            "the actual verification: the stored definition/systemPrompt is compared with\n"
-            "the repository file by SHA-256."
+            "\nNote: the read-back above is the verification: the stored\n"
+            "definition/systemPrompt is compared with the repository file by SHA-256."
         )
 
     if args.evidence:

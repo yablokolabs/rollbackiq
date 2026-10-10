@@ -57,7 +57,7 @@ the truth.
 
 | Dimension | What backs it |
 | --- | --- |
-| **Technological implementation** | Deterministic detector, 9-state machine that raises on illegal transitions, an 18-check gate that reports every veto, a verifier that refuses to certify from thin or reused evidence, real CI/CD with artifact-carried state, OTLP telemetry, a read-only typed API and a React console — 98 passing tests |
+| **Technological implementation** | Deterministic detector, 9-state machine that raises on illegal transitions, an 18-check gate that reports every veto, a verifier that refuses to certify from thin or reused evidence, real CI/CD with artifact-carried state, OTLP telemetry, a read-only typed API and a React console — 114 passing tests |
 | **Design** | Refusing is a feature: unknown migration, unknown target, unverified baseline and thin windows all fail closed, and the refusals are kept as evidence rather than papered over |
 | **Potential impact** | Time-to-detect and time-to-recover are measured in seconds here, and the output is an auditable record a human signed off on |
 | **Innovation** | The differentiator is the claim itself: **a successful rollback job is not success**; observed recovery against a verified baseline, measured after the action, is |
