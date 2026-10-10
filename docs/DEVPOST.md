@@ -1,9 +1,8 @@
 # Devpost submission text (draft)
 
 Paste the sections below into the Devpost form. Every figure comes from an artifact in this
-repository; `docs/COMPETITION_COMPLIANCE.md` maps each claim to its evidence. Two things are
-left to the entrant: the prize category, and a check that the YouTube video's visibility is
-**Public** (the rules require it; Unlisted is not enough).
+repository; `docs/COMPETITION_COMPLIANCE.md` maps each claim to its evidence. One choice is
+left to the entrant: the prize category.
 
 ---
 
