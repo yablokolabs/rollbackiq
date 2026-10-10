@@ -14,6 +14,7 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
+from ..integrations.otel import span
 from ..models.incident import utcnow
 from ..models.metrics import Baseline, MetricWindow
 
@@ -89,6 +90,43 @@ class RegressionDetector:
     # -- public API --------------------------------------------------------
 
     def evaluate(
+        self,
+        window: MetricWindow,
+        baseline: Optional[Baseline],
+        *,
+        now: Optional[datetime] = None,
+    ) -> DetectionResult:
+        """Evaluate a window, recording the resulting decision on a span.
+
+        The decision itself is made by :meth:`_evaluate`; the span is annotated
+        afterwards so that it describes what was concluded rather than what was
+        seen. When telemetry is not configured the span is an inert no-op and
+        this method is behaviourally identical to calling ``_evaluate``.
+        """
+        with span(
+            "rollbackiq.detector.evaluate",
+            {
+                "rollbackiq.detector.release": window.release,
+                "rollbackiq.detector.environment": window.environment,
+                "rollbackiq.detector.samples_seen": window.request_count,
+            },
+        ) as active:
+            result = self._evaluate(window, baseline, now=now)
+            active.set(
+                {
+                    "rollbackiq.detector.triggered": result.triggered,
+                    "rollbackiq.detector.p95_ratio": result.p95_ratio,
+                    "rollbackiq.detector.error_rate": result.error_rate,
+                    "rollbackiq.detector.sample_count": result.sample_count,
+                    "rollbackiq.detector.breaches": result.breaches,
+                    "rollbackiq.detector.confidence": result.confidence,
+                    "rollbackiq.detector.suppressed_reason": result.suppressed_reason,
+                    "rollbackiq.detector.baseline_release": result.baseline_release,
+                }
+            )
+            return result
+
+    def _evaluate(
         self,
         window: MetricWindow,
         baseline: Optional[Baseline],

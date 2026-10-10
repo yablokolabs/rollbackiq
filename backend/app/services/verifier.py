@@ -17,6 +17,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+from ..integrations.otel import span
 from ..models.incident import utcnow
 from ..models.metrics import Baseline, MetricWindow
 
@@ -50,6 +51,55 @@ class VerificationResult(BaseModel):
 
 
 def verify_recovery(
+    *,
+    expected_release: str,
+    after: MetricWindow,
+    baseline: Baseline,
+    executed_at: Optional[datetime] = None,
+    before: Optional[MetricWindow] = None,
+    thresholds: Optional[VerificationThresholds] = None,
+) -> VerificationResult:
+    """Verify recovery, recording the verdict on a span.
+
+    The verdict is computed by :func:`_verify_recovery`, which has several
+    early returns; annotating the span here means the span closes and records
+    correctly on every one of those paths. With telemetry unconfigured the span
+    is an inert no-op and this is behaviourally identical to the inner call.
+    """
+    with span(
+        "rollbackiq.verifier.verify_recovery",
+        {
+            "rollbackiq.verifier.expected_release": expected_release,
+            "rollbackiq.verifier.observed_release": after.release,
+            "rollbackiq.verifier.environment": after.environment,
+            "rollbackiq.verifier.executed_at_known": executed_at is not None,
+        },
+    ) as active:
+        result = _verify_recovery(
+            expected_release=expected_release,
+            after=after,
+            baseline=baseline,
+            executed_at=executed_at,
+            before=before,
+            thresholds=thresholds,
+        )
+        active.set(
+            {
+                "rollbackiq.verifier.recovered": result.recovered,
+                "rollbackiq.verifier.independent": result.independent,
+                "rollbackiq.verifier.expected_release": result.expected_release,
+                "rollbackiq.verifier.observed_release": result.observed_release,
+                "rollbackiq.verifier.samples": result.samples,
+                "rollbackiq.verifier.window_seconds": result.window_seconds,
+                "rollbackiq.verifier.p95_ratio_vs_baseline": result.p95_ratio_vs_baseline,
+                "rollbackiq.verifier.reason_count": len(result.reasons),
+                "rollbackiq.verifier.reasons": result.reasons,
+            }
+        )
+        return result
+
+
+def _verify_recovery(
     *,
     expected_release: str,
     after: MetricWindow,

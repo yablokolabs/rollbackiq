@@ -5,5 +5,12 @@ uvicorn[standard]>=0.30,<1.0
 httpx>=0.27,<1.0
 pydantic>=2.7,<3.0
 
+# OpenTelemetry: the control plane records what detection and verification
+# decided, so one trace runs from "regression found" to "recovery verified".
+# Instrumentation is opt-in and inert when no collector is configured; pinned
+# to the set the demo workload resolved and exercised.
+opentelemetry-sdk==1.45.1
+opentelemetry-exporter-otlp-proto-http==1.45.1
+
 # Test dependencies
 pytest>=8.0,<9.0
