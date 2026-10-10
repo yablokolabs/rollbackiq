@@ -1,0 +1,13 @@
+{
+  "action": "deploy",
+  "release": "v1",
+  "environment": "demo-staging",
+  "container": "rollbackiq-eval-workload-verify",
+  "image": "rollbackiq-workload:local",
+  "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+  "commit_sha": "bc021da",
+  "pipeline_id": "local-20261010T185603Z",
+  "fault_latency_ms": "0",
+  "fault_error_rate": "0",
+  "deployed_at": "2026-10-10T18:56:28Z"
+}

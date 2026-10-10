@@ -1,0 +1,6 @@
+{
+  "command": "/home/azureuser/rollbackiq/.venv/bin/python -u scripts/ci_incident.py regress --image rollbackiq-workload:local --network rollbackiq-local --environment demo-staging --container rollbackiq-eval-control --digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 --fault-latency 0 --fault-error-rate 0 --baseline /home/azureuser/rollbackiq/evidence/evaluation/control-5/baseline-window.json --workdir /home/azureuser/rollbackiq/evidence/evaluation/control-5 --deploy-out /home/azureuser/rollbackiq/evidence/evaluation/control-5/deploy-control.json --detection-out /home/azureuser/rollbackiq/evidence/evaluation/control-5/ci-detection.json --out /home/azureuser/rollbackiq/evidence/evaluation/control-5/incident-bundle.json",
+  "started_at": "2026-10-10T18:58:27.863282+00:00",
+  "exit_code": 1,
+  "wall_seconds": 7.52
+}

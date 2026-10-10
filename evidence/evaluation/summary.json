@@ -1,0 +1,93 @@
+{
+  "lifecycle": {
+    "runs": 5,
+    "recovered": 5,
+    "success_rate": 1.0,
+    "failed": [],
+    "per_run": [
+      {
+        "run": "run-1",
+        "recovered": true,
+        "failure_reason": null,
+        "exit_code": 0,
+        "wall_seconds": 32.72,
+        "detected": true,
+        "windows_to_detect": 2,
+        "p95_ratio_at_detection": 8.936586590408087,
+        "first_window_to_detection_seconds": 6.852,
+        "rollback_to_verified_seconds": 17.836,
+        "verify_p95_ratio_vs_baseline": 0.95686730375224,
+        "verify_error_rate": 0.0
+      },
+      {
+        "run": "run-2",
+        "recovered": true,
+        "failure_reason": null,
+        "exit_code": 0,
+        "wall_seconds": 32.12,
+        "detected": true,
+        "windows_to_detect": 2,
+        "p95_ratio_at_detection": 9.067293737290784,
+        "first_window_to_detection_seconds": 6.781,
+        "rollback_to_verified_seconds": 18.202,
+        "verify_p95_ratio_vs_baseline": 1.006032804540641,
+        "verify_error_rate": 0.0
+      },
+      {
+        "run": "run-3",
+        "recovered": true,
+        "failure_reason": null,
+        "exit_code": 0,
+        "wall_seconds": 32.49,
+        "detected": true,
+        "windows_to_detect": 2,
+        "p95_ratio_at_detection": 8.773723882577071,
+        "first_window_to_detection_seconds": 6.747,
+        "rollback_to_verified_seconds": 18.479,
+        "verify_p95_ratio_vs_baseline": 0.9517609208567598,
+        "verify_error_rate": 0.0
+      },
+      {
+        "run": "run-4",
+        "recovered": true,
+        "failure_reason": null,
+        "exit_code": 0,
+        "wall_seconds": 32.13,
+        "detected": true,
+        "windows_to_detect": 2,
+        "p95_ratio_at_detection": 8.503456489928404,
+        "first_window_to_detection_seconds": 6.717,
+        "rollback_to_verified_seconds": 18.075,
+        "verify_p95_ratio_vs_baseline": 0.949784034813631,
+        "verify_error_rate": 0.0
+      },
+      {
+        "run": "run-5",
+        "recovered": true,
+        "failure_reason": null,
+        "exit_code": 0,
+        "wall_seconds": 32.17,
+        "detected": true,
+        "windows_to_detect": 2,
+        "p95_ratio_at_detection": 8.836776136938871,
+        "first_window_to_detection_seconds": 6.788,
+        "rollback_to_verified_seconds": 18.29,
+        "verify_p95_ratio_vs_baseline": 0.9657700188624122,
+        "verify_error_rate": 0.0
+      }
+    ]
+  },
+  "controls": {
+    "runs": 5,
+    "false_positives": 0,
+    "false_positive_runs": [],
+    "inconclusive": []
+  },
+  "environment": {
+    "host": "Linux-7.0.0-1014-azure-x86_64-with-glibc2.39",
+    "cpus": 4,
+    "docker": "Docker version 29.8.1, build 4a63305",
+    "commit": "bc021da",
+    "summarised_at": "2026-10-10T18:58:37.265599+00:00"
+  }
+}

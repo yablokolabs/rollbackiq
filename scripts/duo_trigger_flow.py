@@ -19,7 +19,14 @@ Exit status is 0 only when the session reaches FINISHED. Every other terminal
 status (FAILED, STOPPED, PAUSED, INPUT_REQUIRED) exits 1 and is recorded with the
 session's own error text, so a failed run cannot be reported as a success.
 
+GitLab can stop answering at any point. If the trigger note cannot be posted, the
+script exits 1 and writes no evidence file, because nothing happened. If GitLab
+fails after the note was accepted, each failed poll is recorded in ``poll_errors``
+and polling continues until the timeout, so the evidence file always names the
+note that GitLab accepted.
+
 The token is read from GITLAB_TOKEN and is never written to the evidence file.
+GITLAB_URL selects the instance (default https://gitlab.com).
 """
 
 from __future__ import annotations
@@ -35,8 +42,7 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 
-REST = "https://gitlab.com/api/v4"
-GRAPHQL = "https://gitlab.com/api/graphql"
+DEFAULT_GITLAB_URL = "https://gitlab.com"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 DEFAULT_PROJECT_ID = "87424071"
@@ -100,19 +106,21 @@ def display(path: Path) -> str:
 
 
 def post_mention(
-    client: httpx.Client, project_id: str, issue_iid: str, body: str
+    client: httpx.Client, rest: str, project_id: str, issue_iid: str, body: str
 ) -> Dict[str, Any]:
     response = client.post(
-        f"{REST}/projects/{project_id}/issues/{issue_iid}/notes",
+        f"{rest}/projects/{project_id}/issues/{issue_iid}/notes",
         data={"body": body},
     )
     response.raise_for_status()
     note = response.json()
-    return {"id": note["id"], "url": f"{REST}/projects/{project_id}/issues/{issue_iid}/notes/{note['id']}"}
+    return {"id": note["id"], "url": f"{rest}/projects/{project_id}/issues/{issue_iid}/notes/{note['id']}"}
 
 
-def graphql(client: httpx.Client, query: str, variables: Dict[str, Any]) -> Dict[str, Any]:
-    response = client.post(GRAPHQL, json={"query": query, "variables": variables})
+def graphql(
+    client: httpx.Client, endpoint: str, query: str, variables: Dict[str, Any]
+) -> Dict[str, Any]:
+    response = client.post(endpoint, json={"query": query, "variables": variables})
     response.raise_for_status()
     body = response.json()
     if body.get("errors"):
@@ -124,9 +132,9 @@ def graphql(client: httpx.Client, query: str, variables: Dict[str, Any]) -> Dict
 
 
 def latest_session(
-    client: httpx.Client, project_path: str, after: datetime
+    client: httpx.Client, endpoint: str, project_path: str, after: datetime
 ) -> Optional[Dict[str, Any]]:
-    data = graphql(client, WORKFLOWS_QUERY, {"path": project_path})
+    data = graphql(client, endpoint, WORKFLOWS_QUERY, {"path": project_path})
     nodes = ((data.get("project") or {}).get("duoWorkflowWorkflows") or {}).get("nodes") or []
     candidates = [
         node for node in nodes if node.get("createdAt") and _parse(node["createdAt"]) >= after
@@ -136,8 +144,12 @@ def latest_session(
     return candidates[0]
 
 
-def session_events(client: httpx.Client, project_path: str, workflow_id: str) -> List[Dict[str, Any]]:
-    data = graphql(client, EVENTS_QUERY, {"path": project_path, "workflowId": workflow_id})
+def session_events(
+    client: httpx.Client, endpoint: str, project_path: str, workflow_id: str
+) -> List[Dict[str, Any]]:
+    data = graphql(
+        client, endpoint, EVENTS_QUERY, {"path": project_path, "workflowId": workflow_id}
+    )
     nodes = ((data.get("project") or {}).get("duoWorkflowEvents") or {}).get("nodes") or []
     events = []
     for node in nodes:
@@ -154,9 +166,11 @@ def session_events(client: httpx.Client, project_path: str, workflow_id: str) ->
     return events
 
 
-def issue_note_authors(client: httpx.Client, project_id: str, issue_iid: str) -> List[Dict[str, Any]]:
+def issue_note_authors(
+    client: httpx.Client, rest: str, project_id: str, issue_iid: str
+) -> List[Dict[str, Any]]:
     response = client.get(
-        f"{REST}/projects/{project_id}/issues/{issue_iid}/notes",
+        f"{rest}/projects/{project_id}/issues/{issue_iid}/notes",
         params={"sort": "desc", "per_page": 10},
     )
     response.raise_for_status()
@@ -197,9 +211,21 @@ def main(argv: List[str]) -> int:
     if f"@{args.service_account}" not in body:
         body = f"@{args.service_account} {body}"
 
+    gitlab_url = os.getenv("GITLAB_URL", DEFAULT_GITLAB_URL).rstrip("/")
+    rest_url = f"{gitlab_url}/api/v4"
+    graphql_url = f"{gitlab_url}/api/graphql"
+
     fired_at = datetime.now(timezone.utc)
+    poll_errors: List[str] = []
     with httpx.Client(headers={"PRIVATE-TOKEN": token}, timeout=60.0) as rest:
-        note = post_mention(rest, args.project_id, args.issue_iid, body)
+        try:
+            note = post_mention(rest, rest_url, args.project_id, args.issue_iid, body)
+        except httpx.HTTPError as exc:
+            print(
+                f"GitLab did not accept the trigger note, so no flow was started: {exc}",
+                file=sys.stderr,
+            )
+            return 1
         print(f"trigger note posted: {note['id']}")
 
         with httpx.Client(headers={"Authorization": f"Bearer {token}"}, timeout=60.0) as gql:
@@ -207,7 +233,15 @@ def main(argv: List[str]) -> int:
             deadline = time.monotonic() + args.timeout_seconds
             while time.monotonic() < deadline:
                 time.sleep(args.poll_seconds)
-                session = latest_session(gql, args.project_path, fired_at)
+                try:
+                    session = latest_session(gql, graphql_url, args.project_path, fired_at)
+                except (httpx.HTTPError, RuntimeError) as exc:
+                    # The note is already posted, so the session may still run. Stopping
+                    # here would lose the record of it; the timeout bounds the retries.
+                    poll_errors.append(str(exc))
+                    print(f"  GitLab did not answer the poll: {exc}")
+                    time.sleep(1)
+                    continue
                 if session is None:
                     print("  waiting for the platform to create a session ...")
                     continue
@@ -216,10 +250,13 @@ def main(argv: List[str]) -> int:
                     break
 
             events: List[Dict[str, Any]] = []
-            if session is not None:
-                events = session_events(gql, args.project_path, session["id"])
-
-        notes_after = issue_note_authors(rest, args.project_id, args.issue_iid)
+            notes_after: List[Dict[str, Any]] = []
+            try:
+                if session is not None:
+                    events = session_events(gql, graphql_url, args.project_path, session["id"])
+                notes_after = issue_note_authors(rest, rest_url, args.project_id, args.issue_iid)
+            except (httpx.HTTPError, RuntimeError) as exc:
+                poll_errors.append(str(exc))
 
     record = {
         "captured_at": datetime.now(timezone.utc).isoformat(),
@@ -231,6 +268,7 @@ def main(argv: List[str]) -> int:
         "trigger_note": note,
         "fired_at": fired_at.isoformat(),
         "session": session,
+        "poll_errors": poll_errors,
         "events": events,
         "issue_notes_after_run": notes_after,
     }

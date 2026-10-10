@@ -1,0 +1,50 @@
+/* Fonts are served from node_modules, so a render needs no network. */
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "@fontsource/inter/latin-600.css";
+@import "@fontsource/inter/latin-700.css";
+@import "@fontsource/jetbrains-mono/latin-400.css";
+@import "@fontsource/jetbrains-mono/latin-500.css";
+
+:root {
+	/* Navy and blue for structure, one amber for caution. */
+	--color-bg: #eef2f6;
+	--color-fg: #0b1626;
+	--color-accent: #075ca7;
+
+	/* Surfaces, from the frame background up to a raised panel */
+	--color-bg-deep: #051d35;
+	--color-surface: #ffffff;
+	--color-surface-raised: #e3eaf1;
+	--color-border: #d4dadf;
+
+	/* Brand steps, so a scene can go darker without leaving the palette */
+	--color-navy: #051d35;
+	--color-navy-2: #053b6e;
+	--color-blue-light: #3b8fd4;
+
+	/* Text steps */
+	--color-steel: #3e4d5c;
+	--color-muted: #6b7a8a;
+	--color-on-accent: #ffffff;
+
+	/* State colours. Green is a good measurement, red a fault, amber a caution. */
+	--color-good: #2e9e5b;
+	--color-bad: #d13b3b;
+	--color-warn: #ff7a1a;
+	--color-mist: #d4dadf;
+
+	/* Typography */
+	--font-display: "Inter", system-ui, sans-serif;
+	--font-body: "Inter", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+	/* Radii */
+	--radius-md: 16px;
+	--radius-lg: 24px;
+	--radius-pill: 999px;
+
+	/* Frame safety (videowright convention) */
+	--safe-x: 96px;
+	--safe-y: 64px;
+}

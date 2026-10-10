@@ -1,0 +1,31 @@
+{
+  "captured_at": "2026-10-10T18:56:05.250015+00:00",
+  "captured_with": "scripts/gitlab_mcp_probe.py",
+  "endpoint": "https://gitlab.com/api/v4/mcp",
+  "authentication": "Bearer personal access token from GITLAB_TOKEN (value not recorded)",
+  "protocol_version_requested": "2025-06-18",
+  "unauthenticated_challenge": "Bearer realm=\"GitLab\", scope=\"mcp\", resource_metadata=\"https://gitlab.com/.well-known/oauth-protected-resource/api/v4/mcp\"",
+  "tools_listed": 0,
+  "tools": [],
+  "tool_called": null,
+  "exchanges": [
+    {
+      "method": "initialize",
+      "http_status": 403,
+      "www_authenticate": null,
+      "message": {
+        "message": "403 Forbidden"
+      },
+      "raw_body": null
+    },
+    {
+      "method": "tools/list",
+      "http_status": 403,
+      "www_authenticate": null,
+      "message": {
+        "message": "403 Forbidden"
+      },
+      "raw_body": null
+    }
+  ]
+}

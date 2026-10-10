@@ -1,0 +1,38 @@
+{
+  "verified_with": "scripts/ci_release.py verify",
+  "baseline_source": "/tmp/rollbackiq-footage-veobrjh_/artifacts/baseline-window.json",
+  "window_source": "/tmp/rollbackiq-footage-veobrjh_/artifacts/verify-window.json",
+  "executed_at": "2026-10-10T19:09:22.541698+00:00",
+  "result": {
+    "recovered": true,
+    "reasons": [],
+    "expected_release": "v1",
+    "observed_release": "v1",
+    "samples": 200,
+    "window_seconds": 6.008462,
+    "independent": true,
+    "p95_ms": 27.05448999768123,
+    "baseline_p95_ms": 26.794804027304053,
+    "p95_ratio_vs_baseline": 1.0096916540278689,
+    "error_rate": 0.0,
+    "improved_vs_faulty": null,
+    "before": null,
+    "after": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T19:09:35.956156Z",
+      "ended_at": "2026-10-10T19:09:41.964618Z",
+      "request_count": 200,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.559228003956378,
+      "p95_ms": 27.05448999768123,
+      "p99_ms": 42.28284698911011,
+      "mean_ms": 22.87452549149748,
+      "max_ms": 43.69249800220132,
+      "source": "probe: 200 real HTTP GET /api/work (concurrency 4, timeout 5.0s, paced across >= 6.0s)"
+    },
+    "verified_at": "2026-10-10T19:09:42.995461Z"
+  }
+}

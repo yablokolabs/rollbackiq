@@ -1,0 +1,71 @@
+{
+  "triggered": false,
+  "note": "the detector did not fire, so no incident or rollback was proposed",
+  "windows": [
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:57:45.442493Z",
+      "ended_at": "2026-10-10T18:57:45.792903Z",
+      "request_count": 120,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.45256700553,
+      "p95_ms": 26.281258033122867,
+      "p99_ms": 36.92471102112904,
+      "mean_ms": 22.551891841188382,
+      "max_ms": 38.66085998015478,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:57:46.915423Z",
+      "ended_at": "2026-10-10T18:57:47.276640Z",
+      "request_count": 120,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.928035003133118,
+      "p95_ms": 29.286049015354365,
+      "p99_ms": 38.30984700471163,
+      "mean_ms": 23.23309979450035,
+      "max_ms": 38.36091299308464,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:57:48.343089Z",
+      "ended_at": "2026-10-10T18:57:48.701068Z",
+      "request_count": 120,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 23.05110002635047,
+      "p95_ms": 27.265155978966504,
+      "p99_ms": 27.83364203060046,
+      "mean_ms": 22.860190459080815,
+      "max_ms": 29.487889958545566,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:57:49.718249Z",
+      "ended_at": "2026-10-10T18:57:50.049403Z",
+      "request_count": 120,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 21.35692205047235,
+      "p95_ms": 25.183640012983233,
+      "p99_ms": 26.30978898378089,
+      "mean_ms": 21.472658254303195,
+      "max_ms": 27.499583025928587,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    }
+  ],
+  "baseline_release": "v1"
+}

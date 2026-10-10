@@ -1,0 +1,73 @@
+{
+  "triggered": true,
+  "incident_id": "inc-v2-20261010190922",
+  "breaches": [
+    "P95_LATENCY",
+    "ERROR_RATE"
+  ],
+  "reasons": [
+    "p95 238.1ms is 8.89x the baseline 26.8ms (limit 3.0x)",
+    "error rate 8.333% exceeds 5.0%"
+  ],
+  "confidence": 1.0,
+  "confidence_note": "heuristic margin-and-sample indicator between 0 and 1, not a probability",
+  "p95_ratio": 8.887587300507885,
+  "windows": [
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T19:09:14.085871Z",
+      "ended_at": "2026-10-10T19:09:16.850008Z",
+      "request_count": 120,
+      "error_count": 16,
+      "error_rate": 0.13333333333333333,
+      "availability": 0.8666666666666667,
+      "p50_ms": 197.61835801182315,
+      "p95_ms": 234.06807600986212,
+      "p99_ms": 241.22884299140424,
+      "mean_ms": 175.69971170839077,
+      "max_ms": 261.2069130409509,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    {
+      "release": "v2",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T19:09:18.375169Z",
+      "ended_at": "2026-10-10T19:09:21.274276Z",
+      "request_count": 120,
+      "error_count": 10,
+      "error_rate": 0.08333333333333333,
+      "availability": 0.9166666666666666,
+      "p50_ms": 201.38924004277214,
+      "p95_ms": 238.14115999266505,
+      "p99_ms": 241.44460598472506,
+      "mean_ms": 187.98631060296125,
+      "max_ms": 241.6595360264182,
+      "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    }
+  ],
+  "baseline": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "captured_at": "2026-10-10T19:09:12.983406Z",
+    "window": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T19:09:10.280709Z",
+      "ended_at": "2026-10-10T19:09:10.717160Z",
+      "request_count": 150,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.7028529625386,
+      "p95_ms": 26.794804027304053,
+      "p99_ms": 41.660992021206766,
+      "mean_ms": 22.702629938333605,
+      "max_ms": 41.82031803065911,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "sample_count": 150,
+    "verified": true
+  },
+  "proposal_hash": "5fae659f271c169f"
+}

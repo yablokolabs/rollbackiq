@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* The console is a dark operations surface; one token keeps the palette honest. */
+:root {
+  color-scheme: dark;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

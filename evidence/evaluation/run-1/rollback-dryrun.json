@@ -1,0 +1,206 @@
+{
+  "incident_id": "inc-v2-20261010185512",
+  "environment": "demo-staging",
+  "idempotency_key": "rollback-inc-v2-20261010185512-v1",
+  "dry_run": true,
+  "decision": {
+    "allowed": true,
+    "stage": "safety_gate",
+    "detail": "safety gate allowed the rollback",
+    "veto_codes": [],
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is 'v2'"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target 'v1' was verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "approval 'appr-inc-v2-20261010185512' supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'azureuser' is an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval matches proposal fc19b376a46cf973"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T19:10:12.768782+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s is within 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185512-v1' present"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185512-v1' has not been executed"
+      }
+    ],
+    "proposal_hash": "fc19b376a46cf973",
+    "target_release": "v1"
+  },
+  "safety_verdict": {
+    "allowed": true,
+    "target_release": "v1",
+    "proposal_hash": "fc19b376a46cf973",
+    "checks": [
+      {
+        "code": "ACTION_IS_ROLLBACK",
+        "passed": true,
+        "detail": "proposed action is 'rollback'; only 'rollback' executes a deployment change"
+      },
+      {
+        "code": "ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' allowlist=['demo-staging']"
+      },
+      {
+        "code": "PHASE1_ENVIRONMENT_ALLOWLISTED",
+        "passed": true,
+        "detail": "environment 'demo-staging' protected allowlist=['demo-staging']"
+      },
+      {
+        "code": "PROPOSAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "proposal environment 'demo-staging' vs request environment 'demo-staging'"
+      },
+      {
+        "code": "CURRENT_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "current deployed release is 'v2'"
+      },
+      {
+        "code": "TARGET_RELEASE_KNOWN",
+        "passed": true,
+        "detail": "rollback target 'v1' is a release we have observed"
+      },
+      {
+        "code": "TARGET_IS_KNOWN_GOOD",
+        "passed": true,
+        "detail": "rollback target 'v1' was verified healthy by this system"
+      },
+      {
+        "code": "TARGET_DIFFERS_FROM_CURRENT",
+        "passed": true,
+        "detail": "rollback target 'v1' differs from the deployed release 'v2'"
+      },
+      {
+        "code": "TARGET_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "target release environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_PRESENT",
+        "passed": true,
+        "detail": "approval 'appr-inc-v2-20261010185512' supplied"
+      },
+      {
+        "code": "APPROVAL_ACTOR_IS_HUMAN",
+        "passed": true,
+        "detail": "approval actor 'azureuser' is an authorized human identity"
+      },
+      {
+        "code": "APPROVAL_GRANTED",
+        "passed": true,
+        "detail": "approval decision is APPROVED"
+      },
+      {
+        "code": "APPROVAL_IN_SCOPE",
+        "passed": true,
+        "detail": "approval matches proposal fc19b376a46cf973"
+      },
+      {
+        "code": "APPROVAL_ENVIRONMENT_MATCHES",
+        "passed": true,
+        "detail": "approval environment 'demo-staging' vs 'demo-staging'"
+      },
+      {
+        "code": "APPROVAL_NOT_EXPIRED",
+        "passed": true,
+        "detail": "approval expires_at=2026-10-10T19:10:12.768782+00:00"
+      },
+      {
+        "code": "APPROVAL_WITHIN_MAX_AGE",
+        "passed": true,
+        "detail": "approval validity window 900s is within 900s"
+      },
+      {
+        "code": "IDEMPOTENCY_KEY_PRESENT",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185512-v1' present"
+      },
+      {
+        "code": "NOT_ALREADY_EXECUTED",
+        "passed": true,
+        "detail": "idempotency key 'rollback-inc-v2-20261010185512-v1' has not been executed"
+      }
+    ],
+    "checked_at": "2026-10-10T18:55:13.046163Z"
+  },
+  "evaluated_at": "2026-10-10T18:55:13.046396+00:00",
+  "outcome": "dry_run_allowed"
+}

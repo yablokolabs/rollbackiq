@@ -28,5 +28,19 @@ evidence/rollback-state.json
 evidence/**/state-*.json
 evidence/**/*-state.json
 
+# Vendored agent skills, fetched with `npx skills add <owner/repo>`. Deliberate:
+# they are third-party tooling, not project source, and their bundled examples
+# quote assistant names that the attribution guard correctly flags. Re-install
+# per docs/diagrams/README.md; the diagrams themselves are committed.
+.agents/skills/
+
 # OS / editor
 .DS_Store
+
+# Installer artifacts from `npx skills add` (see .agents/skills/ above).
+.claude/
+skills-lock.json
+
+# Demo video project: render intermediates. The final video, the narration audio and the
+# footage of the real run are committed.
+demo/videowright/build/

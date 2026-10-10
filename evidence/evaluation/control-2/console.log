@@ -1,0 +1,21 @@
++ docker network inspect rollbackiq-local
++ docker rm -f rollbackiq-eval-control
++ docker run -d --name rollbackiq-eval-control --network rollbackiq-local --network-alias rollbackiq-eval-control -e RELEASE_VERSION=v2 -e RELEASE_COMMIT_SHA=unknown -e RELEASE_PIPELINE_ID=unknown -e RELEASE_IMAGE_DIGEST=sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66 -e DEPLOY_ENV=demo-staging -e FAULT_LATENCY_MS=0 -e FAULT_ERROR_RATE=0 rollbackiq-workload:local
++ docker exec rollbackiq-eval-control python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
++ docker exec rollbackiq-eval-control python -c 'import urllib.request;print(urllib.request.urlopen('"'"'http://127.0.0.1:8000/release'"'"', timeout=2).read().decode())'
+deployed v2 as container 'rollbackiq-eval-control' (image digest sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66)
+written: /home/azureuser/rollbackiq/evidence/evaluation/control-2/deploy-control.json
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/control-2/faulty-window-1.json
+window 1: samples=120 errors=0 error_rate=0.0% p95=29.7ms ratio=1.1045535978540606 triggered=False (no threshold breached)
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/control-2/faulty-window-2.json
+window 2: samples=120 errors=0 error_rate=0.0% p95=25.5ms ratio=0.948712783412003 triggered=False (no threshold breached)
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/control-2/faulty-window-3.json
+window 3: samples=120 errors=0 error_rate=0.0% p95=26.5ms ratio=0.9854034938605746 triggered=False (no threshold breached)
++ docker run --rm --network rollbackiq-local rollbackiq-workload:local python -c <ci_probe.py> ...
+written: /home/azureuser/rollbackiq/evidence/evaluation/control-2/faulty-window-4.json
+window 4: samples=120 errors=0 error_rate=0.0% p95=25.1ms ratio=0.9336628401345107 triggered=False (no threshold breached)
+no regression detected on the measured windows; no incident bundle written
+written: evidence/evaluation/control-2/ci-detection.json

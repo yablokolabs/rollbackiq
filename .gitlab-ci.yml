@@ -21,6 +21,7 @@
 
 stages:
   - verify
+  - test
   - build
   - deploy
   - operate
@@ -87,6 +88,23 @@ attribution-guard:
         echo "Scanning commit messages reachable from $CI_COMMIT_SHA"
         bash scripts/check_no_attribution.sh range "$CI_COMMIT_SHA"
       fi
+
+# The full suite, in the Python image. The regression detector, the safety gate,
+# the verifier and the state machine are what protect the rollback, so their tests
+# gate the pipeline that performs one.
+#
+# It installs BOTH requirement files, not just the control plane's. Part of the
+# suite exercises the workload's telemetry setup, which imports the FastAPI
+# instrumentation that only demo/service/requirements.txt pins; with that package
+# absent, telemetry correctly reports itself disabled and the test fails. Running
+# the job's commands in this image locally is what surfaced that, and installing
+# the shipped requirements is the fix — not a skipped test.
+test:pytest:
+  stage: test
+  extends: .python
+  script:
+    - pip install --quiet --no-cache-dir -r demo/service/requirements.txt
+    - python -m pytest
 
 # Builds the workload image and publishes its immutable digest. The digest is
 # the identity a rollback is allowed to target, so it is captured here and

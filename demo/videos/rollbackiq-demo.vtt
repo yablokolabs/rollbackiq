@@ -1,0 +1,145 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:03.249
+A production bug once deleted customer data.
+
+00:00:03.249 --> 00:00:06.186
+Recovery took backups, and a war room.
+
+00:00:06.277 --> 00:00:11.759
+RollbackIQ is a recovery engineer for
+release regressions, built on GitLab.
+
+00:00:11.850 --> 00:00:16.833
+Its rule is simple: a green rollback job is
+not success.
+
+00:00:16.833 --> 00:00:18.528
+Measured recovery is.
+
+00:00:18.944 --> 00:00:22.382
+The whole lifecycle is one GitLab pipeline.
+
+00:00:22.382 --> 00:00:24.693
+The build job publishes one image.
+
+00:00:24.693 --> 00:00:29.546
+The deploy job starts version one in a demo
+staging environment, and measures
+
+00:00:29.546 --> 00:00:32.286
+a healthy baseline from real requests.
+
+00:00:32.702 --> 00:00:36.976
+Now watch it run. This is live output from
+the same scripts the
+
+00:00:36.976 --> 00:00:42.769
+pipeline jobs use. Version two deploys with
+an injected fault: the same image,
+
+00:00:42.769 --> 00:00:47.100
+with different configuration. One bad window
+is not enough.
+
+00:00:47.191 --> 00:00:51.453
+Window one: latency near nine times the
+baseline.
+
+00:00:51.453 --> 00:00:57.281
+Still no incident. Window two confirms it,
+and the detector opens an incident
+
+00:00:57.281 --> 00:00:59.058
+with a rollback proposal.
+
+00:00:59.393 --> 00:01:05.292
+A proposal changes nothing. A named person
+must approve that exact proposal, by
+
+00:01:05.292 --> 00:01:11.005
+its hash. Then the safety gate runs eighteen
+checks: the environment, the target
+
+00:01:11.005 --> 00:01:13.873
+release, the approver, the idempotency key.
+
+00:01:13.964 --> 00:01:17.425
+If one check fails, the rollback is refused.
+
+00:01:17.737 --> 00:01:21.965
+Here the gate passes, and the rollback puts
+version one back.
+
+00:01:21.965 --> 00:01:24.391
+But a green job proves nothing.
+
+00:01:24.391 --> 00:01:28.699
+So a separate step measures a new window
+that starts after the rollback:
+
+00:01:28.699 --> 00:01:31.369
+two hundred requests, over six seconds.
+
+00:01:31.402 --> 00:01:35.049
+Latency is back at the baseline, with zero
+errors.
+
+00:01:35.082 --> 00:01:37.917
+Recovered, from independent evidence.
+
+00:01:38.310 --> 00:01:42.549
+Then a custom GitLab Duo flow investigates
+the incident.
+
+00:01:42.549 --> 00:01:47.797
+It is defined in this repository, registered
+in the AI Catalog, and started
+
+00:01:47.797 --> 00:01:49.875
+by a mention on the incident issue.
+
+00:01:49.966 --> 00:01:53.474
+It has no tool that can deploy or approve.
+
+00:01:53.565 --> 00:01:55.610
+Its note was not flattering.
+
+00:01:55.610 --> 00:01:59.476
+It found three values in our incident record
+that did not match the
+
+00:01:59.476 --> 00:02:03.052
+artifacts, and it recommended hold and
+escalate.
+
+00:02:03.052 --> 00:02:04.782
+We corrected the record.
+
+00:02:05.117 --> 00:02:10.447
+In GitLab, the same lifecycle ran on shared
+runners, and recovery was verified
+
+00:02:10.447 --> 00:02:14.360
+there too. On one host we repeated it five
+times.
+
+00:02:14.360 --> 00:02:20.141
+Five of five runs recovered, and five
+healthy controls gave zero false positives.
+
+00:02:20.476 --> 00:02:25.308
+RollbackIQ does not restore deleted data,
+and it says so.
+
+00:02:25.341 --> 00:02:30.834
+It makes a rollback a decision with
+evidence: detected by measurement, approved
+by
+
+00:02:30.834 --> 00:02:34.259
+a person, verified independently. Detect.
+
+00:02:34.259 --> 00:02:36.059
+Decide. Recover.
+

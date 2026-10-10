@@ -1,0 +1,87 @@
+{
+  "incident_id": "inc-v2-20261010185649",
+  "environment": "demo-staging",
+  "proposal": {
+    "incident_id": "inc-v2-20261010185649",
+    "action": "rollback",
+    "target_release": "v1",
+    "environment": "demo-staging",
+    "requires_migration": false,
+    "risks": [
+      "rolling back the deployment does not restore any data deleted by the regressed release",
+      "the regressed release remains in the pipeline history and must not be redeployed unreviewed"
+    ],
+    "contraindications": [],
+    "evidence_refs": [
+      "/home/azureuser/rollbackiq/evidence/evaluation/run-4/deploy-regressed.json",
+      "/home/azureuser/rollbackiq/evidence/evaluation/run-4"
+    ],
+    "expected_recovery": "p95 latency within /home/azureuser/rollbackiq/evidence/evaluation/run-4/baseline-window.json envelope and error rate below the recovery limit",
+    "created_at": "2026-10-10T18:56:49.141403Z"
+  },
+  "approval": null,
+  "current_release": {
+    "id": "v2",
+    "commit_sha": "bc021da",
+    "pipeline_id": "local-20261010T185635Z",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+    "known_good": false,
+    "requires_migration": false,
+    "migration_compatible": null,
+    "created_at": "2026-10-10T18:56:49.141412Z"
+  },
+  "target_release": {
+    "id": "v1",
+    "commit_sha": "bc021da",
+    "pipeline_id": "local-20261010T185635Z",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+    "known_good": true,
+    "requires_migration": false,
+    "migration_compatible": true,
+    "created_at": "2026-10-10T18:56:49.141417Z"
+  },
+  "baseline": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "captured_at": "2026-10-10T18:56:41.037505Z",
+    "window": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:56:38.326272Z",
+      "ended_at": "2026-10-10T18:56:38.779788Z",
+      "request_count": 150,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 23.605916008818895,
+      "p95_ms": 28.054523980244994,
+      "p99_ms": 39.09634402953088,
+      "mean_ms": 23.60434716916643,
+      "max_ms": 39.137213956564665,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "sample_count": 150,
+    "verified": true
+  },
+  "before": {
+    "release": "v2",
+    "environment": "demo-staging",
+    "started_at": "2026-10-10T18:56:45.663627Z",
+    "ended_at": "2026-10-10T18:56:48.562569Z",
+    "request_count": 120,
+    "error_count": 10,
+    "error_rate": 0.08333333333333333,
+    "availability": 0.9166666666666666,
+    "p50_ms": 200.83200000226498,
+    "p95_ms": 238.56042401166633,
+    "p99_ms": 241.8290190398693,
+    "mean_ms": 188.0329783486862,
+    "max_ms": 241.93976301467046,
+    "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+  },
+  "idempotency_key": "rollback-inc-v2-20261010185649-v1"
+}

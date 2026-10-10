@@ -1,0 +1,97 @@
+{
+  "incident_id": "inc-v2-20261010185721",
+  "environment": "demo-staging",
+  "proposal": {
+    "incident_id": "inc-v2-20261010185721",
+    "action": "rollback",
+    "target_release": "v1",
+    "environment": "demo-staging",
+    "requires_migration": false,
+    "risks": [
+      "rolling back the deployment does not restore any data deleted by the regressed release",
+      "the regressed release remains in the pipeline history and must not be redeployed unreviewed"
+    ],
+    "contraindications": [],
+    "evidence_refs": [
+      "/home/azureuser/rollbackiq/evidence/evaluation/run-5/deploy-regressed.json",
+      "/home/azureuser/rollbackiq/evidence/evaluation/run-5"
+    ],
+    "expected_recovery": "p95 latency within /home/azureuser/rollbackiq/evidence/evaluation/run-5/baseline-window.json envelope and error rate below the recovery limit",
+    "created_at": "2026-10-10T18:57:21.153549Z"
+  },
+  "approval": {
+    "id": "appr-inc-v2-20261010185721",
+    "incident_id": "inc-v2-20261010185721",
+    "proposal_hash": "9270297e38dbca49",
+    "actor": "azureuser",
+    "decision": "APPROVED",
+    "environment": "demo-staging",
+    "created_at": "2026-10-10T18:57:21.270753Z",
+    "expires_at": "2026-10-10T19:12:21.270753Z",
+    "scope_note": "played by azureuser in a local run"
+  },
+  "current_release": {
+    "id": "v2",
+    "commit_sha": "bc021da",
+    "pipeline_id": "local-20261010T185707Z",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+    "known_good": false,
+    "requires_migration": false,
+    "migration_compatible": null,
+    "created_at": "2026-10-10T18:57:21.153559Z"
+  },
+  "target_release": {
+    "id": "v1",
+    "commit_sha": "bc021da",
+    "pipeline_id": "local-20261010T185707Z",
+    "environment": "demo-staging",
+    "deployed_at": null,
+    "image_digest": "sha256:1aa319172df2c8f96a8703bfc63ed20d3b0436e16fa1f2d7a2dc8acf745dcd66",
+    "known_good": true,
+    "requires_migration": false,
+    "migration_compatible": true,
+    "created_at": "2026-10-10T18:57:21.153563Z"
+  },
+  "baseline": {
+    "release": "v1",
+    "environment": "demo-staging",
+    "captured_at": "2026-10-10T18:57:13.050468Z",
+    "window": {
+      "release": "v1",
+      "environment": "demo-staging",
+      "started_at": "2026-10-10T18:57:10.419396Z",
+      "ended_at": "2026-10-10T18:57:10.855878Z",
+      "request_count": 150,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "availability": 1.0,
+      "p50_ms": 22.560796001926064,
+      "p95_ms": 26.985583011992276,
+      "p99_ms": 40.18137900857255,
+      "mean_ms": 22.715927730702486,
+      "max_ms": 41.511361952871084,
+      "source": "probe: 150 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+    },
+    "sample_count": 150,
+    "verified": true
+  },
+  "before": {
+    "release": "v2",
+    "environment": "demo-staging",
+    "started_at": "2026-10-10T18:57:17.726635Z",
+    "ended_at": "2026-10-10T18:57:20.626011Z",
+    "request_count": 120,
+    "error_count": 10,
+    "error_rate": 0.08333333333333333,
+    "availability": 0.9166666666666666,
+    "p50_ms": 200.8203900186345,
+    "p95_ms": 238.46555600175634,
+    "p99_ms": 241.16465001134202,
+    "mean_ms": 187.71401494450402,
+    "max_ms": 241.28637003013864,
+    "source": "probe: 120 real HTTP GET /api/work (concurrency 8, timeout 5.0s)"
+  },
+  "idempotency_key": "rollback-inc-v2-20261010185721-v1"
+}

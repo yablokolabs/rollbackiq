@@ -1,0 +1,739 @@
+/* Shared look of every scene in the RollbackIQ style. Sizes are for a 1920x1080 frame. */
+
+.rq-scene {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
+	padding: var(--safe-y) var(--safe-x);
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	background:
+		radial-gradient(
+			1200px 700px at 90% -10%,
+			rgba(59, 143, 212, 0.16),
+			transparent 62%
+		),
+		radial-gradient(
+			1100px 700px at -6% 112%,
+			rgba(5, 29, 53, 0.1),
+			transparent 62%
+		),
+		var(--color-bg);
+	color: var(--color-fg);
+	font-family: var(--font-body);
+	font-size: 36px;
+	line-height: 1.3;
+}
+
+.rq-scene * {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+/* defineScene() reveals these. Do not put a CSS transform on a data-beat element:
+   the reveal animation replaces it. */
+.rq-scene [data-beat] {
+	opacity: 0;
+}
+
+/* ---------- text ---------- */
+
+.rq-scene .kicker {
+	font-size: 26px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-accent);
+}
+
+.rq-scene .kicker.warn {
+	color: var(--color-warn);
+}
+
+.rq-scene .kicker.bad {
+	color: var(--color-bad);
+}
+
+.rq-scene .headline {
+	margin-top: 8px;
+	font-family: var(--font-display);
+	font-size: 76px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: 1.08;
+}
+
+.rq-scene .headline.small {
+	font-size: 60px;
+}
+
+.rq-scene em {
+	font-style: normal;
+	color: var(--color-accent);
+}
+
+.rq-scene .lede {
+	font-size: 40px;
+	color: var(--color-steel);
+}
+
+.rq-scene .mono {
+	font-family: var(--font-mono);
+}
+
+.rq-scene .ok {
+	color: var(--color-good);
+}
+
+.rq-scene .bad {
+	color: var(--color-bad);
+}
+
+.rq-scene .warn {
+	color: var(--color-warn);
+}
+
+.rq-scene .dim {
+	color: var(--color-muted);
+}
+
+.rq-scene .strong {
+	font-weight: 500;
+	color: var(--color-fg);
+}
+
+.rq-scene .icon {
+	width: 34px;
+	height: 34px;
+	flex: none;
+}
+
+.rq-scene .lede.wrap,
+.rq-scene .headline.wrap {
+	max-width: 1460px;
+}
+
+/* ---------- layout ---------- */
+
+.rq-scene .stage {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	gap: 32px;
+	align-content: center;
+}
+
+.rq-scene .stage.split {
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+}
+
+.rq-scene .stage.wide-narrow {
+	grid-template-columns: 1.3fr 0.7fr;
+	align-items: center;
+}
+
+.rq-scene .row {
+	display: flex;
+	align-items: center;
+	gap: 26px;
+}
+
+.rq-scene .row.tight {
+	gap: 14px;
+}
+
+.rq-scene .column {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+/* ---------- panels ---------- */
+
+.rq-scene .panel {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 34px 38px;
+	background: var(--color-surface);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	box-shadow: 0 18px 44px rgba(5, 29, 53, 0.08);
+}
+
+.rq-scene .panel.accent {
+	border-color: var(--color-accent);
+}
+
+.rq-scene .panel.warn {
+	border-color: var(--color-warn);
+	background: rgba(255, 122, 26, 0.06);
+}
+
+.rq-scene .panel.good {
+	border-color: var(--color-good);
+	background: rgba(46, 158, 91, 0.06);
+}
+
+.rq-scene .panel.dark {
+	background: var(--color-navy);
+	border-color: var(--color-navy-2);
+	color: #e8eef8;
+}
+
+.rq-scene .panel-title {
+	font-size: 26px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+
+.rq-scene .panel.dark .panel-title {
+	color: #9fb3c8;
+}
+
+/* ---------- measured values ---------- */
+
+.rq-scene .stat-value {
+	font-family: var(--font-display);
+	font-size: 132px;
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.rq-scene .stat-value.small {
+	font-size: 96px;
+}
+
+.rq-scene .stat-label {
+	font-size: 32px;
+	color: var(--color-muted);
+}
+
+.rq-scene .facts {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 16px 40px;
+	font-size: 34px;
+	align-items: baseline;
+}
+
+.rq-scene .fact-label {
+	color: var(--color-muted);
+}
+
+.rq-scene .fact-value {
+	font-family: var(--font-mono);
+	font-size: 34px;
+	font-weight: 500;
+	color: var(--color-fg);
+}
+
+.rq-scene .fact-value.ok {
+	color: var(--color-good);
+}
+
+.rq-scene .fact-value.bad {
+	color: var(--color-bad);
+}
+
+.rq-scene .fact-value.warn {
+	color: var(--color-warn);
+}
+
+.rq-scene .fact-value.accent {
+	color: var(--color-accent);
+}
+
+/* ---------- chips and alerts ---------- */
+
+.rq-scene .chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	padding: 12px 26px;
+	background: var(--color-surface-raised);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-pill);
+	font-size: 30px;
+	font-family: var(--font-mono);
+	color: var(--color-steel);
+	white-space: nowrap;
+}
+
+.rq-scene .chip.accent {
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+	background: rgba(7, 92, 167, 0.08);
+}
+
+.rq-scene .chip.warn {
+	border-color: var(--color-warn);
+	color: var(--color-warn);
+	background: rgba(255, 122, 26, 0.1);
+}
+
+.rq-scene .chip.good {
+	border-color: var(--color-good);
+	color: var(--color-good);
+	background: rgba(46, 158, 91, 0.1);
+}
+
+.rq-scene .chip.bad {
+	border-color: var(--color-bad);
+	color: var(--color-bad);
+	background: rgba(209, 59, 59, 0.1);
+}
+
+.rq-scene .dot {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.rq-scene .alert {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+	padding: 26px 38px;
+	border: 2px solid var(--color-warn);
+	border-radius: var(--radius-lg);
+	background: rgba(255, 122, 26, 0.1);
+	font-size: 36px;
+	color: var(--color-warn);
+}
+
+.rq-scene .alert.good {
+	border-color: var(--color-good);
+	background: rgba(46, 158, 91, 0.1);
+	color: var(--color-good);
+}
+
+.rq-scene .alert.bad {
+	border-color: var(--color-bad);
+	background: rgba(209, 59, 59, 0.1);
+	color: var(--color-bad);
+}
+
+.rq-scene .alert .icon {
+	width: 44px;
+	height: 44px;
+}
+
+/* What the agent asked the user for, quoted back. */
+.rq-scene .request {
+	padding: 26px 34px;
+	border-left: 8px solid var(--color-warn);
+	background: var(--color-surface);
+	border-radius: 0 var(--radius-md) var(--radius-md) 0;
+	font-size: 38px;
+	line-height: 1.35;
+}
+
+.rq-scene .request .from {
+	display: block;
+	margin-bottom: 10px;
+	font-family: var(--font-mono);
+	font-size: 24px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+
+/* ---------- loop footer ---------- */
+
+.rq-scene .stage-stack {
+	display: grid;
+}
+
+.rq-scene .loop {
+	grid-area: 1 / 1;
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 14px;
+}
+
+.rq-scene .loop .step {
+	padding: 16px 0;
+	text-align: center;
+	font-size: 28px;
+	font-weight: 500;
+	background: var(--color-surface);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-md);
+	color: var(--color-muted);
+}
+
+.rq-scene .loop .step.done {
+	border-color: rgba(7, 92, 167, 0.45);
+	color: var(--color-fg);
+}
+
+.rq-scene .loop .step.active {
+	background: var(--color-accent);
+	border-color: var(--color-accent);
+	color: var(--color-on-accent);
+	font-weight: 700;
+}
+
+/* ---------- screenshots ---------- */
+
+.rq-scene .shot {
+	margin: 0;
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	background: var(--color-surface);
+	box-shadow: 0 26px 60px rgba(5, 29, 53, 0.18);
+}
+
+.rq-scene .shot img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.rq-scene .shot.panel-shot {
+	box-shadow: 0 18px 40px rgba(5, 29, 53, 0.14);
+}
+
+/* A full 1600x900 viewport shot is about 423px tall in a half-width column, which
+   leaves no room for the panels below it. Containing it inside a fixed budget keeps
+   the whole frame visible (no cropping) and the scene inside 1080p. */
+.rq-scene .shot.capped img {
+	max-height: 400px;
+	object-fit: contain;
+}
+
+/* A tall element shot - a whole panel captured on its own - needs a bigger budget
+   than a viewport shot, but still has to fit the grid cell it sits in. */
+.rq-scene .shot.fit img {
+	max-height: 600px;
+	object-fit: contain;
+}
+
+/* A scene with three stacked blocks in one column runs out of vertical room at
+   1080p, so it tightens its panels rather than pushing past the frame. */
+.rq-scene.tight .panel {
+	padding: 26px 30px;
+	gap: 16px;
+}
+
+.rq-scene.tight .column {
+	gap: 16px;
+}
+
+.rq-scene .row.between {
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.rq-scene .row.between .from {
+	margin-bottom: 0;
+}
+
+/* ---------- title and closing scenes ---------- */
+
+.rq-scene.centered {
+	align-items: center;
+	justify-content: center;
+	gap: 56px;
+	text-align: center;
+}
+
+.rq-scene .brand {
+	display: flex;
+	align-items: center;
+	gap: 48px;
+	text-align: left;
+}
+
+.rq-scene .logo {
+	width: 220px;
+	height: 220px;
+	border-radius: 48px;
+	box-shadow:
+		0 0 0 2px var(--color-border),
+		0 30px 80px rgba(5, 29, 53, 0.28);
+}
+
+.rq-scene .logo.small {
+	width: 116px;
+	height: 116px;
+	border-radius: 26px;
+}
+
+.rq-scene .wordmark {
+	font-family: var(--font-display);
+	font-size: 150px;
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.rq-scene .wordmark.small {
+	font-size: 84px;
+}
+
+.rq-scene .flow {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.rq-scene .flow-step {
+	padding: 22px 38px;
+	background: var(--color-surface);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-md);
+	font-size: 40px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.rq-scene .flow-step.accent {
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+}
+
+.rq-scene .flow-arrow {
+	display: flex;
+	color: var(--color-muted);
+}
+
+.rq-scene .promise {
+	font-size: 46px;
+	font-weight: 500;
+	color: var(--color-steel);
+}
+
+.rq-scene.centered .logo {
+	width: 260px;
+	height: 260px;
+	border-radius: 56px;
+}
+
+.rq-scene.centered .wordmark {
+	font-size: 190px;
+}
+
+/* The wordmark has a line height of 1, so its descenders reach below its box. */
+.rq-scene.centered .lede {
+	margin-top: 18px;
+	font-size: 50px;
+}
+
+.rq-scene.centered .flow-step {
+	padding: 26px 44px;
+	font-size: 46px;
+}
+
+.rq-scene.centered .promise {
+	font-size: 54px;
+}
+
+/* ---------- evaluation rows ---------- */
+
+.rq-scene .metrics {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 16px 40px;
+	align-items: baseline;
+}
+
+.rq-scene .metrics .value {
+	font-family: var(--font-display);
+	font-size: 54px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--color-fg);
+}
+
+.rq-scene .metrics .value.ok {
+	color: var(--color-good);
+}
+
+.rq-scene .metrics .value.accent {
+	color: var(--color-accent);
+}
+
+.rq-scene .metrics .label {
+	font-size: 32px;
+	color: var(--color-steel);
+}
+
+/* ---------- lists ---------- */
+
+.rq-scene .list {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 0;
+	list-style: none;
+	font-size: 34px;
+}
+
+.rq-scene .list li {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.rq-scene .list .icon {
+	width: 30px;
+	height: 30px;
+	color: var(--color-accent);
+}
+
+.rq-scene .mono-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 0;
+	list-style: none;
+	font-family: var(--font-mono);
+	font-size: 30px;
+	color: var(--color-steel);
+}
+
+/* Fills down the first column, then the second, so the order still reads top to bottom. */
+.rq-scene .mono-list.columns {
+	display: grid;
+	grid-template-rows: repeat(4, auto);
+	grid-auto-flow: column;
+	gap: 12px 40px;
+}
+
+/* ---------- state machine strip ---------- */
+
+.rq-scene .states {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.rq-scene .states .state {
+	padding: 10px 20px;
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface);
+	font-family: var(--font-mono);
+	font-size: 26px;
+	color: var(--color-muted);
+}
+
+.rq-scene .states .state.on {
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+	background: rgba(7, 92, 167, 0.08);
+}
+
+.rq-scene .states .arrow {
+	color: var(--color-muted);
+	font-size: 26px;
+}
+
+/* A bar that shows where a measured value sits against a threshold. */
+.rq-scene .scale {
+	position: relative;
+	height: 26px;
+	border-radius: var(--radius-pill);
+	background: var(--color-surface-raised);
+	border: 2px solid var(--color-border);
+	overflow: hidden;
+}
+
+.rq-scene .scale .fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	background: var(--color-accent);
+}
+
+.rq-scene .scale .fill.warn {
+	background: var(--color-warn);
+}
+
+.rq-scene .scale .mark {
+	position: absolute;
+	top: -8px;
+	bottom: -8px;
+	width: 4px;
+	background: var(--color-navy);
+}
+
+.rq-scene .scale-labels {
+	display: flex;
+	justify-content: space-between;
+	font-family: var(--font-mono);
+	font-size: 26px;
+	color: var(--color-muted);
+ margin-top: 10px;
+}
+
+.rq-scene .caption {
+	font-size: 28px;
+	color: var(--color-muted);
+}
+
+/* ---------- live footage ---------- */
+
+/* The place where scripts/composite_footage.py puts a recording of a real run. The box
+   has a fixed position and size (1216x684 at 96,236 in the 1920x1080 frame) so that the
+   recording is placed without scaling. Keep in step with FOOTAGE_BOX in that script. */
+.rq-scene .footage {
+	position: absolute;
+	left: 96px;
+	top: 236px;
+	width: 1216px;
+	height: 684px;
+	box-sizing: border-box;
+	background: #0b1626;
+	border-radius: 0;
+	box-shadow: 0 26px 60px rgba(5, 29, 53, 0.25);
+}
+.rq-scene .beside-footage {
+	position: absolute;
+	left: 1344px;
+	top: 236px;
+	width: 480px;
+	height: 684px;
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+.rq-scene .beside-footage .panel {
+	padding: 26px 28px;
+	gap: 14px;
+	font-size: 28px;
+	line-height: 1.35;
+}
+.rq-scene .beside-footage .alert {
+	font-size: 28px;
+}
+.rq-scene .source-note {
+	position: absolute;
+	left: 96px;
+	top: 938px;
+	font-size: 24px;
+	color: var(--color-muted);
+}
+
+.rq-scene .stage.narrow-wide {
+	grid-template-columns: 0.75fr 1.25fr;
+	align-items: center;
+}
+.rq-scene .shot.fit img {
+	max-height: 640px;
+}
+.rq-scene .shot.short img {
+	max-height: 560px;
+}
+.rq-scene .shot.on-dark {
+	background: #05060f;
+}
