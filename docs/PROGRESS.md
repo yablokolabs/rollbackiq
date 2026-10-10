@@ -4,7 +4,9 @@
 > Hindsight bank: **`rollbackiq`** | Hindsight API port: **8888**
 
 ## Current phase
-**Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Later in the session: the narrated demonstration video was built (`demo/videos/rollbackiq-demo.mp4`, 2:36, VideoWright project in `demo/videowright/`), the diagrams were embedded in the README and re-rendered whole, and the branch pipeline ran `test:pytest` on a runner for the first time (success). Open: a take with the approval played by hand in the GitLab UI, the GitLab MCP token, and the merge of this branch.
+**Merged.** Merge request !1 was merged by the user on 2026-10-10 as `78acd60`; `main` holds all of session 008 and 009. Pipeline `2934572189` on `main` passed `attribution-guard`, `test:pytest`, `build:workload-image` and `deploy:staging` on a GitLab runner, and waits at the manual job `deploy:regressed`.
+
+**Session 009 (2026-10-10): submission completion, on branch `submission-completion`.** The system is built and evidenced; this session closed specification gaps. Done and committed: a repeated-run evaluation (**5 of 5** lifecycle runs recovered and independently verified, **0 of 5** false positives on healthy controls, `evidence/evaluation/`), outage handling in `scripts/duo_trigger_flow.py`, negative tests for untrusted evidence and a GitLab outage (**108 passed**), `docs/INCIDENT_RUNBOOK.md`, `.env.example`, the recording moved to `demo/videos/`, and a correction of four wrong check codes in `docs/SECURITY.md`. The GitLab MCP spike ended in a characterised blocker (the token has no `mcp` scope). Later in the session: the narrated demonstration video was built (`demo/videos/rollbackiq-demo.mp4`, 2:36, VideoWright project in `demo/videowright/`), the diagrams were embedded in the README and re-rendered whole, and the branch pipeline ran `test:pytest` on a runner for the first time (success). Open: a take with the approval played by hand in the GitLab UI, and the GitLab MCP token.
 
 **User decisions in session 009:** work on a branch, not on `main`; push the branch and open a merge request, the user merges; **use only the `showcase` project (`origin`)** — do not push to `rollbackiq-project`; the video uses a **British female ElevenLabs voice**, with `~/mender/demo/videos` and `~/sightops/demo/videos` as references; the video rules are: under three minutes, shows the automation running (not slides or a mockup), explains the problem, the solution and the use of GitLab.
 
@@ -207,9 +209,9 @@ The user needs the **hackathon-provided `showcase` project** to hold the project
 Push authentication: the remote URL itself carries no credentials. A repository-local credential helper supplies the token from the environment at push time (`credential.helper` holds only a snippet referencing `$GITLAB_TOKEN`, verified to contain no token value), and the token is never written to `.git/config` or committed.
 
 ## Current task
-1. **Push and merge.** Merge request !1 (`submission-completion` → `main`) on `showcase`. Commits after `5d3c349` are local until the next push.
-2. **A take with the approval played by hand** (needs the user): pipeline `2934281629` waits at `deploy:regressed`. Steps in `docs/DEMO.md` §6.
-3. **GitLab MCP** (needs the user): a token with the `mcp` scope, or the OAuth flow in a browser. Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
+1. **A take with the approval played by hand** (needs the user): pipeline `2934572189` on `main` waits at `deploy:regressed`. Steps in `docs/DEMO.md` §6.
+2. **GitLab MCP** (needs the user): a token with the `mcp` scope, or the OAuth flow in a browser. Then `scripts/gitlab_mcp_probe.py --call <read-only tool>`.
+3. **Submission pass**: the Devpost text from `docs/COMPETITION_COMPLIANCE.md`, with the video and the repository link.
 
 Resolved uncertainties from the first pipeline: `docker:27-dind` **is** permitted on the shared runner; the registry accepts the image once the job logs in; `apk add python3 py3-pip` plus `pip install --break-system-packages` works on the Alpine `docker:27` image; and `GITLAB_USER_LOGIN` **is** populated for manual jobs.
 
@@ -344,9 +346,9 @@ Also worth recording for future sessions: `git reset --hard` early in verificati
 - Not installed on this host: `adhd`, `full-send`, `senior-swe`, `ponytail`. VideoWright is a project dependency in `demo/videowright/` (`npm ci`). `context-mode` is installed as a CLI (`context-mode index|search`).
 
 ## Next three actions
-1. **Push the branch** and watch the pipeline; then the user merges !1.
-2. **The user plays the three manual jobs by hand** on a pipeline of this branch and records the screen (`docs/DEMO.md` §6).
-3. **GitLab MCP**, when a token with the `mcp` scope exists.
+1. **The user plays the three manual jobs by hand** on pipeline `2934572189` and records the screen (`docs/DEMO.md` §6).
+2. **GitLab MCP**, when a token with the `mcp` scope exists.
+3. **Write the Devpost submission text** from the documents; every claim must point to an artifact.
 
 Re-provisioning note: after editing `duo/flows/*.yaml` or `duo/agents/*.md`, run `scripts/duo_provision_catalog.py`; it bumps a released version and verifies the stored content by SHA-256. To re-run the flow itself, use `scripts/duo_trigger_flow.py`.
 
@@ -356,11 +358,11 @@ Resolved this session: the token now has full access, project creation returns 2
 
 ## Exact next command
 ```bash
-cd /home/azureuser/rollbackiq && git switch submission-completion && .venv/bin/python -m pytest -q && git status --short && git log --oneline origin/submission-completion..HEAD
+cd /home/azureuser/rollbackiq && git switch main && git pull --ff-only origin main && .venv/bin/python -m pytest -q && git status --short
 ```
 
 ## Latest Git commit
-Branch `submission-completion`. `origin/submission-completion` is at `5d3c349` (merge request !1). Run `git log --oneline origin/submission-completion..HEAD` for the commits that are not pushed yet; they hold the diagram embedding and render fix, and the video project. `origin/main` is still at `5936280`.
+`main` = `origin/main` = `78acd60` (merge of !1, tip `53815d7`), plus the small checkpoint merge request that follows it. New work goes on a branch with a merge request to `showcase`, and each merge request gets `/request_review @GitLabDuo`. The remote `rollbackiq-project` is not used.
 
 ## Hindsight synchronization status
 Bank `rollbackiq` is active and reachable over HTTP on port 8888 (the `hindsight` CLI is not installed; use `POST /v1/default/banks/rollbackiq/memories` and `…/memories/recall`). Session 009 findings are retained. No secrets are stored.

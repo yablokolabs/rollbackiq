@@ -91,8 +91,9 @@ and a tour of the six console views, made by `scripts/record_demo.py`.
 ## 6. A take with the approval played by hand
 
 This is the one part that needs a person. Pipeline
-[2934281629](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/pipelines/2934281629)
-on branch `submission-completion` has run its automatic jobs and waits at the manual ones.
+[2934572189](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43178176/showcase/-/pipelines/2934572189)
+on `main` has run its automatic jobs and waits at the manual ones. Job artifacts expire after one
+week; a new pipeline on `main` gives the same starting point.
 
 1. Start a screen recording of the pipeline page.
 2. Play `deploy:regressed`. Its log must show the detector firing on window 2.
